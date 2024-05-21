@@ -1,0 +1,62 @@
+.container {
+    height: 100vh;
+    display: flex;
+    padding: 5;
+    /* background: linear-gradient(to right bottom, #119992, #b5c6e0); */
+}
+
+.app-sider {
+    background-color: #f8f8f8;
+    padding-top: 6px;
+    position: relative;
+    flex: 0 0 15%;
+    width: 100px; /* Set the width as needed */
+}
+
+.sider-content {
+    text-align: center;
+    margin: 16px 0;
+    background-color: cadetblue;
+}
+
+.logout-button {
+    background-color: cadetblue;
+    color: #fff;
+    /* position: absolute; */
+    bottom: 16px;
+    /* left: 35px; */
+    font-weight: 700;
+    font-family: 'century';
+    align-items: center;
+}
+.logout-button:hover {
+    background-color: #a0a0a0;
+    color: #fff;
+}
+.sider-avatar {
+    bottom: 16px;
+}
+
+.app-header {
+    text-align: center;
+    color: #fff;
+    height: 64px;
+    line-height: 64px;
+    background-color: #4096ff;
+    font-size: x-large;
+}
+
+.app-content {
+    padding: 20px;
+    flex-grow: 5;
+}
+
+.welcome-card {
+    margin-bottom: 16px;
+}
+
+.content-card {
+    text-align: center;
+    padding: 15px;
+    font-size: medium;
+}

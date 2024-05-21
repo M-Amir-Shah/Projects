@@ -1,0 +1,17 @@
+.container {
+    background: linear-gradient(to right bottom, #119992, #b5c6e0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5%;
+  height: 100vh;
+    
+}
+
+.navbar {
+    background: linear-gradient(to right bottom, #119992, #b5c6e0);
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    border-bottom: 1px solid #ccc;
+}

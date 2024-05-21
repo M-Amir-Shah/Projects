@@ -1,0 +1,68 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+
+.container {
+  height: 100vh;
+  background: linear-gradient(to right bottom, #119992, #b5c6e0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5%;
+  /* flex-direction: column; */
+}
+
+.form-box {
+  width: 90%;
+  max-width: 900px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 40px 50px;
+  margin-inline: 20px;
+}
+
+.form-box header h1 {
+  text-align: center;
+  color: black;
+  font-family: century;
+}
+
+.form-box form {
+  margin-block: 30px;
+}
+
+input {
+  width: 100%;
+  padding: 18px 16px;
+  border-radius: 4px;
+  background-color: #a3a3a331;
+  font-size: 16px;
+  margin: 12px 0;
+}
+
+
+.label {
+  margin-right: 5px;
+}
+
+.RadioButton {
+  display: flex;
+  flex-direction: row;
+}
+
+.RadioButton label {
+  margin-right: 20px;
+}
+
+.Buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px; /* Adjust margin as needed */
+}
+
+.Buttons button {
+  margin-right: 10px; /* Adjust margin between buttons as needed */
+}

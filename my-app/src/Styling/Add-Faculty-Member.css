@@ -1,0 +1,94 @@
+.container {
+    background: linear-gradient(to right bottom, #119992, #b5c6e0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5%;
+    height: 100vh;
+
+}
+
+.navbar {
+    background: linear-gradient(to right bottom, #119992, #b5c6e0);
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    border-bottom: 1px solid #ccc;
+}
+
+.form-box {
+    width: 90%;
+    max-width: 900px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 40px 50px;
+    margin-inline: 20px;
+}
+
+.avatar-uploader-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.avatar-uploader {
+    display: inline-block;
+    cursor: pointer;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 1px dashed #d9d9d9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.avatar-uploader:hover {
+    border-color: #1890ff;
+}
+
+.avatar-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.upload-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-text {
+    margin-top: 8px;
+}
+
+.loading-spinner {
+    font-size: 32px;
+    color: #1890ff;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.input-container {
+    margin-bottom: 15px;
+}
+
+.label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}

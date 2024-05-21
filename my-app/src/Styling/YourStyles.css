@@ -1,0 +1,54 @@
+/* App.css */
+
+.layout {
+    min-height: 100vh;
+  }
+  
+  .header {
+    text-align: center;
+    color: #fff;
+    background-color: #4096ff;
+    font-size: 24px;
+    line-height: 64px;
+  }
+  
+  .content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 20px;
+  }
+  
+  .image-container {
+    width: 50%;
+  }
+  
+  .image {
+    width: 100%;
+    height: auto;
+  }
+  
+  .form-box {
+    width: 50%;
+    padding: 20px;
+  }
+  
+  .welcome-card {
+    text-align: center;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .content {
+      flex-direction: column;
+    }
+  
+    .image-container,
+    .form-box {
+      width: 100%;
+    }
+  
+    .image {
+      margin-bottom: 20px;
+    }
+  }
+  
