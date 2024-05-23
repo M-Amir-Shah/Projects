@@ -1,33 +1,21 @@
 import React, { useState } from 'react';
 import { Layout, Card, Row, Col, Drawer, Button, Avatar } from 'antd';
 import { BarsOutlined, UserOutlined } from '@ant-design/icons';
-import '../Styling/Admin-Dashboard.css';
 import { useNavigate } from "react-router-dom";
+import '../Styling/Admin-Dashboard.css';
 import logo from './BiitLogo.jpeg';
-import accepted from '../Pictures/Accepted.png'
-import rejected from '../Pictures/rejected.png'
-import committeeMember from '../Pictures/committee-member.png'
-import grader from '../Pictures/grader.png'
-import meritbase from '../Pictures/meritbase.png'
-import needbase from '../Pictures/needbase.png'
+import accepted from '../Pictures/Accepted.png';
+import rejected from '../Pictures/rejected.png';
+import committeeMember from '../Pictures/committee-member.png';
+import grader from '../Pictures/grader.png';
+import meritbase from '../Pictures/meritbase.png';
+import needbase from '../Pictures/needbase.png';
 
-
-const { Header, Sider, Content } = Layout;
-const { Meta } = Card;
-export const siderWidth = '15%';
+const { Header, Content } = Layout;
 
 const App = () => {
-    const history = useNavigate();
+    const navigate = useNavigate();
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
-    const [showPopup, setShowPopup] = useState(false);
-
-    const openPopup = () => {
-        setShowPopup(true);
-    };
-
-    const closePopup = () => {
-        setShowPopup(false);
-    };
 
     const showDrawer = () => {
         setIsDrawerVisible(true);
@@ -37,63 +25,35 @@ const App = () => {
         setIsDrawerVisible(false);
     };
 
-    const AcceptedApplication = (event) => {
-        event.preventDefault();
-        history('/Accepted-Application');
-    };
-    const RejectedApplication = (event) => {
-        event.preventDefault();
-        history('/Rejected-Application');
-    };
-    const MeritBaseApplication = (event) => {
-        event.preventDefault();
-        history('/AfterLogin');
-    };
-    const NeedbaseApplication = (event) => {
-        event.preventDefault();
-        history('/AfterLogin');
-    };
-    const CommitteeMember = (event) => {
-        event.preventDefault();
-        history('/AfterLogin');
-    };
-    const Graders = (event) => {
-        event.preventDefault();
-        history('/AfterLogin');
+    const navigateTo = (path) => {
+        navigate(path);
     };
 
     return (
-        <div>
+        <Layout>
             <Header className="navbar">
                 <Row justify="space-between" align="middle">
                     <Col>
-                        <div style={{ padding: "5px" }}>
-                            <Button icon={<BarsOutlined />} onClick={showDrawer} />
-                        </div>
-
+                        <Button icon={<BarsOutlined />} onClick={showDrawer} />
                         <Drawer
                             placement="left"
                             width={300}
-                            closable={true}
+                            closable
                             onClose={onClose}
                             visible={isDrawerVisible}
                             bodyStyle={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
                         >
-                            <div className="sider-content">
-                                <Avatar size={64} icon={<UserOutlined />} />
-                            </div>
+                            <Avatar size={64} icon={<UserOutlined />} />
                             <br />
-                            <Button type="primary" onClick={openPopup} style={{ width: '80%' }}>Add Budget Amount</Button>
-                            <Button type="primary" onClick={openPopup} style={{ width: '80%', marginTop: '10px' }}>Add New Student</Button>
-                            <Button type="primary" onClick={openPopup} style={{ width: '80%', marginTop: '10px' }}>Add New Policies</Button>
-                            <Button type="primary" onClick={openPopup} style={{ width: '80%', marginTop: '10px' }}>Add Faculty Member</Button>
-                            <Button type="primary" onClick={openPopup} style={{ width: '80%', marginTop: '10px' }}>Add Committee Member</Button>
-
-                            <br />
-                            <Button type="primary" onClick={openPopup} style={{ width: '80%', marginTop: '100px' }}>Logout</Button>
+                            <Button type="primary" style={{ width: '80%' }} onClick={() => navigateTo('/add-budget')}>Add Budget Amount</Button>
+                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/add-student')}>Add New Student</Button>
+                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/add-policies')}>Add New Policies</Button>
+                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/add-faculty')}>Add Faculty Member</Button>
+                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/add-committee')}>Add Committee Member</Button>
+                            <Button type="primary" style={{ width: '80%', marginTop: '100px' }} onClick={() => navigateTo('/logout')}>Logout</Button>
                         </Drawer>
                     </Col>
-                    <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#ffff' }}>
+                    <Col flex="auto" style={{ textAlign: 'center', fontSize: 'x-large', color: '#fff' }}>
                         BIIT
                     </Col>
                     <Col>
@@ -105,9 +65,9 @@ const App = () => {
                 <Row gutter={[16, 16]}>
                     <Col xs={24} sm={12} md={12} lg={10} xl={10}>
                         <Card
-                            onClick={MeritBaseApplication}
+                            onClick={() => navigateTo('/merit-base')}
                             hoverable
-                            cover={<img src={meritbase} alt="Error loading image" />}
+                            cover={<img src={meritbase} alt="Merit Base" />}
                             className="content-card"
                         >
                             MeritBase Shortlisting
@@ -115,9 +75,9 @@ const App = () => {
                     </Col>
                     <Col xs={24} sm={12} md={12} lg={10} xl={10}>
                         <Card
-                            onClick={NeedbaseApplication}
+                            onClick={() => navigateTo('/need-base')}
                             hoverable
-                            cover={<img src={needbase} alt="Error loading image" />}
+                            cover={<img src={needbase} alt="Need Base" />}
                             className="content-card"
                         >
                             Needbase Application
@@ -128,9 +88,9 @@ const App = () => {
                 <Row gutter={[16, 16]}>
                     <Col xs={24} sm={12} md={12} lg={10} xl={10}>
                         <Card
-                            onClick={AcceptedApplication}
+                            onClick={() => navigateTo('/accepted-application')}
                             hoverable
-                            cover={<img src={accepted} alt="Error loading image" />}
+                            cover={<img src={accepted} alt="Accepted" />}
                             className="content-card"
                         >
                             Accepted Application
@@ -138,9 +98,9 @@ const App = () => {
                     </Col>
                     <Col xs={24} sm={12} md={12} lg={10} xl={10}>
                         <Card
-                            onClick={RejectedApplication}
+                            onClick={() => navigateTo('/rejected-application')}
                             hoverable
-                            cover={<img src={rejected} alt="Error loading image" />}
+                            cover={<img src={rejected} alt="Rejected" />}
                             className="content-card"
                         >
                             Rejected Application
@@ -151,9 +111,9 @@ const App = () => {
                 <Row gutter={[16, 16]}>
                     <Col xs={24} sm={12} md={12} lg={10} xl={10}>
                         <Card
-                            onClick={CommitteeMember}
+                            onClick={() => navigateTo('/committee-member')}
                             hoverable
-                            cover={<img src={committeeMember} alt="Error loading image" />}
+                            cover={<img src={committeeMember} alt="Committee Member" />}
                             className="content-card"
                         >
                             Committee Member
@@ -161,9 +121,9 @@ const App = () => {
                     </Col>
                     <Col xs={24} sm={12} md={12} lg={10} xl={10}>
                         <Card
-                            onClick={Graders}
+                            onClick={() => navigateTo('/graders')}
                             hoverable
-                            cover={<img src={grader} alt="Error loading image" />}
+                            cover={<img src={grader} alt="Graders" />}
                             className="content-card"
                         >
                             Assigning Graders
@@ -171,9 +131,8 @@ const App = () => {
                     </Col>
                 </Row>
             </Content>
-        </div>
+        </Layout>
     );
+};
 
-}
 export default App;
-

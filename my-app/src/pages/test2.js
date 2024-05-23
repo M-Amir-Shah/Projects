@@ -1,83 +1,44 @@
 // import React, { useState } from 'react';
-// import { List, Button, Modal, Rate, Input } from 'antd';
+// import { Upload, Modal } from 'antd';
+// import { PlusOutlined } from '@ant-design/icons';
 
-// const students = [
-//   { name: 'John Doe', arid: 'ARID123' },
-//   { name: 'Jane Smith', arid: 'ARID124' },
-//   // Add more students here
-// ];
+// const PicturesWall = () => {
+//   const [previewVisible, setPreviewVisible] = useState(false);
+//   const [previewImage, setPreviewImage] = useState('');
+//   const [fileList, setFileList] = useState([]);
 
-// const StudentList = () => {
-//   const [isModalVisible, setIsModalVisible] = useState(false);
-//   const [selectedStudent, setSelectedStudent] = useState(null);
-//   const [rating, setRating] = useState(0);
-//   const [suggestions, setSuggestions] = useState('');
-//   const [ratedStudents, setRatedStudents] = useState([]);
+//   const handleCancel = () => setPreviewVisible(false);
 
-//   const showModal = (student) => {
-//     setSelectedStudent(student);
-//     setIsModalVisible(true);
+//   const handlePreview = (file) => {
+//     setPreviewImage(file.thumbUrl || file.url); // Ensure correct URL usage
+//     setPreviewVisible(true);
 //   };
 
-//   const handleOk = () => {
-//     const newRatedStudents = [...ratedStudents, { ...selectedStudent, rating, suggestions }];
-//     setRatedStudents(newRatedStudents);
-//     setIsModalVisible(false);
-//     setRating(0);
-//     setSuggestions('');
-//   };
+//   const handleChange = ({ fileList }) => setFileList(fileList);
 
-//   const handleCancel = () => {
-//     setIsModalVisible(false);
-//   };
+//   const uploadButton = (
+//     <div>
+//       <PlusOutlined />
+//       <div className="ant-upload-text">Upload</div>
+//     </div>
+//   );
 
 //   return (
-//     <div>
-//       <List
-//         bordered
-//         dataSource={students}
-//         renderItem={student => (
-//           <List.Item>
-//             <Button type="link" onClick={() => showModal(student)}>
-//               {student.name}
-//             </Button>
-//           </List.Item>
-//         )}
-//       />
-//       <Modal
-//         title="Rate Student"
-//         visible={isModalVisible}
-//         onOk={handleOk}
-//         onCancel={handleCancel}
+//     <div className="clearfix">
+//       <Upload
+//         action="//jsonplaceholder.typicode.com/posts/"
+//         listType="picture-card"
+//         fileList={fileList}
+//         onPreview={handlePreview}
+//         onChange={handleChange}
 //       >
-//         {selectedStudent && (
-//           <div>
-//             <p>Name: {selectedStudent.name}</p>
-//             <p>ARID: {selectedStudent.arid}</p>
-//             <Rate onChange={value => setRating(value)} value={rating} />
-//             <Input.TextArea
-//               rows={4}
-//               placeholder="Suggestions"
-//               onChange={e => setSuggestions(e.target.value)}
-//               value={suggestions}
-//             />
-//           </div>
-//         )}
+//         {fileList.length >= 3 ? null : uploadButton}
+//       </Upload>
+//       <Modal visible={previewVisible} footer={null} onCancel={handleCancel}>
+//         <img alt="example" style={{ width: '100%' }} src={previewImage} />
 //       </Modal>
-//       <h2>Rated Students</h2>
-//       <List
-//         bordered
-//         dataSource={ratedStudents}
-//         renderItem={student => (
-//           <List.Item>
-//             {student.name} (ARID: {student.arid}) - Rated: {student.rating} Stars
-//           </List.Item>
-//         )}
-//       />
 //     </div>
 //   );
 // };
 
-// export default StudentList;
-
-
+// export default PicturesWall;

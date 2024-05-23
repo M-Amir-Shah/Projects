@@ -1,62 +1,62 @@
+/* App.css */
 .container {
-    height: 100vh;
+    width: 100%;
+    background: linear-gradient(to right bottom, #119992, #b5c6e0); /* Set the background color directly */
     display: flex;
-    padding: 5;
-    /* background: linear-gradient(to right bottom, #119992, #b5c6e0); */
-}
-
-.app-sider {
-    background-color: #f8f8f8;
-    padding-top: 6px;
-    position: relative;
-    flex: 0 0 15%;
-    width: 100px; /* Set the width as needed */
-}
-
-.sider-content {
-    text-align: center;
-    margin: 16px 0;
-    background-color: cadetblue;
-}
-
-.logout-button {
-    background-color: cadetblue;
-    color: #fff;
-    /* position: absolute; */
-    bottom: 16px;
-    /* left: 35px; */
-    font-weight: 700;
-    font-family: 'century';
+    justify-content: center;
     align-items: center;
-}
-.logout-button:hover {
-    background-color: #a0a0a0;
-    color: #fff;
-}
-.sider-avatar {
-    bottom: 16px;
+    padding: 5%;
+    min-height: 100vh; /* Use min-height to ensure the container stretches to at least the height of the viewport */
 }
 
-.app-header {
-    text-align: center;
-    color: #fff;
-    height: 64px;
-    line-height: 64px;
-    background-color: #4096ff;
-    font-size: x-large;
+.navbar {
+    background: linear-gradient(to right bottom, #119992, #b5c6e0); /* Set the background color directly */
+    width: 100%;
+    z-index: 1000;
+    border-bottom: 1px solid #ccc;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
 }
 
-.app-content {
-    padding: 20px;
-    flex-grow: 5;
+.content {
+    background: linear-gradient(to right bottom, #119992, #b5c6e0); /* Set the background color directly */
+    min-height: calc(100vh - 50px); /* Adjust min-height to account for the fixed header */
+    width: 100%;
+    padding: 25px;
+    margin-top: 50px; /* Adjust margin-top to make space for the fixed header */
 }
 
-.welcome-card {
-    margin-bottom: 16px;
+.card-container {
+    display: flex;
+    margin-top: 20px;
+    gap: 10px; /* Adds space between cards */
+    justify-content: center; /* Centers cards in the container */
 }
 
-.content-card {
-    text-align: center;
-    padding: 15px;
-    font-size: medium;
+.card {
+    flex: 1 1 calc(25% - 20px); /* Flex-grow, flex-shrink, and flex-basis with gap consideration */
+    margin: 10px;
+    height: 200px; /* Adjust height as needed */
+    background-color: #f0f0f0; /* Example background color */
+    border: 1px solid #ccc; /* Example border */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box; /* Ensures padding and border are included in the width/height */
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+    .card {
+        flex: 1 1 100%; /* Cards take full width on small screens */
+    }
+}
+
+
+.card-para {
+    margin-top: 10px;
+    font-size: 14px;
+    text-align: end;
 }

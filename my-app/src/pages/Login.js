@@ -5,9 +5,10 @@ import Input from '../components/UserInput';
 import Password from '../components/Password';
 import { Button } from 'antd';
 import '../Styling/Login.css';
+import EndPoint from '../endpoints'
 
 const Login = () => {
-  const history = useNavigate();
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -25,21 +26,22 @@ const Login = () => {
     setError('');
 
     try {
-      // const response = await fetch('http://localhost/FYP/api/User/Login?username=amir&password=123', {
-      //   method: 'GET',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: null,
-      // });
+      const response = await fetch(`${EndPoint.login}?username=${username}&password=${password}`, {
+        mode: 'cors',
+        credentials: 'include',
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-      // if (!response.ok) {
-      //   throw new Error('Invalid username or password');
-      // }
+      if (!response.ok) {
+        throw new Error('Invalid username or password');
+      }
 
-      history('/StudentDashboard');
+      navigate('/StudentDashboard');
     } catch (error) {
-      setError(error.message);  
+      setError(error.message);
     }
   };
 

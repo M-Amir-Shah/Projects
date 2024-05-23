@@ -2,13 +2,12 @@
     width: 100%;
     background: linear-gradient(to right bottom, #119992, #b5c6e0);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
     padding: 10%;
-  height: 100vh;
-    
+    min-height: 100vh;
 }
-
 
 .navbar {
     background: linear-gradient(to right bottom, #119992, #b5c6e0);
@@ -17,8 +16,13 @@
     z-index: 1000;
     border-bottom: 1px solid #ccc;
 }
-.card-para{
-    text-align: end;
-    font-size: larger;
+
+.content-card {
+    width: 100%;
+    text-align: center;
+}
+.card-container {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
 }
