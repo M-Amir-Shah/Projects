@@ -27,8 +27,7 @@ const Login = () => {
 
     try {
       const response = await fetch(`${EndPoint.login}?username=${username}&password=${password}`, {
-        mode: 'cors',
-        credentials: 'include',
+        
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

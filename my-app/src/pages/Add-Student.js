@@ -140,21 +140,21 @@ const AddStudent = () => {
                             />
                         </div>
                         <div className='input-container'>
-                            <Input placeholder="Enter Name" value={name} onChange={StudentName} suffix={<SearchOutlined />} />
+                            <Input placeholder="Enter Name" value={name} onChange={StudentName} suffix={<SearchOutlined />} required/>
                         </div>
 
                         <div className='input-container'>
-                            <Input placeholder="Enter Arid" value={arid} onChange={StudentAird} suffix={<SearchOutlined />} />
+                            <Input placeholder="Enter Arid" value={arid} onChange={StudentAird} suffix={<SearchOutlined />} required/>
                         </div>
 
                         <div className='input-container'>
-                            <Input placeholder="Enter Semester" value={semester} onChange={StudentSemester} />
+                            <Input placeholder="Enter Semester" value={semester} onChange={StudentSemester} required/>
                         </div>
                         <div className='input-container'>
-                            <Input placeholder="Enter CGPA" value={cgpa} onChange={StudentCgpa} />
+                            <Input placeholder="Enter CGPA" value={cgpa} onChange={StudentCgpa}required />
                         </div>
                         <div className='input-container'>
-                            <Input placeholder="Enter section" value={section} onChange={StudentSection} />
+                            <Input placeholder="Enter section" value={section} onChange={StudentSection} required/>
                         </div>
                         <label>Gender</label>
                         <div className='RadioButton'>
@@ -164,6 +164,7 @@ const AddStudent = () => {
                                     value="male"
                                     checked={gender === 'male'}
                                     onChange={StudentGender}
+
                                 />
                                 Male
                             </label>
@@ -186,7 +187,7 @@ const AddStudent = () => {
                             </select>
                         </div>
                         <div className='input-container'>
-                            <Input placeholder="Enter Father Name" value={father} onChange={FatherName} />
+                            <Input placeholder="Enter Father Name" value={father} onChange={FatherName} required/>
                         </div>
                         <div className='input-container'>
                             <Input.Password

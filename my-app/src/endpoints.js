@@ -1,11 +1,27 @@
-const baseUrl = "http://localhost/Backend/";
+const baseUrl = "http://192.168.1.105/Backend/";
 
 const EndPoint = {
     login: `${baseUrl}api/User/Login`,
+    switchRole: `${baseUrl}api/User/SwitchRole`,
+
     getStudentInfo: `${baseUrl}api/Student/getStudentInfo`,
     checkApplicationStatus: `${baseUrl}api/Student/getStudentApplicationStatus`,
     sendApplication: `${baseUrl}api/Student/sendApplication`,
+    updateProfileImage: `${baseUrl}api/Student/UpdateProfileImage`,
+
     imageUrl: `${baseUrl}Content/profileImages/`,
+    houseAgreement: `${baseUrl}Content/HouseAgreement/`,
+    salarySlip: `${baseUrl}Content/SalarySlip/`,
+    deathCertificate: `${baseUrl}Content/DeathCertificates/`,
+
+    getApplication: `${baseUrl}api/Committee/GetApplication`,
+    committeeMemberInfo: `${baseUrl}api/Committee/CommitteeMembers`,
+    giveSuggestion: `${baseUrl}api/Committee/GiveSuggestion`,
+    getBalance: `${baseUrl}api/Committee/GetBalance`,
+
+    rateGraderPerformance: `${baseUrl}api/Faculty/RateGraderPerformance`,
+    facultyInfo: `${baseUrl}api/Faculty/FacultyInfo`,
+    
     getAdminInfo: `${baseUrl}api/Admin/getAdminInfo`,
     getAllStudents: `${baseUrl}api/Admin/getAllStudent`,
     updatePassword: `${baseUrl}api/Admin/UpdatePassword`,
@@ -14,16 +30,6 @@ const EndPoint = {
     getFacultyMembers: `${baseUrl}api/Admin/FacultyMembers`,
     getCommitteeMembers: `${baseUrl}api/Admin/CommitteeMembers`,
     addCommitteeMember: `${baseUrl}api/Admin/AddCommitteeMember`,
-    getApplication: `${baseUrl}api/Committee/GetApplication`,
-    updateProfileImage: `${baseUrl}api/Student/UpdateProfileImage`,
-    committeeMemberInfo: `${baseUrl}api/Committee/CommitteeMembers`,
-    houseAgreement: `${baseUrl}Content/HouseAgreement/`,
-    salarySlip: `${baseUrl}Content/SalarySlip/`,
-    deathCertificate: `${baseUrl}Content/DeathCertificates/`,
-    giveSuggestion: `${baseUrl}api/Committee/GiveSuggestion`,
-    getBalance: `${baseUrl}api/Committee/GetBalance`,
-    switchRole: `${baseUrl}api/User/SwitchRole`,
-    facultyInfo: `${baseUrl}api/Faculty/FacultyInfo`,
     adminApplication: `${baseUrl}api/Admin/ApplicationSuggestions`,
     acceptApplication: `${baseUrl}api/Admin/AcceptApplication`,
     rejectApplication: `${baseUrl}api/Admin/RejectApplication`,
@@ -36,9 +42,10 @@ const EndPoint = {
     getPolicies: `${baseUrl}api/Admin/getPolicies`,
     unAssignedStudents: `${baseUrl}api/Admin/unAssignedGraders`,
     addBudget: `${baseUrl}api/Admin/AddBudget`,
+    budgethistory: `${baseUrl}api/Admin/BudgetHistory`,
     getGraderInfo: `${baseUrl}api/Admin/gradersInformation`,
-    rateGraderPerformance: `${baseUrl}api/Faculty/RateGraderPerformance`,
-    getMeritBaseShortListedStudent: `${baseUrl}api/Admin/GetMeritBaseShortListedStudent`
+    getMeritBaseShortListedStudent: `${baseUrl}api/Admin/GetMeritBaseShortListedStudent`,
+    
 };
 
 export default EndPoint;

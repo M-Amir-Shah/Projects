@@ -6,10 +6,12 @@ import Input from '../components/Input.js';
 import { Button, List, Col, Row, Layout} from 'antd';
 import logo from './BiitLogo.jpeg';
 import { CheckOutlined, CloseOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 
 const { Header } = Layout;
 
 const MeritBase = () => {
+    const history = useNavigate;
     const [applications, setApplications] = useState([
         { name: 'Muhammad Amir', id: '2022-Arid-3610', status: 'pending' },
         { name: 'Usman Akbar', id: '2021-Arid-3718', status: 'accepted' },
@@ -38,7 +40,9 @@ const MeritBase = () => {
             app.id === id ? { ...app, status: 'rejected' } : app
         ));
     };
-
+    const Back = (event) => {
+        history(-1);
+    };
     const Submit = (event) => {
         event.preventDefault();
     };
@@ -48,7 +52,7 @@ const MeritBase = () => {
             <Header className="navbar">
                 <Row justify="space-between" align="middle">
                     <Col>
-                        <Button type="text" icon={<ArrowLeftOutlined />} />
+                        <Button onClick={Back} icon={<ArrowLeftOutlined />} />
                     </Col>
                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#ffff' }}>
                         BIIT 

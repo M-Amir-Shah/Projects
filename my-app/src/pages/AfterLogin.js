@@ -65,7 +65,7 @@ const AfterLogin = () => {
 
                         <div className='input-container'>
                             <label className='label' htmlFor="Textinput">Arid No.</label>
-                            <Input placeholder="Enter your Arid" />
+                            <Input placeholder="Arid eg. 2020-Arid-1234" />
                         </div>
 
                         <div className='input-container'>
