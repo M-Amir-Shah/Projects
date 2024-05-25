@@ -134,6 +134,7 @@ import need from '../Pictures/form.png';
 import Criteria from '../Pictures/Criteria.png';
 import help from '../Pictures/Help.png';
 import logo from './BiitLogo.jpeg'
+import '../Styling/StudentDashboard.css'
 
 const { Header, Content } = Layout;
 
@@ -146,25 +147,25 @@ const StudentDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        fetch(EndPoint.getStudentInfo)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data');
-                }
-                return response.json();
-            })
-            .then(data => {
-                setName(data.name);
-                setStudentId(data.studentId);
-                setStatus(data.status);
-                setLoading(false);
-            })
-            .catch(error => {
-                setError(error);
-                setLoading(false);
-            });
-    }, []);
+    // useEffect(() => {
+    //     fetch(EndPoint.getStudentInfo)
+    //         .then(response => {
+    //             if (!response.ok) {
+    //                 throw new Error('Failed to fetch data');
+    //             }
+    //             return response.json();
+    //         })
+    //         .then(data => {
+    //             setName(data.name);
+    //             setStudentId(data.studentId);
+    //             setStatus(data.status);
+    //             setLoading(false);
+    //         })
+    //         .catch(error => {
+    //             setError(error);
+    //             setLoading(false);
+    //         });
+    // }, []);
 
     const logout = (event) => {
         event.preventDefault();
@@ -200,7 +201,7 @@ const StudentDashboard = () => {
     };
 
     return (
-        <div className='container'>
+        <div>
             <Header className="navbar">
                 <Row justify="space-between" align="middle">
                     <Col>
@@ -230,17 +231,17 @@ const StudentDashboard = () => {
                     </Col>
                 </Row>
             </Header>
-            <Content>
-                {loading ? (
+            <Content className='container'>
+                {/* {loading ? (
                     <Spin size="large" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }} />
                 ) : error ? (
                     <Alert message="Error" description="There was an error fetching the data." type="error" showIcon />
-                ) : (
+                ) : ( */}
                     <>
                         <Card title="Welcome" className="welcome-card">
-                            Name: {name}<br />
-                            Arid: {studentId}<br />
-                            Status: {status}
+                            <b>Name:</b>  {name}Muhammad Amir Shahzad<br />
+                            <b>Arid:</b> {studentId}2020-Arid-360<br />
+                            <b>Status:</b> {status} Pending
                         </Card>
                         <div className="card-container">
                             <Card
@@ -277,7 +278,7 @@ const StudentDashboard = () => {
                             </Card>
                         </div>
                     </>
-                )}
+                {/* )} */}
             </Content>
         </div>
     );

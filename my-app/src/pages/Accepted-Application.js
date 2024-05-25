@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 const { Header } = Layout;
 
 const AcceptedApplication = () => {
-    const history = useNavigate;
+    const navigate = useNavigate(); // Call useNavigate inside the component
     const [applications, setApplications] = useState([]);
     const [selectedOption, setSelectedOption] = useState('');
 
@@ -31,9 +31,10 @@ const AcceptedApplication = () => {
         setSelectedOption(event.target.value);
     };
 
-    const Back = (event) => {
-        history(-1)
+    const Back = () => {
+        navigate('/Admin-Dashboard'); // Use navigate function here
     };
+
     const handleAcceptApplication = async (amount, applicationId) => {
         try {
             const response = await fetch(`${EndPoint.acceptApplication}?amount=${amount}&applicationid=${applicationId}`, {

@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import '../Styling/Committee-Members.css';
-import { Button, List, Col, Row, Layout, Avatar, message, Spin } from 'antd';
-import { ArrowLeftOutlined, UserOutlined, PlusOutlined, CloseOutlined } from '@ant-design/icons';
+import '../Styling/MeritBase-ShortListing.css';
+import { Button, List, Col, Row, Layout, Avatar, message } from 'antd';
+import { ArrowLeftOutlined, UserOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import EndPoint from '../endpoints';
+import logo from './BiitLogo.jpeg';
 const { Header } = Layout;
 
 const fetchStudentRecords = async () => {
     try {
-        const response = await fetch(EndPoint.getCommitteeMembers);
+        const response = await fetch(EndPoint.meritBaseShortListing);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
@@ -21,22 +22,7 @@ const fetchStudentRecords = async () => {
     }
 };
 
-const removeMemberFromDB = async (memberId) => {
-    try {
-        const response = await fetch(`${EndPoint.getCommitteeMembers}/${memberId}`, {
-            method: 'DELETE',
-        });
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        message.success('Member removed successfully');
-    } catch (error) {
-        console.error('Error removing member:', error);
-        message.error('Failed to remove member.');
-    }
-};
-
-const CommitteeMembers = () => {
+const StudentRecords = () => {
     const navigate = useNavigate();
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -53,20 +39,11 @@ const CommitteeMembers = () => {
     }, []);
 
     const Back = () => {
-        navigate('/Admin-Dashboard');
-    };
-    const Add = () => {
-        navigate('/Faculty-Members');
-    };
-    const Submit = (event) => {
-        event.preventDefault();
+        navigate('/Admin-Dashboard'); // Use navigate function here
     };
 
-    const handleRemoveMember = async (memberId) => {
-        await removeMemberFromDB(memberId);
-        // After successful removal, update the state to reflect the changes
-        const updatedApplications = applications.filter(member => member.id !== memberId);
-        setApplications(updatedApplications);
+    const Submit = (event) => {
+        event.preventDefault();
     };
 
     return (
@@ -77,21 +54,19 @@ const CommitteeMembers = () => {
                         <Button onClick={Back} icon={<ArrowLeftOutlined />} />
                     </Col>
                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#ffff' }}>
-                        BIIT Committee-Members
+                        BIIT Meritbase-Student Records
                     </Col>
                     <Col>
-                        <Button onClick={Add} icon={<PlusOutlined />} />
+                        <img src={logo} alt="BIIT Financial Aid Allocation Tool" style={{ height: '35px', width: '35px', borderRadius: '25px' }} />
                     </Col>
                 </Row>
             </Header>
             <div className="form-box">
-                <h2 style={{ textAlign: 'center' }}>Committee-Members</h2>
+                <h2 style={{ textAlign: 'center' }}>Short listed Records</h2>
                 <form onSubmit={Submit}>
                     <div className="scrollable-list">
                         {loading ? (
-                            <div style={{ textAlign: 'center' }}>
-                                <Spin size="large" />
-                            </div>
+                            <p>Loading...</p>
                         ) : (
                             <List
                                 itemLayout="horizontal"
@@ -101,8 +76,8 @@ const CommitteeMembers = () => {
                                         <List.Item.Meta
                                             avatar={<Avatar size={64} icon={<UserOutlined />} />}
                                             title={item.name}
+                                            description={item.arid_no}
                                         />
-                                        {/* <Button icon={<CloseOutlined />} onClick={() => handleRemoveMember(item.id)} danger>Remove</Button> */}
                                     </List.Item>
                                 )}
                             />
@@ -114,4 +89,19 @@ const CommitteeMembers = () => {
     );
 };
 
-export default CommitteeMembers;
+export default StudentRecords;
+
+
+// const removeMember = (id) => {
+//     setMembers(members.filter((member) => member.id !== id));
+// };
+
+// <List.Item
+//     actions={[
+//         <button type='primary' onClick={() => removeMember(item.id)}>Remove</button>
+//     ]}
+// >
+//     <List.Item.Meta
+//         title={<a href="https://ant.design">{item.name}</a>}
+//     />
+// </List.Item>

@@ -1,78 +1,48 @@
-/* Faculty-Dashboard.css */
-.container {
-    width: 100%;
+/* * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+  } */
+  
+  .container {
+    height: 100vh;
     background: linear-gradient(to right bottom, #119992, #b5c6e0);
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 5%;
-    min-height: 100vh;
-    overflow-y: auto; /* Add overflow-y to make the container scrollable */
-}
-
-.navbar {
-    background: linear-gradient(to right bottom, #119992, #b5c6e0);
-    width: 100%;
-    z-index: 1000;
-    border-bottom: 1px solid #ccc;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-}
-
-.content {
-    background: linear-gradient(to right bottom, #119992, #b5c6e0);
-    min-height: calc(100vh - 50px);
-    width: 100%;
-    padding: 25px;
-    margin-top: 50px;
-    display: flex;
-    justify-content: center;
-}
-
-.form-box {
+    flex-direction: column;
+  }
+  .scrollable-list {
+    max-height: 300px; /* Adjust the max-height as needed */
+    overflow-y: auto;
+  }
+  
+  .form-box {
     width: 90%;
     max-width: 900px;
     background-color: #ffffff;
     border-radius: 8px;
     padding: 40px 50px;
     margin-inline: 20px;
-}
-
-.form-box header h1 {
+  }
+  .form-box header h1 {
     text-align: center;
     color: black;
     font-family: century;
-}
-
-.form-box form {
-    margin-block: 30px;
-}
-
-.list-container {
-    max-height: 400px; /* Set max-height to make the list scrollable */
-    overflow-y: auto; /* Add overflow-y to make the list scrollable */
-}
-
-.card-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-}
-
-.card {
-    width: calc(33.33% - 20px);
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.card-para {
-    margin-top: 10px;
-    font-size: 14px;
-    text-align: end;
-}
-.scrollable-list {
-    max-height: 400px; /* Adjust the max-height as needed */
-    overflow-y: auto;
   }
+  
+  .form-box form {
+    margin-block: 30px;
+  }
+
+  .navbar {
+    position: fixed;
+    width: 100%;
+    background: linear-gradient(to right bottom, #119992, #b5c6e0);
+    z-index: 1000;
+    border-bottom: 1px solid #ccc;
+    top: 0;
+    left: 0;
+}

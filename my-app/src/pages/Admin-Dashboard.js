@@ -28,6 +28,9 @@ const App = () => {
     const navigateTo = (path) => {
         navigate(path);
     };
+    const logout = (event) =>{
+        navigate('/Login')
+    }
 
     return (
         <Layout>
@@ -45,12 +48,12 @@ const App = () => {
                         >
                             <Avatar size={64} icon={<UserOutlined />} />
                             <br />
-                            <Button type="primary" style={{ width: '80%' }} onClick={() => navigateTo('/add-budget')}>Add Budget Amount</Button>
-                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/add-student')}>Add New Student</Button>
-                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/add-policies')}>Add New Policies</Button>
-                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/add-faculty')}>Add Faculty Member</Button>
-                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/add-committee')}>Add Committee Member</Button>
-                            <Button type="primary" style={{ width: '80%', marginTop: '100px' }} onClick={() => navigateTo('/logout')}>Logout</Button>
+                            <Button type="primary" style={{ width: '80%' }} onClick={() => navigateTo('/Budget')}>Add Budget Amount</Button>
+                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Add-Student')}>Add New Student</Button>
+                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Policies')}>Add New Policies</Button>
+                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Add-Faculty-Member')}>Add Faculty Member</Button>
+                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Add-New-Committee-Member')}>Add Committee Member</Button>
+                            <Button type="primary" style={{ width: '80%', marginTop: '100px' }} onClick={logout}>Logout</Button>
                         </Drawer>
                     </Col>
                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'x-large', color: '#fff' }}>
@@ -62,74 +65,56 @@ const App = () => {
                 </Row>
             </Header>
             <Content className='container'>
-                <Row gutter={[16, 16]}>
-                    <Col xs={24} sm={12} md={12} lg={10} xl={10}>
-                        <Card
-                            onClick={() => navigateTo('/merit-base')}
-                            hoverable
-                            cover={<img src={meritbase} alt="Merit Base" />}
-                            className="content-card"
-                        >
-                            MeritBase Shortlisting
-                        </Card>
-                    </Col>
-                    <Col xs={24} sm={12} md={12} lg={10} xl={10}>
-                        <Card
-                            onClick={() => navigateTo('/need-base')}
-                            hoverable
-                            cover={<img src={needbase} alt="Need Base" />}
-                            className="content-card"
-                        >
-                            Needbase Application
-                        </Card>
-                    </Col>
-                </Row>
-                <br />
-                <Row gutter={[16, 16]}>
-                    <Col xs={24} sm={12} md={12} lg={10} xl={10}>
-                        <Card
-                            onClick={() => navigateTo('/accepted-application')}
-                            hoverable
-                            cover={<img src={accepted} alt="Accepted" />}
-                            className="content-card"
-                        >
-                            Accepted Application
-                        </Card>
-                    </Col>
-                    <Col xs={24} sm={12} md={12} lg={10} xl={10}>
-                        <Card
-                            onClick={() => navigateTo('/rejected-application')}
-                            hoverable
-                            cover={<img src={rejected} alt="Rejected" />}
-                            className="content-card"
-                        >
-                            Rejected Application
-                        </Card>
-                    </Col>
-                </Row>
-                <br />
-                <Row gutter={[16, 16]}>
-                    <Col xs={24} sm={12} md={12} lg={10} xl={10}>
-                        <Card
-                            onClick={() => navigateTo('/committee-member')}
-                            hoverable
-                            cover={<img src={committeeMember} alt="Committee Member" />}
-                            className="content-card"
-                        >
-                            Committee Member
-                        </Card>
-                    </Col>
-                    <Col xs={24} sm={12} md={12} lg={10} xl={10}>
-                        <Card
-                            onClick={() => navigateTo('/graders')}
-                            hoverable
-                            cover={<img src={grader} alt="Graders" />}
-                            className="content-card"
-                        >
-                            Assigning Graders
-                        </Card>
-                    </Col>
-                </Row>
+                <div className="card-container">
+                    <Card
+                        onClick={() => navigateTo('/merit-base-short-listing')}
+                        hoverable
+                        cover={<img src={meritbase} alt="Merit Base" />}
+                        className="content-card"
+                    >
+                        MeritBase Shortlisting
+                    </Card>
+                    <Card
+                        onClick={() => navigateTo('/need-base')}
+                        hoverable
+                        cover={<img src={needbase} alt="Need Base" />}
+                        className="content-card"
+                    >
+                        Needbase Application
+                    </Card>
+                    <Card
+                        onClick={() => navigateTo('/accepted-application')}
+                        hoverable
+                        cover={<img src={accepted} alt="Accepted" />}
+                        className="content-card"
+                    >
+                        Accepted Application
+                    </Card>
+                    <Card
+                        onClick={() => navigateTo('/rejected-application')}
+                        hoverable
+                        cover={<img src={rejected} alt="Rejected" />}
+                        className="content-card"
+                    >
+                        Rejected Application
+                    </Card>
+                    <Card
+                        onClick={() => navigateTo('/Committee-Members')}
+                        hoverable
+                        cover={<img src={committeeMember} alt="Committee Member" />}
+                        className="content-card"
+                    >
+                        Committee Member
+                    </Card>
+                    <Card
+                        onClick={() => navigateTo('/Assign-Graders')}
+                        hoverable
+                        cover={<img src={grader} alt="Graders" />}
+                        className="content-card"
+                    >
+                        Assigning Graders
+                    </Card>
+                </div>
             </Content>
         </Layout>
     );

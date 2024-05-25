@@ -5,12 +5,13 @@ import Input from '../components/UserInput';
 import Password from '../components/Password';
 import { Button } from 'antd';
 import '../Styling/Login.css';
-import EndPoint from '../endpoints'
+import EndPoint from '../endpoints';
 
 const Login = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false); // State for loading spinner
   const [error, setError] = useState('');
 
   const UsernameChange = (event) => {
@@ -24,10 +25,10 @@ const Login = () => {
   const Submit = async (event) => {
     event.preventDefault();
     setError('');
+    setLoading(true); // Start loading spinner
 
     try {
       const response = await fetch(`${EndPoint.login}?username=${username}&password=${password}`, {
-        
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -38,9 +39,11 @@ const Login = () => {
         throw new Error('Invalid username or password');
       }
 
-      navigate('/StudentDashboard');
+      navigate('/Admin-Dashboard');
     } catch (error) {
       setError(error.message);
+    } finally {
+      setLoading(false); // Stop loading spinner
     }
   };
 
@@ -79,7 +82,7 @@ const Login = () => {
             </div>
             <br />
             <div className="button-container">
-              <Button type="primary" htmlType="submit" size='large'>
+              <Button type="primary" htmlType="submit" size="large" loading={loading}>
                 Login
               </Button>
             </div>

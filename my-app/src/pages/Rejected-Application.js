@@ -1,4 +1,3 @@
-// MeritBase.js
 import React, { useState, useEffect } from 'react';
 import '../Styling/Rejected-Application.css';
 import { Button, List, Col, Row, Layout, Avatar } from 'antd';
@@ -10,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 const { Header } = Layout;
 
 const RejectedApplication = () => {
-    const history= useNavigate;
+    const navigate = useNavigate(); // Call useNavigate inside the component
     const [applications, setApplications] = useState([]);
     const [selectedOption, setSelectedOption] = useState('');
 
@@ -31,8 +30,9 @@ const RejectedApplication = () => {
     const SelectChange = (event) => {
         setSelectedOption(event.target.value);
     };
-    const Back = (event) => {
-        history(-1)
+
+    const Back = () => {
+        navigate('/Admin-Dashboard'); // Use navigate function here
     };
 
     const filteredApplications = applications.filter(app => app.type === selectedOption);

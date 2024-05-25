@@ -1,30 +1,38 @@
-// MeritBase.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../Styling/Add-Committee-Member.css'; // Keep this import if needed for other styles
 import Search from '../components/SearchingButton.js';
-import { Button, List, Col, Row, Layout,message } from 'antd';
+import { Button, List, Col, Row, Layout, message } from 'antd';
 import logo from './BiitLogo.jpeg';
 import { CheckOutlined, ArrowLeftOutlined } from '@ant-design/icons';
-
+import EndPoint from '../endpoints'; // Import your API endpoints file
+import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
 const { Header } = Layout;
 
 const MeritBase = () => {
-    const [applications, setApplications] = useState([
-        { name: 'Muhammad Aftab Khan', status: 'pending' },
-        { name: 'Umar Farooq', status: 'Already Member' },
-        { name: 'Muhammad Zahid', status: 'Already Member' },
-        { name: 'Shahid Jamil', status: 'pending' },
-        { name: 'Adeel Sohail', status: 'Already Member' },
-        { name: 'Shahid Abid', status: 'pending' },
-        { name: 'Qasim Shahzad', status: 'Already Member' },
-        { name: 'Zeeshan Muzzafar', status: 'pending' },
-        { name: 'Mam Sumeria', status: 'Already Member' },
-        { name: 'Amir Rasheed', status: 'Already Member' },
-        { name: 'Saeed Watto', status: 'pending' },
-        { name: 'Shahid Rasheed', status: 'Already Member' },
-        { name: 'Abdul Islam', status: 'pending' },
-        { name: 'Raja Inam Ullah', status: 'Already Member' },
-    ]);
+    const [loading, setLoading] = useState(false); // Initialize loading state
+    const [applications, setApplications] = useState([]); // State variable to store applications data
+    const navigate = useNavigate(); // Get the navigate function from useNavigate hook
+
+    useEffect(() => {
+        const fetchApplications = async () => {
+            try {
+                setLoading(true); // Set loading state to true while fetching data
+                const response = await fetch(EndPoint.addCommitteeMember); // Fetch data from API endpoint
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                const data = await response.json(); // Parse JSON response
+                setApplications(data); // Set fetched data to state
+            } catch (error) {
+                console.error('Error fetching :', error);
+                message.error('Failed to fetch  data.');
+            } finally {
+                setLoading(false); // Set loading state back to false after fetching data
+            }
+        };
+
+        fetchApplications(); // Call the fetchApplications function when component mounts
+    }, []);
 
     const handleAccept = (id) => {
         setApplications(applications.map(app =>
@@ -43,12 +51,16 @@ const MeritBase = () => {
         event.preventDefault();
     };
 
+    const Back = () => {
+        navigate('/Admin-Dashboard');
+    };
+
     return (
         <div className="container">
             <Header className="navbar">
                 <Row justify="space-between" align="middle">
                     <Col>
-                        <Button type="text" icon={<ArrowLeftOutlined />} />
+                        <Button type="text" icon={<ArrowLeftOutlined />} onClick={Back} />
                     </Col>
                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#ffff' }}>
                         BIIT
@@ -64,25 +76,23 @@ const MeritBase = () => {
                     <div>
                         <div>
                             <Search placeholder="Search Name" />
-
                         </div>
                         <div className="scrollable-list">
                             <List
                                 itemLayout="horizontal"
                                 dataSource={applications}
+                                loading={loading}
                                 renderItem={item => (
                                     <List.Item
                                         actions={[
-                                            <Button type="primary" icon={<CheckOutlined />} onClick={() => handleAccept(item.id)} />
-                                            
+                                            <Button type="primary" icon={<CheckOutlined />} onClick={() => handleAccept(item.id)} />,
+                                            <Button type="danger" onClick={() => handleReject(item.id)}>Reject</Button>
                                         ]}
                                     >
                                         <List.Item.Meta
-
-                                            title={<a href="https://ant.design">{item.name}</a>}
-
+                                            title={item.name}
+                                            description={item.status}
                                         />
-                                        {/* <Badge status={item.status === 'accepted' ? 'success' : item.status === 'rejected' ? 'error' : 'default'} /> */}
                                     </List.Item>
                                 )}
                             />

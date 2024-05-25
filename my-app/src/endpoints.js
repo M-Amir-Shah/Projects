@@ -1,4 +1,4 @@
-const baseUrl = "http://192.168.1.105/Backend/";
+const baseUrl = "http://192.168.1.111/Backend/";
 
 const EndPoint = {
     login: `${baseUrl}api/User/Login`,
@@ -26,6 +26,7 @@ const EndPoint = {
     getAllStudents: `${baseUrl}api/Admin/getAllStudent`,
     updatePassword: `${baseUrl}api/Admin/UpdatePassword`,
     getAllBudget: `${baseUrl}api/Admin/getAllBudget`,
+    addBudget: `${baseUrl}api/Admin/AddBudget`,
     addFacultyMember: `${baseUrl}api/Admin/AddFacultyMember`,
     getFacultyMembers: `${baseUrl}api/Admin/FacultyMembers`,
     getCommitteeMembers: `${baseUrl}api/Admin/CommitteeMembers`,
@@ -36,16 +37,18 @@ const EndPoint = {
     accepted: `${baseUrl}api/Admin/AcceptedApplication`,
     rejected: `${baseUrl}api/Admin/RejectedApplication`,
     assignGrader: `${baseUrl}api/Admin/AssignGrader`,
-    meritBaseShortListing: `${baseUrl}api/Admin/MeritBaseShortListing`,
+    meritBaseShortListing: `${baseUrl}api/Admin/GetMeritBaseShortListedStudent`,
     addStudent: `${baseUrl}api/Admin/AddStudent`,
     addPolicies: `${baseUrl}api/Admin/AddPolicies`,
     getPolicies: `${baseUrl}api/Admin/getPolicies`,
     unAssignedStudents: `${baseUrl}api/Admin/unAssignedGraders`,
-    addBudget: `${baseUrl}api/Admin/AddBudget`,
     budgethistory: `${baseUrl}api/Admin/BudgetHistory`,
     getGraderInfo: `${baseUrl}api/Admin/gradersInformation`,
     getMeritBaseShortListedStudent: `${baseUrl}api/Admin/GetMeritBaseShortListedStudent`,
-    
+    addSession : `${baseUrl}api/Admin/AddSession`,
+    getGiveRating : `${baseUrl}api/Admin/GiveRating`,
+    meritbase : `${baseUrl}api/Admin/MeritBase`,
+    addUser : `${baseUrl}api/Admin/AddUser`,
 };
 
 export default EndPoint;
