@@ -1,4 +1,4 @@
-const baseUrl = "http://192.168.1.111/Backend/";
+const baseUrl = "http://192.168.1.102/Backend/";
 
 const EndPoint = {
     login: `${baseUrl}api/User/Login`,
@@ -21,6 +21,7 @@ const EndPoint = {
 
     rateGraderPerformance: `${baseUrl}api/Faculty/RateGraderPerformance`,
     facultyInfo: `${baseUrl}api/Faculty/FacultyInfo`,
+    teachersGraders : `${baseUrl}api/Faculty/TeachersGraders`,
     
     getAdminInfo: `${baseUrl}api/Admin/getAdminInfo`,
     getAllStudents: `${baseUrl}api/Admin/getAllStudent`,

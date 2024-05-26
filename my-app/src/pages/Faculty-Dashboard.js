@@ -1,28 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import logo from './BiitLogo.jpeg';
 import { Card, Layout, message, List, Modal, Rate, Input, Form, Avatar, Row, Col, Drawer, Button } from 'antd';
 import { BarsOutlined, UserOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
 import '../Styling/Faculty-Dashboard.css';
+import EndPoint from '../endpoints';
 
 const { Header, Content } = Layout;
 
-const students = [
-  { id: 1, name: 'Ali Raza', arid: '2020-Arid-0011', avatar: 'https://via.placeholder.com/40' },
-  { id: 2, name: 'Babar', arid: '2020-Arid-0012', avatar: 'https://via.placeholder.com/40' },
-  { id: 3, name: 'M Amir Shahzad', arid: '2020-Arid-0013', avatar: 'https://via.placeholder.com/40' },
-  { id: 4, name: 'Abdul Islam', arid: '2020-Arid-0014', avatar: 'https://via.placeholder.com/40' },
-  { id: 5, name: 'Usman Akbar', arid: '2020-Arid-0015', avatar: 'https://via.placeholder.com/40' },
-  { id: 6, name: 'Muhammad Bashir', arid: '2020-Arid-0016', avatar: 'https://via.placeholder.com/40' },
-  { id: 7, name: 'Ali Ahmad', arid: '2020-Arid-3611', avatar: 'https://via.placeholder.com/40' },
-  { id: 8, name: 'Rizan', arid: '2020-Arid-3612', avatar: 'https://via.placeholder.com/40' },
-  { id: 9, name: 'Shahzad', arid: '2020-Arid-3613', avatar: 'https://via.placeholder.com/40' },
-  { id: 10, name: 'Abdul Rehman', arid: '2020-Arid-3614', avatar: 'https://via.placeholder.com/40' },
-  { id: 11, name: 'Usman saeed', arid: '2020-Arid-3615', avatar: 'https://via.placeholder.com/40' },
-  { id: 12, name: 'zeeshan Rafiq', arid: '2020-Arid-3616', avatar: 'https://via.placeholder.com/40' },
-];
-
-const StudentDrawer = ({ visible, onClose, onBalanceCheck, onLogout }) => (
+// The Drawer component for the user menu
+const StudentDrawer = ({ visible, onClose, switchToCommittee, onLogout }) => (
   <Drawer
     placement="left"
     width={300}
@@ -35,7 +23,7 @@ const StudentDrawer = ({ visible, onClose, onBalanceCheck, onLogout }) => (
       <Avatar size={64} icon={<UserOutlined />} />
     </div>
     <br />
-    <Button type="primary" onClick={onBalanceCheck} style={{ width: '80%' }}>Switch to Committee</Button>
+    <Button type="primary" onClick={switchToCommittee} style={{ width: '80%' }}>Switch to Committee</Button>
     <br />
     <Button type="primary" onClick={onLogout} style={{ width: '80%' }}>Logout</Button>
   </Drawer>
@@ -44,10 +32,11 @@ const StudentDrawer = ({ visible, onClose, onBalanceCheck, onLogout }) => (
 StudentDrawer.propTypes = {
   visible: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  onBalanceCheck: PropTypes.func.isRequired,
+  switchToCommittee: PropTypes.func.isRequired,
   onLogout: PropTypes.func.isRequired,
 };
 
+// The Modal component for rating and suggestion
 const StudentModal = ({ visible, student, rating, suggestion, onRatingChange, onSuggestionChange, onOk, onCancel }) => (
   <Modal
     title={`Rate ${student ? student.name : ''}`}
@@ -95,6 +84,27 @@ const StudentList = () => {
   const [studentRatings, setStudentRatings] = useState({});
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [students, setStudents] = useState([]);
+  const [memberId, setMemberId] = useState(null); // Assuming memberId is fetched from somewhere
+
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const response = await fetch(`${EndPoint.teachersGraders}`);
+        const data = await response.json();
+        setStudents(data);
+        if (data.length > 0) {
+          setMemberId(data[0].memberId); // Set the memberId if available in the data
+        }
+      } catch (error) {
+        message.error('Failed to fetch students');
+      }
+    };
+
+    fetchStudents();
+  }, []);
 
   const openPopup = () => setShowPopup(true);
   const closePopup = () => setShowPopup(false);
@@ -119,7 +129,30 @@ const StudentList = () => {
   const handleCancel = () => setIsModalVisible(false);
   const handleRatingChange = (value) => setRating(value);
   const handleSuggestionChange = (e) => setSuggestion(e.target.value);
-  const BalanceCheck = () => message.success('Remaining Balance is $500.');
+
+  const switchToCommittee = async () => {
+    try {
+      const response = await fetch(`${EndPoint.switchRole}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ memberId }),
+      });
+      if (response.ok) {
+        message.success('Switched to Committee role');
+      } else {
+        message.error('Failed to switch role');
+      }
+    } catch (error) {
+      message.error('Failed to switch role');
+    }
+  };
+
+  const handleLogout = () => {
+    // Perform any logout operations here
+    navigate('/Login'); // Navigate to the login page
+  };
 
   return (
     <div>
@@ -147,7 +180,7 @@ const StudentList = () => {
             renderItem={(student) => (
               <List.Item onClick={() => showModal(student)} style={{ cursor: 'pointer' }}>
                 <List.Item.Meta
-                  avatar={<Avatar src={student.avatar} />}
+                  avatar={<Avatar src={student.avatar || 'https://via.placeholder.com/40'} />}
                   title={student.name}
                   description={student.arid}
                 />
@@ -177,8 +210,8 @@ const StudentList = () => {
       <StudentDrawer
         visible={isDrawerVisible}
         onClose={onClose}
-        onBalanceCheck={BalanceCheck}
-        onLogout={openPopup}
+        switchToCommittee={switchToCommittee}
+        onLogout={handleLogout}
       />
     </div>
   );

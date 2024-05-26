@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import '../Styling/Afterlogin.css';
-import Input from '../components/Input.js';
-import { Button } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Button, Input } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import '../Styling/Afterlogin.css'; // Importing CSS file
 
 const AfterLogin = () => {
     const history = useNavigate();
@@ -13,7 +12,24 @@ const AfterLogin = () => {
     const [uploadDeathCertificate, setUploadDeathCertificate] = useState(false);
     const [uploadSalarySlip, setUploadSalarySlip] = useState(false);
     const [error, setError] = useState('');
+    const [formData, setFormData] = useState(null); // State to store data from API
 
+    useEffect(() => {
+        // Fetch data from API
+        const fetchData = async () => {
+            try {
+                const response = await fetch('your_api_endpoint_here');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+                const data = await response.json();
+                setFormData(data); // Set the fetched data to state
+            } catch (error) {
+                setError('Failed to fetch data');
+            }
+        };
+        fetchData();
+    }, []);
 
     const FileData = (event) => {
         setFile(event.target.files[0]);
@@ -35,25 +51,38 @@ const AfterLogin = () => {
         setFather(event.target.value);
     };
 
-
     const Submit = async (event) => {
         event.preventDefault();
-        history('/PersonalDetails');
-        // setArid('');
-        // setGender('');
-        // setFather('');
-        // setUploadDeathCertificate('');
-        setError('');
+        try {
+            const response = await fetch('your_api_endpoint_here', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    arid,
+                    gender,
+                    father,
+                    // Add other data fields as needed
+                }),
+            });
+            if (!response.ok) {
+                throw new Error('Failed to submit data');
+            }
+            history('/PersonalDetails');
+        } catch (error) {
+            setError('Failed to submit data');
+        }
     };
+
     const Cancel = (event) => {
         history(-1);
-    }
+    };
 
     return (
         <div className="container">
             <div className="form-box">
                 <header>
-
                     <h1 id="title">Student Info</h1>
                 </header>
                 <form onSubmit={Submit}>
@@ -177,7 +206,7 @@ const AfterLogin = () => {
                         }<br />
                         <div className='Buttons'>
                             <Button type='primary' onClick={Cancel} >Cancel</Button>
-                            <Button type='primary' onClick={Submit}>Next</Button>
+                            <Button type='primary' htmlType="submit">Next</Button>
                         </div>
                     </div>
                 </form>
