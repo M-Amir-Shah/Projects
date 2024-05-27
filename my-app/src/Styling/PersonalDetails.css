@@ -6,7 +6,7 @@
 } */
 
 .container {
-  height: 100vh;
+  height: 100%;
   background: linear-gradient(to right bottom, #119992, #b5c6e0);
   display: flex;
   justify-content: center;
@@ -16,7 +16,7 @@
 }
 
 .form-box {
-  width: 90%;
+  width: 100%;
   max-width: 900px;
   background-color: #ffffff;
   border-radius: 8px;

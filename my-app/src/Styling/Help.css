@@ -1,0 +1,54 @@
+/* Navbar styling */
+.navbar {
+    background: linear-gradient(to right bottom, #119992, #b5c6e0);
+    width: 100%;
+    z-index: 1000;
+    border-bottom: 1px solid #ccc;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 60px; /* Adjust the height as needed */
+}
+
+/* Container styling */
+.container {
+    width: 100%;
+    height: calc(100% - 60px); /* Full height minus the navbar */
+    background: linear-gradient(to right bottom, #119992, #b5c6e0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5%;
+    box-sizing: border-box;
+    overflow: hidden; /* Remove scrolling */
+}
+
+.form-box {
+    width: 100%;
+    max-width: 600px; /* Increased max-width to make the form box larger */
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 60px 70px; /* Increased padding to add more space inside the form box */
+    margin-inline: auto; /* Center the form box horizontally */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: add some shadow for better appearance */
+  }
+  
+ /* General styling for the <p> tag containing the contact details */
+.contact-details p {
+    line-height: 1.8; /* Adjust line height for overall spacing */
+    margin: 0; /* Reset margin for the <p> tag */
+}
+
+.contact-details b {
+    display: block; /* Ensure <b> elements are block level */
+    margin-bottom: 5px; /* Space between <b> elements */
+}
+
+.contact-details a {
+    color: #1890ff; /* Ant Design primary color for links */
+    text-decoration: none; /* Remove underline from links */
+}
+
+.contact-details a:hover {
+    text-decoration: underline; /* Underline links on hover */
+}

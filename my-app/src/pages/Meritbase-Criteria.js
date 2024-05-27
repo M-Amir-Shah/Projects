@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Row, Col, Button, Card } from 'antd';
 import { ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons';
-import "../Styling/Policies.css";
+import "../Styling/Criterias.css";
+import logo from './BiitLogo.jpeg';
 import { useNavigate } from "react-router-dom";
 import EndPoint from '../endpoints';
 
@@ -35,15 +36,11 @@ const Navbar = () => {
         fetchPolicies();
     }, []);
 
-    const AddPolicies = (event) => {
-        event.preventDefault();
-        history('/NewPolicies');
-    };
-
     const Back = (event) => {
         event.preventDefault();
-        history(-1);
+        history('/StudentDashboard');
     };
+
 
     return (
         <div>
@@ -53,10 +50,11 @@ const Navbar = () => {
                         <Button onClick={Back} icon={<ArrowLeftOutlined />} />
                     </Col>
                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large' }}>
-                        Policies
+                        MeritBase Criteria
                     </Col>
                     <Col>
-                        <Button icon={<PlusOutlined />} onClick={AddPolicies} />
+                        <img src={logo} alt="BIIT logo" style={{ height: '35px', width: '35px', borderRadius: '25px' }} />
+
                     </Col>
                 </Row>
             </Header>
@@ -70,8 +68,9 @@ const Navbar = () => {
                         policies.map((policy, index) => (
                             <div key={index}>
                                 <Card>
-                                <p><b>Session: </b>{policy.p.session}</p>
+                                    <p><b>Session: </b>{policy.p.session}</p>
                                     <p><b>Policy: </b>{policy.p.policyfor}</p> {/* Display policyFor */}
+                                    <p><b>Depend on: </b>{policy.p.policy1}</p>
                                     <p><b>Description: </b>{policy.c.description}</p>
                                 </Card>
                                 <br />

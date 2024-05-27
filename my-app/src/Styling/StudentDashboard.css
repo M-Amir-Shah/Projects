@@ -8,10 +8,11 @@ html, body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 80px; /* Adjust padding to account for navbar height */
+    padding-top: 100px; /* Adjust padding to account for navbar height */
     padding-left: 10%;
     padding-right: 10%;
-    min-height: 100vh;
+    min-height: 100%;
+    height: 100%;
 }
 
 .navbar {

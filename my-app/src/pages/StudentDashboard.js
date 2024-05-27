@@ -169,28 +169,25 @@ const StudentDashboard = () => {
 
     const logout = (event) => {
         event.preventDefault();
-        navigate(-1);
+        navigate('/Login');
     };
 
-    const Apply = (event) => {
-        event.preventDefault();
-        navigate('/ApplyNeedBase'); // Assuming you have a route for applying for need-based aid
+    const Apply = () => {
+        navigate('/AfterLogin'); // Assuming you have a route for applying for need-based aid
     };
-
-    const NeedCriteria = (event) => {
-        event.preventDefault();
-        navigate('/NeedbaseCriteria'); // Assuming you have a route for viewing need-based criteria
+    
+    const NeedCriteria = () => {
+        navigate('/Needbase-Criteria'); // Assuming you have a route for viewing need-based criteria
     };
-
-    const MeritCriteria = (event) => {
-        event.preventDefault();
-        navigate('/MeritbaseCriteria'); // Assuming you have a route for viewing merit-based criteria
+    
+    const MeritCriteria = () => {
+        navigate('/Meritbase-Criteria'); // Update path to '/MeritbaseCriteria'
     };
-
-    const HelpCriteria = (event) => {
-        event.preventDefault();
+    
+    const HelpCriteria = () => {
         navigate('/Help'); // Assuming you have a route for help
     };
+    
 
     const showDrawer = () => {
         setIsDrawerVisible(true);
@@ -240,7 +237,7 @@ const StudentDashboard = () => {
                     <>
                         <Card title="Welcome" className="welcome-card">
                             <b>Name:</b>  {name}Muhammad Amir Shahzad<br />
-                            <b>Arid:</b> {studentId}2020-Arid-360<br />
+                            <b>Arid:</b> {studentId}2020-Arid-3690<br />
                             <b>Status:</b> {status} Pending
                         </Card>
                         <div className="card-container">

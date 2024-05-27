@@ -12,10 +12,11 @@
   align-items: center;
   height: 100%;
   padding: 20px;
+  width: 100%;
 }
 
 .form-box {
-  width: 90%;
+  width: 100%;
   max-width: 900px;
   background-color: #ffffff;
   border-radius: 8px;

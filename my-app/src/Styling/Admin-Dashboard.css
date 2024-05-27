@@ -7,7 +7,7 @@
     padding-top: 80px; /* Adjust padding to account for navbar height */
     padding-left: 10%;
     padding-right: 10%;
-    min-height: 100vh;
+    min-height: 100%;
 }
 
 .navbar {

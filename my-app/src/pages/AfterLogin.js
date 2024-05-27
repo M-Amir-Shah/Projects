@@ -54,21 +54,21 @@ const AfterLogin = () => {
     const Submit = async (event) => {
         event.preventDefault();
         try {
-            const response = await fetch('your_api_endpoint_here', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    arid,
-                    gender,
-                    father,
-                    // Add other data fields as needed
-                }),
-            });
-            if (!response.ok) {
-                throw new Error('Failed to submit data');
-            }
+            // const response = await fetch('your_api_endpoint_here', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify({
+            //         arid,
+            //         gender,
+            //         father,
+            //         // Add other data fields as needed
+            //     }),
+            // });
+            // if (!response.ok) {
+            //     throw new Error('Failed to submit data');
+            // }
             history('/PersonalDetails');
         } catch (error) {
             setError('Failed to submit data');
@@ -206,7 +206,7 @@ const AfterLogin = () => {
                         }<br />
                         <div className='Buttons'>
                             <Button type='primary' onClick={Cancel} >Cancel</Button>
-                            <Button type='primary' htmlType="submit">Next</Button>
+                            <Button type='primary' onClick={Submit}>Next</Button>
                         </div>
                     </div>
                 </form>

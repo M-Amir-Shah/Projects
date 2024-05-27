@@ -39,7 +39,7 @@ const Login = () => {
         throw new Error('Invalid username or password');
       }
 
-      navigate('/Admin-Dashboard');
+      navigate('/StudentDashboard');
     } catch (error) {
       setError(error.message);
     } finally {

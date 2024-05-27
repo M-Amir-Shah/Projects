@@ -1,31 +1,59 @@
 import React from 'react';
+import { Layout, Row, Col, Button } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
+import '../Styling/Help.css';  // Assuming your CSS is in this file
+import logo from './BiitLogo.jpeg';
+import { HomeOutlined, MobileOutlined, PhoneOutlined, MailOutlined, FacebookOutlined, InstagramOutlined } from '@ant-design/icons';
+import { useNavigate } from "react-router-dom";
 
-const App = () => {
+const { Header, Content } = Layout;
+
+const Navbar = () => {
+    const history = useNavigate();
+
+    const Back = (event) => {
+        event.preventDefault();
+        history('/StudentDashboard');
+    };
+
     return (
-        <div style={styles.container}>
-            <p style={styles.paragraph}>Barani Institute of Information Technology (BIIT) was established at the Pir Mehr Ali Shah Arid Agriculture University[1] and is located in Rawalpindi, Punjab, Pakistan[2] The institute is a self-financed/ self-funded project and was established as a partnership venture between the Pir Mehr Ali Shah Arid Agriculture University and Resource Organizers and Software Engineers (ROSE) International.[3]</p>
-            <p style={styles.paragraph}>Integer sagittis libero sed turpis posuere tincidunt. Nullam et elit in est cursus congue. Phasellus ac tellus non velit ultrices bibendum vel in ante.</p>
-            <p style={styles.paragraph}>Vivamus volutpat justo et felis aliquam, vel lobortis ex viverra. Morbi varius pretium felis, a ultricies elit gravida sit amet. Donec id leo in ante vehicula tincidunt.</p>
-        </div>
+        <Layout style={{ minHeight: '100vh' }}>
+            <Header className="navbar">
+                <Row justify="space-between" align="middle">
+                    <Col>
+                        <Button onClick={Back} icon={<ArrowLeftOutlined />} />
+                    </Col>
+                    <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large' }}>
+                        Help
+                    </Col>
+                    <Col>
+                        <img src={logo} alt="BIIT logo" style={{ height: '35px', width: '35px', borderRadius: '25px' }} />
+                    </Col>
+                </Row>
+            </Header>
+            <Content className="container">
+                <div className="form-box">
+                    <p className="contact-details">
+                    <b><HomeOutlined /> BIIT: </b> 106-A/1 Murree Rd, Block A Satellite Town Rawalpindi, Pakistan
+                            <b><MobileOutlined /> Mobile Number: </b> (+92) 336-0572652
+                            <b><PhoneOutlined /> Landline Number: </b>(+92-51) 4251766, 4251767, 8731506, 8731509
+                            <b><MailOutlined /> Email: </b>
+                            <a href="mailto:admissions@biit.edu.pk">
+                                admissions@biit.edu.pk
+                            </a>
+                            <b><FacebookOutlined /> Facebook: </b>
+                            <a href="https://www.facebook.com/BIITOfficial?mibextid=kFxxJD" target="_blank" rel="noopener noreferrer">
+                                BIIT Official Facebook
+                            </a>
+                            <b><InstagramOutlined /> Instagram: </b>
+                            <a href="https://www.instagram.com/biitofficial?igsh=bjA5MzNrZHJ2MGly" target="_blank" rel="noopener noreferrer">
+                                BIIT Official Instagram
+                            </a>
+                    </p>
+                </div>
+            </Content>
+        </Layout>
     );
 };
 
-// Define styles object
-const styles = {
-    container: {
-        background:'pink',
-        display:'felx',
-        alignItem:'center',
-        maxWidth: '800px', // Adjust the maximum width as needed
-        margin: '0 auto', // Center the content horizontally
-        padding: '20px', // Add padding around the content
-    },
-    paragraph: {
-        userSelect: 'none',
-        fontSize: '16px', // Set the font size
-        lineHeight: '1.6', // Set the line height
-        marginBottom: '20px', // Add margin bottom between paragraphs
-    },
-};
-
-export default App;
+export default Navbar;
