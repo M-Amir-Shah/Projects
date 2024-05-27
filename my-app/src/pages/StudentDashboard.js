@@ -123,6 +123,9 @@
 // export default App;
 
 
+
+
+
 import React, { useState, useEffect } from 'react';
 import { Layout, Avatar, Button, Card, Row, Col, Spin, Alert } from 'antd';
 import { UserOutlined, LogoutOutlined, BarsOutlined } from '@ant-design/icons';
@@ -142,30 +145,39 @@ const StudentDashboard = () => {
     const navigate = useNavigate();
     const [name, setName] = useState('');
     const [studentId, setStudentId] = useState('');
-    const [status, setStatus] = useState('');
+    const [status, setStatus] = useState(''); // Define status state variable
+    const [applicationStatus, setApplicationStatus] = useState('');
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // useEffect(() => {
-    //     fetch(EndPoint.getStudentInfo)
-    //         .then(response => {
-    //             if (!response.ok) {
-    //                 throw new Error('Failed to fetch data');
-    //             }
-    //             return response.json();
-    //         })
-    //         .then(data => {
-    //             setName(data.name);
-    //             setStudentId(data.studentId);
-    //             setStatus(data.status);
-    //             setLoading(false);
-    //         })
-    //         .catch(error => {
-    //             setError(error);
-    //             setLoading(false);
-    //         });
-    // }, []);
+    useEffect(() => {
+        const fetchStudentInfo = fetch(EndPoint.getStudentInfo).then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch student info');
+          }
+          return response.json();
+        });
+    
+        const fetchApplicationStatus = fetch(EndPoint.checkApplicationStatus).then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch application status');
+          }
+          return response.json();
+        });
+        Promise.all([fetchStudentInfo, fetchApplicationStatus])
+      .then(([studentInfo, applicationStatusResult]) => {
+        setName(studentInfo.name);
+        setStudentId(studentInfo.student_id);
+        setStatus(studentInfo.status); // Set status value here
+        setApplicationStatus(applicationStatusResult.applicationStatus);
+        setLoading(false);
+      })
+      .catch(error => {
+        setError(error);
+        setLoading(false);
+      });
+  }, []);
 
     const logout = (event) => {
         event.preventDefault();
@@ -229,16 +241,16 @@ const StudentDashboard = () => {
                 </Row>
             </Header>
             <Content className='container'>
-                {/* {loading ? (
+                {loading ? (
                     <Spin size="large" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }} />
                 ) : error ? (
                     <Alert message="Error" description="There was an error fetching the data." type="error" showIcon />
-                ) : ( */}
+                ) : (
                     <>
                         <Card title="Welcome" className="welcome-card">
-                            <b>Name:</b>  {name}Muhammad Amir Shahzad<br />
-                            <b>Arid:</b> {studentId}2020-Arid-3690<br />
-                            <b>Status:</b> {status} Pending
+                            <b>Name:</b>  {name}<br />
+                            <b>Arid:</b> {studentId}<br />
+                            <b>Status:</b> {status} {/* Use status state variable here */}
                         </Card>
                         <div className="card-container">
                             <Card
@@ -275,7 +287,7 @@ const StudentDashboard = () => {
                             </Card>
                         </div>
                     </>
-                {/* )} */}
+                 )} 
             </Content>
         </div>
     );

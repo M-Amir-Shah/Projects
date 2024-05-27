@@ -2,56 +2,6 @@
 .container {
     width: 100%;
     background: linear-gradient(to right bottom, #119992, #b5c6e0);
-    /* Set the background color directly */
     display: flex;
-    justify-content: center;
-    align-items: center;
-    /* padding: 5%; */
-    min-height: 100%;
-    /* Use min-height to ensure the container stretches to at least the height of the viewport */
-}
-
-
-
-.content {
-    background: linear-gradient(to right bottom, #119992, #b5c6e0);
-    /* Set the background color directly */
-    min-height: calc(100% - 50px);
-    /* Adjust min-height to account for the fixed header */
-    width: 100%;
-    padding: 25px;
-    /* margin-top: 50px; */
-    /* Adjust margin-top to make space for the fixed header */
-}
-
-.card-container {
-    display: flex;
-    margin-top: 20px;
-    gap:20px;
-}
-
-.welcome-card{
-    /* position: fixed; */
-    display: flex;
-    width: 100%;
-    /* height: 130px; */
-}
-
-.card {
-    flex: 1 1 1 1 10%; /* Flex-grow, flex-shrink, and flex-basis */
-    margin: 10px;
-    height: 5px; /* Fixed height */
-    background-color: #f0f0f0; /* Example background color */
-    border: 1px solid #ccc; /* Example border */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box; /* Ensures padding and border are included in the width/height */
-    /* Additional styling as needed */
-}
-
-.card-para {
-    margin-top: 10px;
-    font-size: 14px;
-    text-align: end;
+    height: 100%;
 }

@@ -1,40 +1,31 @@
-/* * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: sans-serif;
-  
-} */
-
 .container {
-  height: 100%;
+  height: 100vh;
   background: linear-gradient(to right bottom, #119992, #b5c6e0);
   display: flex;
   justify-content: center;
   align-items: center;
-  
   width: 100%;
   
 }
 
-.form-box {
+/* .form-box {
   width: 100%;
   max-width: 100px;
   background-color: #ffffff;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 40px 50px;
   margin-inline: 20px;
-}
+} */
 
-.form-box header h1 {
+/* .form-box header h1 {
   text-align: center;
   color: black;
   font-family: century;
-}
+} */
 
-.form-box form {
+/* .form-box form {
   margin-block: 30px;
-}
+} */
 
 .Biit_logo {
   display: flex;
@@ -43,17 +34,17 @@
   width: auto;
 }
 
-.Biit_logo a img {
+/* .Biit_logo a img {
 
   max-height: 100px;
   margin-inline: 30rem;
   padding: 20px;
-}
+} */
 .h1{
   margin-bottom: 1rem;
-  margin-top: 1.3rem;
+  margin-top: 1.8rem;
 }
 .button-container {
   text-align: center;
-  margin-top: 20px; /* Adjust as needed */
+  margin-top: 2rem; 
 }

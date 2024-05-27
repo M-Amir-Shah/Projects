@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import logo from './BiitLogo.jpeg';
 import Input from '../components/UserInput';
 import Password from '../components/Password';
-import { Button } from 'antd';
+import { Button, Alert } from 'antd';
 import '../Styling/Login.css';
 import EndPoint from '../endpoints';
 
@@ -36,12 +36,31 @@ const Login = () => {
       });
 
       if (!response.ok) {
+        const text = await response.text();
+        console.error('Response error text:', text);
         throw new Error('Invalid username or password');
       }
 
-      navigate('/StudentDashboard');
+      const data = await response.json();
+      console.log('Response data:', data);
+
+      const role = data.role;
+      if (role === 4) {
+        navigate('/StudentDashboard');
+        const profileId = data.profileId;
+        localStorage.setItem('profileId', profileId.toString());
+        localStorage.setItem('savedUsername', username);
+      } else if (role === 1) {
+        navigate('/Admin-Dashboard');
+        const profileId = data.profileId;
+        localStorage.setItem('profileId', profileId.toString());
+        localStorage.setItem('savedUsername', username);
+      } else {
+        setError('Invalid role.');
+      }
     } catch (error) {
-      setError(error.message);
+      console.error('Error:', error);
+      setError('Invalid User. Please try again.');
     } finally {
       setLoading(false); // Stop loading spinner
     }
@@ -50,11 +69,11 @@ const Login = () => {
   return (
     <div className="container">
       <div className="form-box">
-        <header>
+        <header className="header">
           <div className="Biit_logo">
             <img src={logo} alt="BIIT Financial Aid Allocation Tool" />
           </div>
-          <h1 id="title" className="h1">
+          <h1 className="h1">
             BIIT Financial Aid Allocation Tool
           </h1>
         </header>
@@ -86,7 +105,7 @@ const Login = () => {
                 Login
               </Button>
             </div>
-            {error && <p className="error-message">{error}</p>}
+            {error && <Alert message={error} type="error" showIcon />}
           </div>
         </form>
       </div>
