@@ -11,7 +11,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false); // State for loading spinner
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const UsernameChange = (event) => {
@@ -22,10 +22,36 @@ const Login = () => {
     setPassword(event.target.value);
   };
 
+  const handleResponse = (data) => {
+    const { role, profileId } = data;
+
+    // Store data in localStorage
+    localStorage.setItem('profileId', profileId.toString());
+    localStorage.setItem('savedUsername', username);
+
+    // Navigate based on user role
+    switch (role) {
+      case 1:
+        navigate('/Admin-Dashboard');
+        break;
+      case 2:
+        navigate('/Committee-Dashboard');
+        break;
+      case 3:
+        navigate('/Faculty-Dashboard');
+        break;
+      case 4:
+        navigate('/StudentDashboard');
+        break;
+      default:
+        setError('Invalid role.');
+    }
+  };
+
   const Submit = async (event) => {
     event.preventDefault();
     setError('');
-    setLoading(true); // Start loading spinner
+    setLoading(true);
 
     try {
       const response = await fetch(`${EndPoint.login}?username=${username}&password=${password}`, {
@@ -43,26 +69,12 @@ const Login = () => {
 
       const data = await response.json();
       console.log('Response data:', data);
-
-      const role = data.role;
-      if (role === 4) {
-        navigate('/StudentDashboard');
-        const profileId = data.profileId;
-        localStorage.setItem('profileId', profileId.toString());
-        localStorage.setItem('savedUsername', username);
-      } else if (role === 1) {
-        navigate('/Admin-Dashboard');
-        const profileId = data.profileId;
-        localStorage.setItem('profileId', profileId.toString());
-        localStorage.setItem('savedUsername', username);
-      } else {
-        setError('Invalid role.');
-      }
+      handleResponse(data);
     } catch (error) {
       console.error('Error:', error);
       setError('Invalid User. Please try again.');
     } finally {
-      setLoading(false); // Stop loading spinner
+      setLoading(false);
     }
   };
 

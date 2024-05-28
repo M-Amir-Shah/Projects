@@ -1,33 +1,41 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import logo from './BiitLogo.jpeg';
+import { useNavigate } from 'react-router-dom';
 import { Card, Layout, message, List, Modal, Rate, Input, Form, Avatar, Row, Col, Drawer, Button } from 'antd';
 import { BarsOutlined, UserOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
-import '../Styling/Faculty-Dashboard.css';
+import logo from './BiitLogo.jpeg';
 import EndPoint from '../endpoints';
+import '../Styling/Faculty-Dashboard.css';
 
 const { Header, Content } = Layout;
 
-// The Drawer component for the user menu
-const StudentDrawer = ({ visible, onClose, switchToCommittee, onLogout }) => (
-  <Drawer
-    placement="left"
-    width={300}
-    closable
-    onClose={onClose}
-    visible={visible}
-    bodyStyle={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
-  >
-    <div className="sider-content">
-      <Avatar size={64} icon={<UserOutlined />} />
-    </div>
-    <br />
-    <Button type="primary" onClick={switchToCommittee} style={{ width: '80%' }}>Switch to Committee</Button>
-    <br />
-    <Button type="primary" onClick={onLogout} style={{ width: '80%' }}>Logout</Button>
-  </Drawer>
-);
+const StudentDrawer = ({ visible, onClose, switchToCommittee, onLogout }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    onLogout();
+    navigate('/Login');
+  };
+
+  return (
+    <Drawer
+      placement="left"
+      width={300}
+      closable
+      onClose={onClose}
+      visible={visible}
+      bodyStyle={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+    >
+      <div className="sider-content">
+        <Avatar size={64} icon={<UserOutlined />} />
+      </div>
+      <br />
+      <Button type="primary" onClick={switchToCommittee} style={{ width: '80%' }}>Switch to Committee</Button>
+      <br />
+      <Button type="primary" onClick={handleLogout} style={{ width: '80%' }}>Logout</Button>
+    </Drawer>
+  );
+};
 
 StudentDrawer.propTypes = {
   visible: PropTypes.bool.isRequired,
@@ -36,7 +44,6 @@ StudentDrawer.propTypes = {
   onLogout: PropTypes.func.isRequired,
 };
 
-// The Modal component for rating and suggestion
 const StudentModal = ({ visible, student, rating, suggestion, onRatingChange, onSuggestionChange, onOk, onCancel }) => (
   <Modal
     title={`Rate ${student ? student.name : ''}`}
@@ -53,11 +60,7 @@ const StudentModal = ({ visible, student, rating, suggestion, onRatingChange, on
             <Rate onChange={onRatingChange} value={rating} />
           </Form.Item>
           <Form.Item label="Suggestion">
-            <Input.TextArea
-              value={suggestion}
-              onChange={onSuggestionChange}
-              rows={4}
-            />
+            <Input.TextArea value={suggestion} onChange={onSuggestionChange} rows={4} />
           </Form.Item>
         </Form>
       </div>
@@ -83,11 +86,10 @@ const StudentList = () => {
   const [suggestion, setSuggestion] = useState('');
   const [studentRatings, setStudentRatings] = useState({});
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
   const [students, setStudents] = useState([]);
-  const [memberId, setMemberId] = useState(null); // Assuming memberId is fetched from somewhere
+  const [memberId, setMemberId] = useState(null);
 
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -96,7 +98,7 @@ const StudentList = () => {
         const data = await response.json();
         setStudents(data);
         if (data.length > 0) {
-          setMemberId(data[0].memberId); // Set the memberId if available in the data
+          setMemberId(data[0].memberId);
         }
       } catch (error) {
         message.error('Failed to fetch students');
@@ -106,10 +108,8 @@ const StudentList = () => {
     fetchStudents();
   }, []);
 
-  const openPopup = () => setShowPopup(true);
-  const closePopup = () => setShowPopup(false);
   const showDrawer = () => setIsDrawerVisible(true);
-  const onClose = () => setIsDrawerVisible(false);
+  const onCloseDrawer = () => setIsDrawerVisible(false);
 
   const showModal = (student) => {
     setSelectedStudent(student);
@@ -118,7 +118,7 @@ const StudentList = () => {
     setIsModalVisible(true);
   };
 
-  const handleOk = () => {
+  const handleModalOk = () => {
     setStudentRatings((prev) => ({
       ...prev,
       [selectedStudent.id]: { rating, suggestion },
@@ -126,7 +126,7 @@ const StudentList = () => {
     setIsModalVisible(false);
   };
 
-  const handleCancel = () => setIsModalVisible(false);
+  const handleModalCancel = () => setIsModalVisible(false);
   const handleRatingChange = (value) => setRating(value);
   const handleSuggestionChange = (e) => setSuggestion(e.target.value);
 
@@ -134,9 +134,7 @@ const StudentList = () => {
     try {
       const response = await fetch(`${EndPoint.switchRole}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ memberId }),
       });
       if (response.ok) {
@@ -149,19 +147,16 @@ const StudentList = () => {
     }
   };
 
-  const handleLogout = () => {
-    // Perform any logout operations here
-    navigate('/Login'); // Navigate to the login page
-  };
+  const logout = () =>{
+    navigate('/Login');
+  }
 
   return (
-    <div>
+    <Layout>
       <Header className="navbar">
         <Row justify="space-between" align="middle">
           <Col>
-            <div style={{ padding: '5px' }}>
-              <Button icon={<BarsOutlined />} onClick={showDrawer} />
-            </div>
+            <Button icon={<BarsOutlined />} onClick={showDrawer} />
           </Col>
           <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#fff' }}>
             BIIT Faculty-DashBoard
@@ -171,10 +166,27 @@ const StudentList = () => {
           </Col>
         </Row>
       </Header>
+      <Drawer
+        placement="left"
+        width={300}
+        closable
+        onClose={onCloseDrawer}
+        visible={isDrawerVisible}
+        bodyStyle={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+      >
+        <div className="sider-content">
+          <Avatar size={64} icon={<UserOutlined />} />
+        </div>
+        <br />
+        <Button type="primary" onClick={switchToCommittee} style={{ width: '80%' }}>Switch to Committee</Button>
+        <br />
+        <Button type="primary" onClick={logout} style={{ width: '80%' }}>Logout</Button>
+      </Drawer>
       <Content className='container'>
         <div className="form-box">
           <header><h1>Graders List</h1></header>
-          <List className="scrollable-list"
+          <List
+            className="scrollable-list"
             bordered
             dataSource={students}
             renderItem={(student) => (
@@ -204,16 +216,10 @@ const StudentList = () => {
         suggestion={suggestion}
         onRatingChange={handleRatingChange}
         onSuggestionChange={handleSuggestionChange}
-        onOk={handleOk}
-        onCancel={handleCancel}
+        onOk={handleModalOk}
+        onCancel={handleModalCancel}
       />
-      <StudentDrawer
-        visible={isDrawerVisible}
-        onClose={onClose}
-        switchToCommittee={switchToCommittee}
-        onLogout={handleLogout}
-      />
-    </div>
+    </Layout>
   );
 };
 

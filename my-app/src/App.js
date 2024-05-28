@@ -23,6 +23,10 @@ import AddStudent from "./pages/Add-Student";
 import Policies from "./pages/Policies";
 import AddPolicies from "./pages/NewPolicies";
 import Com from './pages/Committee-Dashboard';
+import FacultyDash from './pages/Faculty-Dashboard'
+import StudentRecords from "./pages/Student-Record";
+import UpdatePassword from './pages/Update-Password'
+import ViewApplication from './pages/View-Application'
 
 function App() {
   return (
@@ -52,6 +56,11 @@ function App() {
         <Route path="/Policies" element={<Policies />} />
         <Route path="/NewPolicies" element={<AddPolicies />} />
         <Route path="/Add-Student" element={<AddStudent />} />
+        <Route path="/Faculty-Dashboard" element={<FacultyDash />} />
+        <Route path="/Student-Record" element={<StudentRecords />} />
+        <Route path="/View-Application" element={<ViewApplication />} />
+        <Route path="/Update-Password" element={<UpdatePassword />} />
+
       </Routes>
     </div>
   );

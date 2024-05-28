@@ -20,34 +20,32 @@ const AddNewBudget = () => {
     const handleSubmit = async () => {
         try {
             // Ensure amount is a number and not empty
-            if (!amount || isNaN(amount)) {
+            if (!amount) {
                 message.error('Enter amount.');
                 return;
             }
-
-            const requestBody = { amount: parseFloat(amount) };
-
+    
             const response = await fetch(`${EndPoint.addBudget}`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(requestBody),
+                body: JSON.stringify({ amount: parseInt(amount, 10) })  // Convert amount to integer
             });
-
-            // Log the request body and endpoint for debugging
-            console.log('Request body:', JSON.stringify(requestBody));
+    
+            // Log the endpoint and request body for debugging
             console.log('Endpoint:', EndPoint.addBudget);
-
+            console.log('Request body:', JSON.stringify({ amount: parseInt(amount, 10) }));
+    
             if (!response.ok) {
                 throw new Error('Failed to add budget');
             }
-
+    
             const data = await response.json();
-
+    
             // Log the response data for debugging
             console.log('Response data:', data);
-
+    
             message.success('Budget added successfully');
             navigate('/Budget');
         } catch (error) {
@@ -55,7 +53,7 @@ const AddNewBudget = () => {
             message.error('Failed to add budget. Please try again later.');
         }
     };
-
+    
     return (
         <div>
             <Header className="navbar">
