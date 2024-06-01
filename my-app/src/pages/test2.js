@@ -139,3 +139,227 @@
 // };
 
 // export default App;
+// import React, { useState } from 'react';
+// import { Table, Button, Modal, Progress } from 'antd';
+// //import 'antd/dist/reset.css';  // Correctly import Ant Design styles
+
+// const App = () => {
+//   const [isModalVisible, setIsModalVisible] = useState(false);
+//   const [modalContent, setModalContent] = useState('');
+
+//   const teachers = [
+//     {
+//       key: '1',
+//       name: 'John Doe',
+//       status: 'Accepted',
+//       reason: 'John has a great track record of improving student performance.'
+//     },
+//     {
+//       key: '2',
+//       name: 'Jane Smith',
+//       status: 'Rejected',
+//       reason: 'Jane lacks the necessary experience in the required subject area.'
+//     },
+//     {
+//       key: '3',
+//       name: 'Mary Johnson',
+//       status: 'Rejected',
+//       reason: 'Mary lacks the necessary teaching certifications.'
+//     },
+//     {
+//       key: '4',
+//       name: 'John Doe',
+//       status: 'Accepted',
+//       reason: 'John has a great track record of improving student performance.'
+//     },
+//     {
+//       key: '5',
+//       name: 'John Doe',
+//       status: 'Accepted',
+//       reason: 'John has a great track record of improving student performance.'
+//     },
+//     {
+//       key: '6',
+//       name: 'John Doe',
+//       status: 'Accepted',
+//       reason: 'John has a great track record of improving student performance.'
+//     },
+//     // Add more teachers as needed
+//   ];
+
+//   const acceptedCount = teachers.filter(teacher => teacher.status === 'Accepted').length;
+//   const rejectedCount = teachers.filter(teacher => teacher.status === 'Rejected').length;
+//   const totalCount = teachers.length;
+
+//   const acceptedPercentage = totalCount ? ((acceptedCount / totalCount) * 100).toFixed(2) : 0;
+//   const rejectedPercentage = totalCount ? ((rejectedCount / totalCount) * 100).toFixed(2) : 0;
+
+
+//   const showModal = (reason) => {
+//     setModalContent(reason);
+//     setIsModalVisible(true);
+//   };
+
+//   const handleOk = () => {
+//     setIsModalVisible(false);
+//   };
+
+//   const handleCancel = () => {
+//     setIsModalVisible(false);
+//   };
+
+//   const columns = [
+//     {
+//       title: 'Teacher Name',
+//       dataIndex: 'name',
+//       key: 'name',
+//     },
+//     {
+//       title: 'Status',
+//       dataIndex: 'status',
+//       key: 'status',
+//       render: (status) => (
+//         <span style={{ color: status === 'Accepted' ? 'green' : 'red' }}>
+//           {status}
+//         </span>
+//       )
+//     },
+//     {
+//       title: 'Action',
+//       key: 'action',
+//       render: (_, record) => (
+//         <Button type="primary" onClick={() => showModal(record.reason)}>
+//           View
+//         </Button>
+//       )
+//     }
+//   ];
+
+//   return (
+//     <div style={{ padding: '20px' }}>
+//       <div style={{ marginBottom: '20px' }}>
+//         <h3>Accepted</h3>
+//         <Progress
+//           percent={acceptedPercentage}
+//           strokeColor="green"
+//           trailColor="#d9d9d9"
+//         />
+//       </div>
+//       <div style={{ marginBottom: '20px' }}>
+//         <h3>Rejected</h3>
+//         <Progress
+//           percent={rejectedPercentage}
+//           strokeColor="red"
+//           trailColor="#d9d9d9"
+//         />
+//       </div>
+//       <Table columns={columns} dataSource={teachers} pagination={false} />
+//       <Modal title="Details" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+//         <p>{modalContent}</p>
+//       </Modal>
+//     </div>
+//   );
+// };
+
+// export default App;
+
+
+import React, { useState, useEffect } from 'react';
+import { Table, Button, Modal, Progress } from 'antd';
+// import 'antd/dist/reset.css';  // Correctly import Ant Design styles
+
+const App = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalContent, setModalContent] = useState('');
+  const [teachers, setTeachers] = useState([]);
+
+  useEffect(() => {
+    // Fetch data from API
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://api.example.com/teachers'); // Replace with your API endpoint
+        const data = await response.json();
+        setTeachers(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const acceptedCount = teachers.filter(teacher => teacher.status === 'Accepted').length;
+  const rejectedCount = teachers.filter(teacher => teacher.status === 'Rejected').length;
+  const totalCount = teachers.length;
+
+  const acceptedPercentage = totalCount ? ((acceptedCount / totalCount) * 100).toFixed(2) : 0;
+  const rejectedPercentage = totalCount ? ((rejectedCount / totalCount) * 100).toFixed(2) : 0;
+
+  const BarsModal = (reason) => {
+    setModalContent(reason);
+    setIsModalVisible(true);
+  };
+
+  const BarsOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const BarsModalCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const columns = [
+    {
+      title: 'Teacher Name',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status) => (
+        <span style={{ color: status === 'Accepted' ? 'green' : 'red' }}>
+          {status}
+        </span>
+      )
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_, record) => (
+        <Button type="primary" onClick={() => BarsModal(record.reason)}>
+          View
+        </Button>
+      )
+    }
+  ];
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <div style={{ marginBottom: '20px' }}>
+        <h3>Accepted</h3>
+        <Progress
+          percent={parseFloat(acceptedPercentage)}
+          strokeColor="green"
+          trailColor="#d9d9d9"
+        />
+      </div>
+      <div style={{ marginBottom: '20px' }}>
+        <h3>Rejected</h3>
+        <Progress
+          percent={parseFloat(rejectedPercentage)}
+          strokeColor="red"
+          trailColor="#d9d9d9"
+        />
+      </div>
+      <Table columns={columns} dataSource={teachers} pagination={false} />
+      <Modal title="Details" visible={isModalVisible} onOk={BarsOk} onCancel={BarsModalCancel}>
+        <p>{modalContent}</p>
+      </Modal>
+    </div>
+  );
+};
+
+export default App;
+

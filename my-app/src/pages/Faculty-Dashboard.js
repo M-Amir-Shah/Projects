@@ -95,18 +95,27 @@ const StudentList = () => {
     const fetchStudents = async () => {
       try {
         const response = await fetch(`${EndPoint.teachersGraders}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch students');
+        }
         const data = await response.json();
-        setStudents(data);
-        if (data.length > 0) {
-          setMemberId(data[0].memberId);
+        console.log('Fetched students:', data); // Check what data is returned
+        if (Array.isArray(data)) {
+          setStudents(data);
+          if (data.length > 0) {
+            setMemberId(data[0].memberId);
+          }
+        } else {
+          throw new Error('Invalid data received from server');
         }
       } catch (error) {
-        message.error('Failed to fetch students');
+        message.error(error.message);
       }
     };
-
+  
     fetchStudents();
   }, []);
+  
 
   const showDrawer = () => setIsDrawerVisible(true);
   const onCloseDrawer = () => setIsDrawerVisible(false);

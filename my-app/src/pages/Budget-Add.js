@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Layout, Row, Col, Button, Input, message } from 'antd';
+import { Layout, Row, Col, Button, Input, message, Spin } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 import logo from './BiitLogo.jpeg';
 import "../Styling/Budget.css";
-import EndPoint from '../endpoints.js';
+import axios from 'axios';
+import EndPoint from '../endpoints';
 import { Content } from 'antd/es/layout/layout';
 
 const { Header } = Layout;
@@ -12,6 +13,7 @@ const { Header } = Layout;
 const AddNewBudget = () => {
     const navigate = useNavigate();
     const [amount, setAmount] = useState('');
+    const [loading, setLoading] = useState(false); // Define setLoading here
 
     const handleBack = () => {
         navigate('/Budget');
@@ -19,41 +21,37 @@ const AddNewBudget = () => {
 
     const handleSubmit = async () => {
         try {
-            // Ensure amount is a number and not empty
             if (!amount) {
                 message.error('Enter amount.');
                 return;
             }
     
-            const response = await fetch(`${EndPoint.addBudget}`, {
-                method: 'POST',
+            setLoading(true);  // Set loading to true when the request starts
+    
+            // Introduce a 5-second delay
+            await new Promise(resolve => setTimeout(resolve, 5000));
+    
+            const url = `${EndPoint.addBudget}?amount=${amount}`;
+            console.log('Endpoint:', url);
+    
+            const response = await axios.post(url, null, {
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ amount: parseInt(amount, 10) })  // Convert amount to integer
+                }
             });
     
-            // Log the endpoint and request body for debugging
-            console.log('Endpoint:', EndPoint.addBudget);
-            console.log('Request body:', JSON.stringify({ amount: parseInt(amount, 10) }));
-    
-            if (!response.ok) {
-                throw new Error('Failed to add budget');
-            }
-    
-            const data = await response.json();
-    
-            // Log the response data for debugging
-            console.log('Response data:', data);
+            console.log('Response data:', response.data);
     
             message.success('Budget added successfully');
             navigate('/Budget');
         } catch (error) {
-            console.error('Error adding budget:', error);
+            console.error('Error adding budget:', error.response ? error.response.data : error.message);
             message.error('Failed to add budget. Please try again later.');
+        } finally {
+            setLoading(false);  // Reset loading state after the request completes
         }
     };
-    
+
     return (
         <div>
             <Header className="navbar">
@@ -81,6 +79,7 @@ const AddNewBudget = () => {
                     />
                     <br />
                     <Button type="primary" onClick={handleSubmit}>Submit</Button>
+                    {loading && <Spin />} {/* Show the loading spinner if loading is true */}
                 </Content>
             </div>
         </div>

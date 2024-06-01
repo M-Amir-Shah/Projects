@@ -3,7 +3,7 @@ import { Layout, Row, Col, Button } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import '../Styling/Help.css';  // Assuming your CSS is in this file
 import logo from './BiitLogo.jpeg';
-import { HomeOutlined, MobileOutlined, PhoneOutlined, MailOutlined, FacebookOutlined, InstagramOutlined } from '@ant-design/icons';
+import { EnvironmentOutlined, MobileOutlined, PhoneOutlined, MailOutlined, FacebookOutlined, InstagramOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 
 const { Header, Content } = Layout;
@@ -34,18 +34,18 @@ const Navbar = () => {
             <Content className="container">
                 <div className="form-box">
                     <p className="contact-details">
-                    <b><HomeOutlined /> BIIT: </b> 106-A/1 Murree Rd, Block A Satellite Town Rawalpindi, Pakistan
-                            <b><MobileOutlined /> Mobile Number: </b> (+92) 336-0572652
-                            <b><PhoneOutlined /> Landline Number: </b>(+92-51) 4251766, 4251767, 8731506, 8731509
-                            <b><MailOutlined /> Email: </b>
+                    <b><EnvironmentOutlined /> BIIT : </b> 106-A/1 Murree Rd, Block A Satellite Town Rawalpindi, Pakistan
+                            <b><MobileOutlined /> Mobile Number : </b> (+92) 336-0572652
+                            <b><PhoneOutlined /> Landline Number : </b>(+92-51) 4251766, 4251767, 8731506, 8731509
+                            <b><MailOutlined /> Email : </b>
                             <a href="mailto:admissions@biit.edu.pk">
                                 admissions@biit.edu.pk
                             </a>
-                            <b><FacebookOutlined /> Facebook: </b>
+                            <b><FacebookOutlined /> Facebook : </b>
                             <a href="https://www.facebook.com/BIITOfficial?mibextid=kFxxJD" target="_blank" rel="noopener noreferrer">
                                 BIIT Official Facebook
                             </a>
-                            <b><InstagramOutlined /> Instagram: </b>
+                            <b><InstagramOutlined /> Instagram : </b>
                             <a href="https://www.instagram.com/biitofficial?igsh=bjA5MzNrZHJ2MGly" target="_blank" rel="noopener noreferrer">
                                 BIIT Official Instagram
                             </a>

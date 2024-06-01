@@ -5,6 +5,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import "../Styling/NewPolicies.css";
 import { useNavigate } from 'react-router-dom';
 import EndPoint from '../endpoints'; // Import the endpoints file
+import axios from 'axios';
 
 const { Header, Content } = Layout;
 const { Option } = Select;
@@ -29,26 +30,40 @@ const NeedMeritPolicy = () => {
     const handleFormSubmit = async (values) => {
         setLoading(true); // Start loading
         try {
-            const response = await fetch(EndPoint.addPolicies, {
-                method: 'POST',
+            const formData = new FormData();
+            formData.append('description', values.description);
+            formData.append('policyFor', values.policyFor);
+
+            // Add other fields based on the policy type
+            if (values.policyFor === 'Needbase') {
+                formData.append('val1', values.minimumCGPA);
+                formData.append('policy', values.description); // Assuming policy description is the same for both types
+            } else if (values.policyFor === 'Meritbase') {
+                formData.append('val1', values.meritType === 'CGPA' ? values.minimumCGPA : values.minimumStrength);
+                formData.append('val2', values.meritType === 'Strength' ? values.maximumStrength : ''); // Assuming val2 is not always used
+                formData.append('policy', values.description); // Assuming policy description is the same for both types
+                formData.append('strength', values.meritType === 'Strength' ? values.studentsCount : ''); // Assuming strength is only used for 'Strength' type
+            }
+
+            const response = await axios.post(EndPoint.addPolicies, formData, {
                 headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(values)
+                    'Content-Type': 'multipart/form-data' // Make sure to set correct content type
+                }
             });
-            if (response.ok) {
-                // Handle successful response
+
+            if (response.status === 200) {
                 console.log('Policy added successfully');
-                form.resetFields(); // Reset form fields
+                form.resetFields();
             } else {
                 console.error('Failed to add policy:', response.statusText);
             }
         } catch (error) {
             console.error('Error adding policy:', error);
         } finally {
-            setLoading(false); // Stop loading
+            setLoading(false);
         }
     };
+
 
     const Back = () => {
         history(-1);

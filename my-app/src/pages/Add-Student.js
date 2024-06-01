@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import '../Styling/Add-Student.css';
 import { Button, Col, Row, Layout, Input, message } from 'antd';
 import logo from './BiitLogo.jpeg';
-// import Input from '../components/Input.js';
 import { SearchOutlined, CameraOutlined, LoadingOutlined, ArrowLeftOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import EndPoint from '../endpoints';
 
 const { Header } = Layout;
 
 const AddStudent = () => {
-
     const navigate = useNavigate();
 
     const [name, setName] = useState('');
@@ -20,11 +20,9 @@ const AddStudent = () => {
     const [father, setFather] = useState('');
     const [degree, setDegree] = useState('');
     const [section, setSection] = useState('');
+    const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [imageUrl, setImageUrl] = useState(null);
-
-
-
 
     const StudentName = (event) => {
         setName(event.target.value);
@@ -51,6 +49,9 @@ const AddStudent = () => {
         setSection(event.target.value);
     };
 
+    const handlePasswordChange = (event) => {
+        setPassword(event.target.value);
+    };
 
     const getBase64 = (file, callback) => {
         const reader = new FileReader();
@@ -84,23 +85,46 @@ const AddStudent = () => {
             });
         }, Math.random() * (5000 - 3000) + 3000); // Random delay between 3s and 5s
     };
+
     const Submit = (event) => {
         event.preventDefault();
-        message.success('Added Successfully')
-        // event.name('');
-        // event.arid('');
-        // event.semester('');
-        // event.section('');
-        // event.cgpa('');
-        // event.gender('');
-        // event.password('');
-        // event.father('');
+
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('aridno', arid);
+        formData.append('semester', semester);
+        formData.append('cgpa', cgpa);
+        formData.append('gender', gender);
+        formData.append('fathername', father);
+        formData.append('degree', degree);
+        formData.append('section', section);
+        formData.append('password', password);
+        formData.append('pic', imageUrl);
+
+        axios.post(`${EndPoint.addStudent}`, formData)
+            .then(response => {
+                message.success('Added Successfully');
+                // Clear form fields after successful submission
+                setName('');
+                setArid('');
+                setSemester('');
+                setCgpa('');
+                setGender('');
+                setFather('');
+                setDegree('');
+                setSection('');
+                setPassword('');
+                setImageUrl(null);
+            })
+            .catch(error => {
+                message.error('Failed to add student');
+                console.error('Error:', error);
+            });
     };
 
     const Cancel = (event) => {
-        navigate(-1);
+        navigate('/Admin-Dashboard');
     };
-
     return (
         <div className="container">
             <Header className="navbar">
@@ -140,21 +164,21 @@ const AddStudent = () => {
                             />
                         </div>
                         <div className='input-container'>
-                            <Input placeholder="Enter Name" value={name} onChange={StudentName} suffix={<SearchOutlined />} required/>
+                            <Input placeholder="Enter Name" value={name} onChange={StudentName} suffix={<SearchOutlined />} required />
                         </div>
 
                         <div className='input-container'>
-                            <Input placeholder="Enter Arid" value={arid} onChange={StudentAird} suffix={<SearchOutlined />} required/>
+                            <Input placeholder="Enter Arid" value={arid} onChange={StudentAird} suffix={<SearchOutlined />} required />
                         </div>
 
                         <div className='input-container'>
-                            <Input placeholder="Enter Semester" value={semester} onChange={StudentSemester} required/>
+                            <Input placeholder="Enter Semester" value={semester} onChange={StudentSemester} required />
                         </div>
                         <div className='input-container'>
-                            <Input placeholder="Enter CGPA" value={cgpa} onChange={StudentCgpa}required />
+                            <Input placeholder="Enter CGPA" value={cgpa} onChange={StudentCgpa} required />
                         </div>
                         <div className='input-container'>
-                            <Input placeholder="Enter section" value={section} onChange={StudentSection} required/>
+                            <Input placeholder="Enter section" value={section} onChange={StudentSection} required />
                         </div>
                         <label>Gender</label>
                         <div className='RadioButton'>
@@ -187,7 +211,7 @@ const AddStudent = () => {
                             </select>
                         </div>
                         <div className='input-container'>
-                            <Input placeholder="Enter Father Name" value={father} onChange={FatherName} required/>
+                            <Input placeholder="Enter Father Name" value={father} onChange={FatherName} required />
                         </div>
                         <div className='input-container'>
                             <Input.Password

@@ -1,122 +1,153 @@
 import React, { useState } from 'react';
 import '../Styling/PersonalDetails.css';
-import Input from '../components/Input.js';
-import Description from '../components/DescriptionBox.js';
-import { Button, message } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { Input, Button, message } from 'antd';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeftOutlined, CheckOutlined } from '@ant-design/icons';
-
+import EndPoint from '../endpoints';
+const { TextArea } = Input;
 
 const PersonalDetails = () => {
-    const history = useNavigate();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { formData } = location.state || {};
 
     const [house, setHouse] = useState('');
-    const [file, setFile] = useState(null);
-    const [uploadHouseAgreement, setUploadHouseAgreement] = useState(false);
-    const [uploadEvidence, setUploadEvidence] = useState(false);
+    const [agreement, setAgreement] = useState(null);
+    const [agreementBase64, setAgreementBase64] = useState('');
+    const [reason, setReason] = useState('');
+    const [amount, setAmount] = useState('');
 
-    const HouseDetails = (event) => {
+    const handleHouseDetails = (event) => {
         setHouse(event.target.value);
     };
-    const FileData = (event) => {
-        setFile(event.target.files[0]);
+
+    const handleFileData = (event) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setAgreementBase64(reader.agreement);
+        };
+        reader.readAsDataURL(file);
     };
 
-    const HouseAgreement = () => {
-        setUploadHouseAgreement(!uploadHouseAgreement);
+    const handleReasonChange = (event) => {
+        setReason(event.target.value);
     };
 
-    const Evidence = () => {
-        setUploadEvidence(!uploadEvidence);
+    const handleAmountChange = (event) => {
+        setAmount(event.target.value);
     };
 
-    const Back = (event) => {
-        history(-1);
-    }
+    const handleBack = () => {
+        navigate('/AfterLogin');
+    };
 
-
-    const Submit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        message.success("Submit Successfully.");
-        setTimeout(() => {
-            history(-2); // Navigates back two steps in the history stack after 3 seconds
-            //  window.location.reload();   reload the current screen
-        }, 3500); // Delay navigation by 3 seconds
+
+        // Validation check
+        if (!house || !agreementBase64 || !reason || !amount) {
+            message.error("Please fill in all fields.");
+            return;
+        }
+
+        const updatedFormData = {
+            ...formData,
+            house: house,
+            agreement: agreementBase64,
+            reason: reason,
+            amount: amount
+        };
+
+        try {
+            const response = await fetch(EndPoint.sendApplication, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedFormData)
+            });
+
+            if (response.ok) {
+                message.success("Submitted Successfully.");
+                setTimeout(() => {
+                    navigate('/StudentDashboard');
+                }, 1500);
+            } else {
+                message.error("Submission Failed.");
+            }
+        } catch (error) {
+            console.error('Error submitting the form:', error);
+            message.error("Submission Failed.");
+        }
     };
 
     return (
         <div className="container">
             <div className="form-box">
                 <header>
-
                     <h1 id="title">Personal Details</h1>
                 </header>
-                <form onSubmit={Submit}>
+                <form onSubmit={handleSubmit}>
                     <div>
                         <label>House</label>
                         <div className='RadioButton'>
                             <label>
                                 <input
                                     type="radio"
-                                    name="status"
+                                    name="house"
                                     value="own"
                                     checked={house === "own"}
-                                    onChange={HouseDetails}
+                                    onChange={handleHouseDetails}
                                 />
                                 Own
                             </label>
                             <label>
                                 <input
                                     type="radio"
-                                    name="status"
+                                    name="house"
                                     value="rent"
                                     checked={house === "rent"}
-                                    onChange={HouseDetails}
+                                    onChange={handleHouseDetails}
                                 />
                                 Rent
-                                <br />
                             </label>
                         </div>
+                        <br />
                         <label>House Agreement
                             <input
                                 type="file"
                                 accept=".pdf, .doc, .docx"
-                                onChange={FileData}
-
+                                onChange={handleFileData}
                             />
                         </label>
                         <div>
                             <label>Reason for scholarship</label>
                             <br />
-                            <Description placeholder="Reason..." />
+                            <TextArea placeholder="Reason..." value={reason} onChange={handleReasonChange} />
                         </div>
-                        <br />
-                        <label>Reason Evidence
-                            <input
-                                type="file"
-                                accept=".pdf, .doc, .docx"
-                                onChange={FileData}
-                            />
-                        </label>
-
                         <div>
                             <label>Required Amount</label>
                             <br />
-                            <Input type="number"
+                            <Input
+                                type="number"
                                 inputMode="numeric"
                                 min={0}
                                 required
-                                placeholder="Enter Amount" />
+                                placeholder="Enter Amount"
+                                value={amount}
+                                onChange={handleAmountChange}
+                            />
                         </div>
                         <br />
                         <div className='Buttons'>
-                            <Button type='primary' onClick={Back} icon={<ArrowLeftOutlined />}>Back</Button>
-                            <Button type='primary' onClick={Submit} icon={<CheckOutlined />}>Submit</Button>
+                            <Button type='primary' onClick={handleBack} icon={<ArrowLeftOutlined />}>Back</Button>
+                            <Button type='primary' htmlType="submit" icon={<CheckOutlined />}>Submit</Button>
                         </div>
                     </div>
                 </form>
-            </div >
-        </div >
+            </div>
+        </div>
     );
 };
 

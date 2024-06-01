@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Avatar, Button, Card, Row, Col, Spin, Alert, Drawer, message } from 'antd';
+import { Layout, Avatar, Button, Card, Row, Col, Spin, Alert, Drawer, message, Modal } from 'antd';
 import { UserOutlined, LogoutOutlined, BarsOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 import EndPoint from '../endpoints'; // Importing the EndPoint object
@@ -39,7 +39,7 @@ const StudentDashboard = () => {
 
     const fetchApplicationStatus = async (profileId) => {
         try {
-            const response = await fetch('http://192.168.207.81/Backend/api/Student/getStudentApplicationStatus?id='+profileId);
+            const response = await fetch(`${EndPoint.checkApplicationStatus}?id=${profileId}`);
             if (!response.ok) throw new Error('Error fetching application status');
             const data = await response.json();
             setApplicationStatus(data.applicationStatus);
@@ -68,26 +68,33 @@ const StudentDashboard = () => {
             fetchApplicationStatus(storedProfileId);
         } else {
             setLoading(false);
-            setError('No profile ID found in local storage.');
+            setError('No profile ID found.'); // in local Storage
         }
     }, []);
 
-    const navigateToScholarship = () => {
-        if (!applicationStatus || applicationStatus === 'Rejected') {
-            navigate("/INFOFROM");
-        } else {
-            message.error('Your scholarship application is currently being processed.');
-        }
+    // const navigateToScholarship = () => {
+    //     if (!applicationStatus || applicationStatus === 'Rejected') {
+    //         navigate("/INFOFROM");
+    //     } else {
+    //         message.error('Your scholarship application is currently being processed.');
+    //     }
+    // };
+
+    const logout = () => {
+        Modal.confirm({
+            title: 'Logout',
+            content: 'Are you sure you want to logout?',
+            okText: 'Yes',
+            cancelText: 'No',
+            onOk: () => {
+                localStorage.clear(); // Clear local storage on logout
+                navigate('/Login');
+            },
+        });
     };
 
-    const logout = (event) => {
-        event.preventDefault();
-        localStorage.clear(); // Clear local storage on logout
-        navigate('/Login');
-    };
-
-    const Apply = () => {
-        navigateToScholarship();
+    const Apply = (profileId) => {
+        navigate('/AfterLogin', { state: { profileId: profileId } });
     };
 
     const NeedCriteria = () => {
@@ -146,13 +153,13 @@ const StudentDashboard = () => {
                 ) : (
                     <>
                         <Card title="Welcome" className="welcome-card">
-                            <b>Name:</b> {name}<br />
-                            <b>Arid :</b> {arid_no}<br />
+                            <b>Name:</b> <input type="text" value={name} disabled /><br />
+                            <b>Arid :</b> <input type="text" value={arid_no} disabled /><br />
                             <b>Status:</b> {applicationStatus}
                         </Card>
                         <div className="card-container">
                             <Card
-                                onClick={Apply}
+                                onClick={() => Apply(profileId)}
                                 hoverable
                                 cover={<img src={application} alt="Error loading image" />}
                                 className="content-card"

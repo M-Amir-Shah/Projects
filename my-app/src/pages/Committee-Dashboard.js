@@ -4,6 +4,7 @@ import { FilePdfOutlined, FileExcelOutlined, FileImageOutlined, BarsOutlined, Us
 import '../Styling/Committee-DashBoard.css';
 import { useNavigate } from "react-router-dom";
 import logo from './BiitLogo.jpeg';
+import axios from 'axios';
 import Search from '../components/SearchingButton';
 import EndPoint from '../endpoints'; // Import your API endpoints file
 
@@ -51,15 +52,11 @@ const App = () => {
         const fetchDocuments = async () => {
             try {
                 setLoading(true);
-                const response = await fetch(`${EndPoint.getApplication}?id=YOUR_COMMITTEE_ID`); // Replace with your actual committee ID
-                if (!response.ok) {
-                    throw new Error('Failed to fetch documents data');
-                }
-                const data = await response.json();
-                setDocuments(data);
+                const response = await axios.get(`${EndPoint.getApplication}?id=YOUR_COMMITTEE_ID`); // Replace with your actual committee ID
+                setDocuments(response.data);
             } catch (error) {
                 console.error('Error fetching documents:', error);
-                // message.error('Failed to fetch documents data.');
+                message.error('Failed to fetch documents data.');
             } finally {
                 setLoading(false);
             }
@@ -82,18 +79,13 @@ const App = () => {
 
     const BalanceCheck = async () => {
         try {
-            const response = await fetch(EndPoint.getBalance);
-            if (!response.ok) {
-                throw new Error('Failed to fetch balance data');
-            }
-            const money = await response.json();
+            const response = await axios.get(EndPoint.getBalance);
+            const money = response.data;
             message.success(`Remaining Balance is: ${money.remainingAmount}`);
         } catch (error) {
-
             message.error('Failed to fetch balance data.');
         }
     };
-    
 
     return (
         <div>
