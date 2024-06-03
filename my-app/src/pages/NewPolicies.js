@@ -58,12 +58,11 @@ const NeedMeritPolicy = () => {
                 console.error('Failed to add policy:', response.statusText);
             }
         } catch (error) {
-            console.error('Error adding policy:', error);
+            console.error('Error adding policy:', error.response || error.message);
         } finally {
             setLoading(false);
         }
     };
-
 
     const Back = () => {
         history(-1);

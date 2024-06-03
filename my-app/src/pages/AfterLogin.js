@@ -26,6 +26,8 @@ const AfterLogin = () => {
     const [contactNo, setContactNo] = useState('');
     const [salary, setSalary] = useState('');
     const [error, setError] = useState('');
+    const [length, setLength]=useState('1');
+    const [isPicked, setIsPicked] = useState('');
 
     useEffect(() => {
         if (profileId) {
@@ -238,20 +240,21 @@ const AfterLogin = () => {
                                     <label className='label' htmlFor="salary">Salary</label>
                                     <Input placeholder="Salary" value={salary} onChange={(e) => setSalary(e.target.value)} />
                                 </div>
-                                <label>
-                                    Upload Salary Slip:
-                                    <input
-                                        type="file"
-                                        accept=".pdf, .doc, .docx, .jpg, .jpeg, .png, .gif"
-                                        onChange={handleSalarySlip}
-                                    />
-                                </label>
+                                <div>
+                                    <label>
+                                        Upload Salary Slip:
+                                        <input
+                                            type="file"
+                                            accept=".pdf, .doc, .docx, .jpg, .jpeg, .png, .gif"
+                                            onChange={handleSalarySlip}
+                                        />
+                                    </label>
+                                </div>
                             </div>
                         )}
-                        <div className='button-container'>
-                            <Button type="primary" htmlType="submit">Next</Button>
-                            <Button type="default" onClick={handleCancel}>Cancel</Button>
-                        </div>
+
+                        <Button type="primary" htmlType="submit" className="next">Next</Button>
+                        <Button type="danger" onClick={handleCancel} className="cancel">Cancel</Button>
                     </div>
                 </form>
             </div>

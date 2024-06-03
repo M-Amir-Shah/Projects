@@ -75,7 +75,7 @@ const App = () => {
                         MeritBase Shortlisting
                     </Card>
                     <Card
-                        onClick={() => navigateTo('/need-base')}
+                        onClick={() => navigateTo('/Admin-ViewApplication-List')}
                         hoverable
                         cover={<img src={needbase} alt="Need Base" />}
                         className="content-card"

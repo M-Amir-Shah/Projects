@@ -10,7 +10,13 @@ body {
 
 .root {
   height: 100vh;
+  background: linear-gradient(to right bottom, #119992, #b5c6e0);
 }
+
+#root {
+  background: linear-gradient(to right bottom, #119992, #b5c6e0);
+}
+
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',

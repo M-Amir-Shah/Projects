@@ -79,7 +79,7 @@ const App = () => {
 
     const BalanceCheck = async () => {
         try {
-            const response = await axios.get(EndPoint.getBalance);
+            const response = await axios.get(EndPoint.getAllBudget);
             const money = response.data;
             message.success(`Remaining Balance is: ${money.remainingAmount}`);
         } catch (error) {

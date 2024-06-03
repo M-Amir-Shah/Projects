@@ -4,53 +4,83 @@ import { Button, List, Col, Row, Layout, Avatar, message, Modal } from 'antd';
 import { ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import logo from './BiitLogo.jpeg';
+import axios from 'axios';
 import EndPoint from '../endpoints'; // Import your API endpoints file
 const { Header } = Layout;
 
 const GradersList = () => {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false); // Initialize loading state
-    const [modalVisible, setModalVisible] = useState(false); // State variable for modal visibility
-    const [selectedTeacher, setSelectedTeacher] = useState(null); // State variable to store selected teacher
-    const [studentsData, setStudentsData] = useState([]); // State variable to store students data
-    const [facultyData, setFacultyData] = useState([]); // State variable to store faculty data
+    const [loading, setLoading] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedTeacher, setSelectedTeacher] = useState();
+    const [selectedStudent, setSelectedStudent] = useState();
+    const [studentsData, setStudentsData] = useState([]);
+    const [facultyData, setFacultyData] = useState([]);
 
     useEffect(() => {
         const fetchStudents = async () => {
             try {
-                setLoading(true); // Set loading state to true while fetching data
-                const response = await fetch(EndPoint.getAllStudents); // Fetch data from API endpoint
-                if (!response.ok) {
-                    throw new Error('Failed to fetch students data');
-                }
-                const data = await response.json(); // Parse JSON response
-                setStudentsData(data); // Set fetched data to state
+                setLoading(true);
+                // Simulating loading delay of 3-5 seconds
+                setTimeout(async () => {
+                    const response = await axios.get(EndPoint.getAllStudents);
+                    setStudentsData(response.data);
+                }, Math.floor(Math.random() * 3000) + 3000); // Random delay between 3 to 5 seconds
             } catch (error) {
                 console.error('Error fetching students:', error);
                 message.error('Failed to fetch students data.');
             } finally {
-                setLoading(false); // Set loading state back to false after fetching data
+                setLoading(false);
             }
         };
 
-        fetchStudents(); // Call the fetchStudents function when component mounts
+        fetchStudents();
     }, []);
 
-    // Function to handle assigning a teacher
-    const assignTeacher = async (teacher) => {
-        try {
-            const response = await fetch(EndPoint.getFacultyMembers);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+    useEffect(() => {
+        const fetchFacultyMembers = async () => {
+            try {
+                setLoading(true);
+                // Simulating loading delay of 3-5 seconds
+                setTimeout(async () => {
+                    const response = await axios.get(EndPoint.getFacultyMembers);
+                    if (!response.data || !Array.isArray(response.data)) {
+                        throw new Error('Invalid data received');
+                    }
+                    setFacultyData(response.data);
+                }, Math.floor(Math.random() * 3000) + 3000); // Random delay between 3 to 5 seconds
+            } catch (error) {
+                console.error('Error fetching Faculty Members:', error);
+                message.error('Failed to load Faculty Members.');
+            } finally {
+                setLoading(false);
             }
-            const data = await response.json();
-            return data;
+        };
+
+        fetchFacultyMembers();
+    }, []);
+
+    const assignTeacher = async () => {
+        try {
+            setLoading(true);
+            const response = await axios.post(EndPoint.assignGrader, {
+                facultyId: selectedTeacher.facultyId,
+                studentId: selectedStudent.studentId
+            });
+            if (response.status === 200) {
+                message.success('Teacher assigned successfully');
+            } else {
+                message.error('Failed to assign teacher');
+            }
         } catch (error) {
-            console.error('Error fetching Faculty Members:', error);
-            message.error('Failed to load Faculty Members.');
-            return [];
+            console.error('Error assigning teacher:', error);
+            message.error('Failed to assign teacher');
+        } finally {
+            setLoading(false);
+            setModalVisible(false);
         }
     };
+    
 
     const Back = () => {
         navigate('/Admin-Dashboard');
@@ -64,7 +94,7 @@ const GradersList = () => {
                         <Button onClick={Back} icon={<ArrowLeftOutlined />} />
                     </Col>
                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#ffff' }}>
-                        BIIT Graders List
+                        BIIT Student List
                     </Col>
                     <Col>
                         <img src={logo} alt="BIIT Financial Aid Allocation Tool" style={{ height: '35px', width: '35px', borderRadius: '25px' }} />
@@ -72,8 +102,9 @@ const GradersList = () => {
                 </Row>
             </Header>
             <div className="form-box">
-                <h2 style={{ textAlign: 'center' }}>Graders</h2>
+                <h2 style={{ textAlign: 'center' }}>Assigning Grader</h2>
                 <div className="scrollable-list">
+
                     <List
                         itemLayout="horizontal"
                         dataSource={studentsData}
@@ -82,6 +113,7 @@ const GradersList = () => {
                                 <List.Item.Meta
                                     avatar={<Avatar size={64} icon={<UserOutlined />} />}
                                     title={item.name}
+                                    description={item.arid_no}
                                 />
                                 <Button onClick={() => { setSelectedTeacher(item); setModalVisible(true); }}>
                                     Assign
@@ -91,34 +123,36 @@ const GradersList = () => {
                     />
                 </div>
             </div>
-            {/* Modal for assigning teacher */}
             <Modal
-                title="Assign Teacher"
+                title="Assign Faculty Member"
                 visible={modalVisible}
                 onCancel={() => setModalVisible(false)}
                 footer={[
                     <Button key="cancel" onClick={() => setModalVisible(false)}>
                         Cancel
                     </Button>,
+
                 ]}
             >
-                {/* List of teachers in the modal */}
-                <List
-                    itemLayout="horizontal"
-                    dataSource={facultyData} // Use facultyData instead of teachersData
-                    renderItem={item => (
-                        <List.Item>
-                            <List.Item.Meta
-                                avatar={<Avatar size={64} icon={<UserOutlined />} />}
-                                title={item.name}
-                            />
-                            <Button type="primary" onClick={() => assignTeacher(item)} loading={loading}>
-                                Assign
-                            </Button>
-                        </List.Item>
-                    )}
-                />
+                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                    <List
+                        itemLayout="horizontal"
+                        dataSource={facultyData}
+                        renderItem={item => (
+                            <List.Item>
+                                <List.Item.Meta
+                                    avatar={<Avatar size={64} icon={<UserOutlined />} />}
+                                    title={item.name}
+                                />
+                                <Button key="assign" type="primary" onClick={assignTeacher} loading={loading}>
+                                    Assign
+                                </Button>
+                            </List.Item>
+                        )}
+                    />
+                </div>
             </Modal>
+
         </div>
     );
 };

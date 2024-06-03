@@ -12,7 +12,6 @@
     justify-content: center;
     align-items: center;
     padding: 5%;
-    flex-direction: column;
   }
   .scrollable-list {
     max-height: 300px; /* Adjust the max-height as needed */

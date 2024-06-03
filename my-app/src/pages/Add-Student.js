@@ -22,7 +22,7 @@ const AddStudent = () => {
     const [section, setSection] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const [imageUrl, setImageUrl] = useState(null);
+    const [pic, setImageUrl] = useState(null);
 
     const StudentName = (event) => {
         setName(event.target.value);
@@ -99,7 +99,7 @@ const AddStudent = () => {
         formData.append('degree', degree);
         formData.append('section', section);
         formData.append('password', password);
-        formData.append('pic', imageUrl);
+        formData.append('pic', pic);
 
         axios.post(`${EndPoint.addStudent}`, formData)
             .then(response => {
@@ -147,8 +147,8 @@ const AddStudent = () => {
                             <label htmlFor="upload-button" className="avatar-uploader">
                                 {loading ? (
                                     <LoadingOutlined className="loading-spinner" />
-                                ) : imageUrl ? (
-                                    <img src={imageUrl} alt="avatar" className="avatar-image" />
+                                ) : pic ? (
+                                    <img src={pic} alt="avatar" className="avatar-image" />
                                 ) : (
                                     <div className="upload-icon">
                                         <CameraOutlined />
@@ -164,11 +164,11 @@ const AddStudent = () => {
                             />
                         </div>
                         <div className='input-container'>
-                            <Input placeholder="Enter Name" value={name} onChange={StudentName} suffix={<SearchOutlined />} required />
+                            <Input placeholder="Enter Student Name" value={name} onChange={StudentName} required />
                         </div>
 
                         <div className='input-container'>
-                            <Input placeholder="Enter Arid" value={arid} onChange={StudentAird} suffix={<SearchOutlined />} required />
+                            <Input placeholder="Enter Arid" value={arid} onChange={StudentAird} required />
                         </div>
 
                         <div className='input-container'>
@@ -178,7 +178,7 @@ const AddStudent = () => {
                             <Input placeholder="Enter CGPA" value={cgpa} onChange={StudentCgpa} required />
                         </div>
                         <div className='input-container'>
-                            <Input placeholder="Enter section" value={section} onChange={StudentSection} required />
+                            <Input placeholder="Enter section [A,B,C]" value={section} onChange={StudentSection} required />
                         </div>
                         <label>Gender</label>
                         <div className='RadioButton'>
@@ -202,13 +202,8 @@ const AddStudent = () => {
                                 Female
                             </label>
                         </div>
-                        <div>
-                            <select id="semester" value={degree} onChange={StudentDegree} required>
-                                <option value="" size="large">Select Degree </option>
-                                <option value="bscs">BSCS</option>
-                                <option value="bsse">BSSE</option>
-                                <option value="bsit">BSIT</option>
-                            </select>
+                        <div className='input-container'>
+                            <Input placeholder="Enter Degree [BSCS, BSSE, BSIT]" value={degree} onChange={StudentDegree} required />
                         </div>
                         <div className='input-container'>
                             <Input placeholder="Enter Father Name" value={father} onChange={FatherName} required />

@@ -115,19 +115,21 @@ const AddFaculty = () => {
                                 type="file"
                                 style={{ display: 'none' }}
                                 onChange={ImageUpload}
+                                required
                             />
                         </div>
                         <div className="form-fields">
                             <label>Name</label>
-                            <Input value={name} onChange={NameSet} placeholder="Enter name" />
+                            <Input value={name} onChange={NameSet} placeholder="Enter name" required/>
                             <label>Contact</label>
-                            <Input value={contact} onChange={ContactSet} placeholder="Enter contact" />
+                            <Input value={contact} onChange={ContactSet} placeholder="Enter contact" required/>
                             <label>Password</label>
-                            <Input.Password value={password} onChange={PasswordSet} placeholder="Enter password" />
+                            <Input.Password value={password} onChange={PasswordSet} placeholder="Enter password" required/>
                         </div>
+                        <br/>
                         <div className='buttons'>
-                            <Button type="default" onClick={Cancel} size='large' style={{ marginRight: '10px' }}>Cancel</Button>
-                            <Button type="primary" htmlType="submit" size='large'>Submit</Button>
+                            <Button type="primary" onClick={Cancel} size='large' style={{ marginRight: '10px' }}>Cancel</Button>
+                            <Button type="primary" htmlType="submit" size='large'>Add</Button>
                         </div>
                     </form>
                 </Content>

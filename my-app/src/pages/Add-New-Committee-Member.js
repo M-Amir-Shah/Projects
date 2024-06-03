@@ -3,55 +3,62 @@ import '../Styling/Add-Committee-Member.css'; // Keep this import if needed for 
 import Search from '../components/SearchingButton.js';
 import { Button, List, Col, Row, Layout, message } from 'antd';
 import logo from './BiitLogo.jpeg';
-import { CheckOutlined, ArrowLeftOutlined } from '@ant-design/icons';
-import EndPoint from '../endpoints'; // Import your API endpoints file
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
+import axios from 'axios'; // Import Axios
+import EndPoint from '../endpoints.js';
+
 const { Header } = Layout;
 
 const MeritBase = () => {
-    const [loading, setLoading] = useState(false); // Initialize loading state
-    const [applications, setApplications] = useState([]); // State variable to store applications data
-    const navigate = useNavigate(); // Get the navigate function from useNavigate hook
+    const [loading, setLoading] = useState(false); 
+    const [applications, setApplications] = useState([]); 
+    const navigate = useNavigate(); 
 
     useEffect(() => {
         const fetchApplications = async () => {
             try {
-                setLoading(true); // Set loading state to true while fetching data
-                const response = await fetch(EndPoint.addCommitteeMember); // Fetch data from API endpoint
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data');
-                }
-                const data = await response.json(); // Parse JSON response
-                setApplications(data); // Set fetched data to state
+                setLoading(true); 
+                const response = await axios.get(EndPoint.getFacultyMembers); 
+                setApplications(response.data); 
             } catch (error) {
-                console.error('Error fetching :', error);
-                message.error('Failed to fetch  data.');
+                console.error('Error fetching:', error);
+                message.error('Failed to fetch data.');
             } finally {
-                setLoading(false); // Set loading state back to false after fetching data
+                setLoading(false); 
             }
         };
 
-        fetchApplications(); // Call the fetchApplications function when component mounts
+        fetchApplications();
     }, []);
 
-    const handleAccept = (id) => {
-        setApplications(applications.map(app =>
-            app.id === id ? { ...app, status: 'Already Member' } : app
-        ));
-        message.success('Successfully Added');
+    const handleAccept = async (id) => {
+        try {
+            // const existingMember = applications.find(member => member.id === id && member.status === 'Already Member');
+            // if (existingMember) {
+            //     message.error('Already a committee member.');
+            //     return;
+            // }
+    
+            const response = await axios.post(EndPoint.addCommitteeMember, { id });
+
+            if (response.status === 200) {
+                setApplications(applications.map(app =>
+                    app.id === id ? { ...app, status: 'Already Member' } : app
+                ));
+                message.success('Successfully Added');
+            } else if (response.status === 302) {
+                message.error('Already Exist');
+            } else {
+                message.error('Failed to add member.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            message.error('Failed to add member.');
+        }
     };
 
-    const handleReject = (id) => {
-        setApplications(applications.map(app =>
-            app.id === id ? { ...app, status: 'Not Member' } : app
-        ));
-    };
-
-    const Submit = (event) => {
-        event.preventDefault();
-    };
-
-    const Back = () => {
+    const handleBack = () => {
         navigate('/Admin-Dashboard');
     };
 
@@ -60,7 +67,7 @@ const MeritBase = () => {
             <Header className="navbar">
                 <Row justify="space-between" align="middle">
                     <Col>
-                        <Button type="text" icon={<ArrowLeftOutlined />} onClick={Back} />
+                        <Button type="text" icon={<ArrowLeftOutlined />} onClick={handleBack} />
                     </Col>
                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#ffff' }}>
                         BIIT
@@ -72,7 +79,7 @@ const MeritBase = () => {
             </Header>
             <div className="form-box">
                 <h3>Add Committee Member</h3>
-                <form onSubmit={Submit}>
+                <form >
                     <div>
                         <div>
                             <Search placeholder="Search Name" />
@@ -85,8 +92,7 @@ const MeritBase = () => {
                                 renderItem={item => (
                                     <List.Item
                                         actions={[
-                                            <Button type="primary" icon={<CheckOutlined />} onClick={() => handleAccept(item.id)} />,
-                                            <Button type="danger" onClick={() => handleReject(item.id)}>Reject</Button>
+                                            <Button type="primary"  onClick={() => handleAccept(item.id)} >Add</Button>
                                         ]}
                                     >
                                         <List.Item.Meta

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import '../Styling/PersonalDetails.css';
 import { Input, Button, message } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeftOutlined, CheckOutlined } from '@ant-design/icons';
@@ -12,7 +11,6 @@ const PersonalDetails = () => {
     const { formData } = location.state || {};
 
     const [house, setHouse] = useState('');
-    const [agreement, setAgreement] = useState(null);
     const [agreementBase64, setAgreementBase64] = useState('');
     const [reason, setReason] = useState('');
     const [amount, setAmount] = useState('');
@@ -25,7 +23,7 @@ const PersonalDetails = () => {
         const file = event.target.files[0];
         const reader = new FileReader();
         reader.onloadend = () => {
-            setAgreementBase64(reader.agreement);
+            setAgreementBase64(reader.result); // Use reader.result to get the base64 encoded string
         };
         reader.readAsDataURL(file);
     };
@@ -114,13 +112,12 @@ const PersonalDetails = () => {
                             </label>
                         </div>
                         <br />
-                        <label>House Agreement
-                            <input
-                                type="file"
-                                accept=".pdf, .doc, .docx"
-                                onChange={handleFileData}
-                            />
-                        </label>
+                        <label>House Agreement</label>
+                        <input
+                            type="file"
+                            accept=".pdf, .doc, .docx"
+                            onChange={handleFileData}
+                        />
                         <div>
                             <label>Reason for scholarship</label>
                             <br />

@@ -9,6 +9,7 @@ import Criteria from '../Pictures/Criteria.png';
 import help from '../Pictures/Help.png';
 import logo from './BiitLogo.jpeg';
 import '../Styling/StudentDashboard.css';
+import Image from '../Pictures/admin.jpg';
 
 const { Header, Content } = Layout;
 
@@ -131,7 +132,7 @@ const StudentDashboard = () => {
                             visible={isDrawerVisible}
                         >
                             <div className="sider-content">
-                                <Avatar size={64} icon={<UserOutlined />} />
+                            <Avatar size={64} src={Image} />
                             </div>
                             <br />
                             <Button type="primary" onClick={logout} icon={<LogoutOutlined />} style={{ width: '80%' }}>Logout</Button>

@@ -27,10 +27,12 @@ import FacultyDash from './pages/Faculty-Dashboard'
 import StudentRecords from "./pages/Student-Record";
 import UpdatePassword from './pages/Update-Password'
 import ViewApplication from './pages/View-Application'
+import AdminApp from './pages/Admin-ViewApplication'
+import AdminViewAppList from './pages/Admin-ViewApplication-List'
+
 
 function App() {
   return (
-    <div>
       <Routes>
         <Route path='/' element={<Login />} />
         <Route path="/Login" element={<Login />} />
@@ -60,10 +62,10 @@ function App() {
         <Route path="/Student-Record" element={<StudentRecords />} />
         <Route path="/View-Application" element={<ViewApplication />} />
         <Route path="/Update-Password" element={<UpdatePassword />} />
-
+        <Route path="/Admin-ViewApplication" element={<AdminApp/>}/>
+        <Route path="/Admin-ViewApplication-List" element={<AdminViewAppList/>}/>
       </Routes>
-    </div>
-  );
+   );
 }
 
 export default App;

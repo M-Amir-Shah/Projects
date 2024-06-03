@@ -82,13 +82,3 @@
         transform: rotate(360deg);
     }
 }
-
-.input-container {
-    margin-bottom: 15px;
-}
-
-.label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}

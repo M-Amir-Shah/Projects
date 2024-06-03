@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, Layout, message, List, Modal, Rate, Input, Form, Avatar, Row, Col, Drawer, Button } from 'antd';
 import { BarsOutlined, UserOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
+import axios from 'axios'; // Import axios
 import logo from './BiitLogo.jpeg';
 import EndPoint from '../endpoints';
 import '../Styling/Faculty-Dashboard.css';
@@ -87,35 +88,32 @@ const StudentList = () => {
   const [studentRatings, setStudentRatings] = useState({});
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [students, setStudents] = useState([]);
-  const [memberId, setMemberId] = useState(null);
+  const [facultyId, setFacultyId] = useState(null);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchStudents = async () => {
+    const fetchStudents = async (id) => {
       try {
-        const response = await fetch(`${EndPoint.teachersGraders}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch students');
-        }
-        const data = await response.json();
-        console.log('Fetched students:', data); // Check what data is returned
-        if (Array.isArray(data)) {
-          setStudents(data);
-          if (data.length > 0) {
-            setMemberId(data[0].memberId);
+        if (id) {
+          const response = await axios.get(`${EndPoint.teachersGraders}?id=${id}`);
+          if (response.status === 200) {
+            const data = response.data;
+            console.log('Fetched graders:', data);
+            setStudents(data);
+            if (data.length > 0) {
+              setFacultyId(data[0].facultyId);
+            }
+          } else {
+            throw new Error('Failed to fetch graders');
           }
-        } else {
-          throw new Error('Invalid data received from server');
         }
       } catch (error) {
         message.error(error.message);
       }
     };
-  
-    fetchStudents();
-  }, []);
-  
+    fetchStudents(facultyId);
+  }, [facultyId]);
 
   const showDrawer = () => setIsDrawerVisible(true);
   const onCloseDrawer = () => setIsDrawerVisible(false);
@@ -127,11 +125,23 @@ const StudentList = () => {
     setIsModalVisible(true);
   };
 
-  const handleModalOk = () => {
-    setStudentRatings((prev) => ({
-      ...prev,
-      [selectedStudent.id]: { rating, suggestion },
-    }));
+  const handleModalOk = async () => {
+    try {
+      const response = await axios.post(`${EndPoint.rateGraderPerformance}`, {
+        facultyId: facultyId,
+        graderId: selectedStudent.id,
+        rate: rating,
+        session: selectedStudent.session // Assuming session is available in selectedStudent
+      });
+      if (response.status === 200) {
+        message.success('Grader rated successfully');
+        // Update state or handle success scenario
+      } else {
+        message.error('Failed to rate grader');
+      }
+    } catch (error) {
+      message.error('Failed to rate grader');
+    }
     setIsModalVisible(false);
   };
 
@@ -141,12 +151,8 @@ const StudentList = () => {
 
   const switchToCommittee = async () => {
     try {
-      const response = await fetch(`${EndPoint.switchRole}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ memberId }),
-      });
-      if (response.ok) {
+      const response = await axios.post(`${EndPoint.switchRole}`, { facultyId: facultyId });
+      if (response.status === 200) {
         message.success('Switched to Committee role');
       } else {
         message.error('Failed to switch role');
@@ -156,9 +162,9 @@ const StudentList = () => {
     }
   };
 
-  const logout = () =>{
+  const logout = () => {
     navigate('/Login');
-  }
+  };
 
   return (
     <Layout>
