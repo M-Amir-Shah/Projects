@@ -33,30 +33,31 @@ const MeritBase = () => {
     }, []);
 
     const handleAccept = async (id) => {
-        try {
-            // const existingMember = applications.find(member => member.id === id && member.status === 'Already Member');
-            // if (existingMember) {
-            //     message.error('Already a committee member.');
-            //     return;
-            // }
-    
-            const response = await axios.post(EndPoint.addCommitteeMember, { id });
+    try {
+        const response = await axios.post(EndPoint.addCommitteeMember, { id });
 
-            if (response.status === 200) {
-                setApplications(applications.map(app =>
-                    app.id === id ? { ...app, status: 'Already Member' } : app
-                ));
-                message.success('Successfully Added');
-            } else if (response.status === 302) {
-                message.error('Already Exist');
-            } else {
-                message.error('Failed to add member.');
-            }
-        } catch (error) {
-            console.error('Error:', error);
+        if (response.status === 200) {
+            setApplications(applications.map(app =>
+                app.id === id ? { ...app, status: 'Already Member' } : app
+            ));
+            message.success('Successfully Added');
+        } else if (response.status === 302) {
+            message.error('Already Exists');
+        } else {
             message.error('Failed to add member.');
         }
-    };
+    } catch (error) {
+        console.error('Error:', error);
+        if (error.response) {
+            message.error(`Error: ${error.response.status} - ${error.response.data}`);
+        } else if (error.request) {
+            message.error('No response received from server.');
+        } else {
+            message.error('Failed to add member.');
+        }
+    }
+};
+
 
     const handleBack = () => {
         navigate('/Admin-Dashboard');
