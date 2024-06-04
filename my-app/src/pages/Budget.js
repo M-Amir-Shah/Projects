@@ -17,7 +17,7 @@ const Navbar = () => {
     useEffect(() => {
         const fetchBudgetData = async () => {
             try {
-                const response = await fetch(`${EndPoint.getAllBudget}`); // Replace 'API_ENDPOINT_HERE' with your actual API endpoint
+                const response = await fetch(`${EndPoint.budgethistory}`); // Replace 'API_ENDPOINT_HERE' with your actual API endpoint
                 if (!response.ok) {
                     throw new Error('Failed to fetch budget data');
                 }
@@ -61,8 +61,9 @@ const Navbar = () => {
                 <Content className="form-box">
                 <h2 style={{ textAlign: 'center' }}>Budget History</h2>
                     <form>
+                    <Searching placeholder="Search" />
                         <div className="scrollable-list">
-                            <Searching placeholder="Search" />
+                            
                             <br />
                             {loading ? (
                                 <p>Loading...</p>

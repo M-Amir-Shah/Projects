@@ -99,6 +99,7 @@ const CommitteeMembers = () => {
                                 renderItem={item => (
                                     <List.Item>
                                         <List.Item.Meta
+                                        // <Avatar size={64} src={Image} />
                                             avatar={<Avatar size={64} icon={<UserOutlined />} />}
                                             title={item.name}
                                         />

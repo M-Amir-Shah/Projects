@@ -39,14 +39,15 @@ const fetchStudentRecords = async () => {
 
 const CommitteeMembers = () => {
     const navigate = useNavigate();
-    const [applications, setApplications] = useState([]);
+    const [faculty, setFaculty] = useState([]);
+    const [profilePic, setProfilePic] = useState();
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const loadStudentRecords = async () => {
             setLoading(true);
             const data = await fetchStudentRecords();
-            setApplications(data);
+            setFaculty(data);
             setLoading(false);
         };
 
@@ -56,7 +57,7 @@ const CommitteeMembers = () => {
     const Back = () => {
         navigate('/Committee-Members');
     };
-    
+
     const Submit = (event) => {
         event.preventDefault();
     };
@@ -64,8 +65,8 @@ const CommitteeMembers = () => {
     // const handleRemoveMember = async (memberId) => {
     //     await removeMemberFromDB(memberId);
     //     // After successful removal, update the state to reflect the changes
-    //     const updatedApplications = applications.filter(member => member.id !== memberId);
-    //     setApplications(updatedApplications);
+    //     const updatedfaculty = faculty.filter(member => member.id !== memberId);
+    //     setFaculty(updatedfaculty);
     // };
 
     return (
@@ -79,7 +80,7 @@ const CommitteeMembers = () => {
                         BIIT Faculty-Members
                     </Col>
                     <Col>
-                    <img src={logo} alt="BIIT Financial Aid Allocation Tool" style={{ height: '35px', width: '35px', borderRadius: '25px' }} />
+                        <img src={logo} alt="BIIT Financial Aid Allocation Tool" style={{ height: '35px', width: '35px', borderRadius: '25px' }} />
                     </Col>
                 </Row>
             </Header>
@@ -94,17 +95,19 @@ const CommitteeMembers = () => {
                         ) : (
                             <List
                                 itemLayout="horizontal"
-                                dataSource={applications}
+                                dataSource={faculty}
                                 renderItem={item => (
                                     <List.Item>
                                         <List.Item.Meta
-                                            avatar={<Avatar size={64} icon={<UserOutlined />} />}
+                                            avatar={<Avatar size={64} src={item.profilePic} />}
                                             title={item.name}
                                         />
+                                        {/* Uncomment the following line to add a "Remove" button */}
                                         {/* <Button icon={<CloseOutlined />} onClick={() => handleRemoveMember(item.id)} danger>Remove</Button> */}
                                     </List.Item>
                                 )}
                             />
+
                         )}
                     </div>
                 </form>

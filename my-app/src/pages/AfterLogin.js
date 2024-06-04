@@ -26,7 +26,7 @@ const AfterLogin = () => {
     const [contactNo, setContactNo] = useState('');
     const [salary, setSalary] = useState('');
     const [error, setError] = useState('');
-    const [length, setLength]=useState('1');
+    const [length, setLength] = useState('1');
     const [isPicked, setIsPicked] = useState('');
 
     useEffect(() => {
@@ -252,9 +252,9 @@ const AfterLogin = () => {
                                 </div>
                             </div>
                         )}
-
+                        <br />
                         <Button type="primary" htmlType="submit" className="next">Next</Button>
-                        <Button type="danger" onClick={handleCancel} className="cancel">Cancel</Button>
+                        <Button type="primary" onClick={handleCancel} >Cancel</Button>
                     </div>
                 </form>
             </div>

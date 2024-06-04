@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Layout, Row, Col, Badge, Drawer, Button, Avatar, message } from 'antd';
+import { Card, Layout, Row, Col, Badge, Drawer, Button, Avatar, Modal, message } from 'antd';
 import { FilePdfOutlined, FileExcelOutlined, FileImageOutlined, BarsOutlined, UserOutlined } from '@ant-design/icons';
 import '../Styling/Committee-DashBoard.css';
 import { useNavigate } from "react-router-dom";
@@ -47,6 +47,9 @@ const App = () => {
     const [showPopup, setShowPopup] = useState(false);
     const [documents, setDocuments] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [remainingBalance, setRemainingBalance] = useState(null);
+    const [totalAmount, setTotalAmount] = useState(null);
 
     useEffect(() => {
         const fetchDocuments = async () => {
@@ -79,12 +82,20 @@ const App = () => {
 
     const BalanceCheck = async () => {
         try {
-            const response = await axios.get(EndPoint.getAllBudget);
-            const money = response.data;
-            message.success(`Remaining Balance is: ${money.remainingAmount}`);
+            const response = await axios.get(EndPoint.budgethistory);
+            const budgetList = response.data;
+            // Calculate total amount from the budget list
+            const totalAmount = budgetList.reduce((acc, curr) => acc + curr.amount, 0);
+            setIsModalVisible(true);
+            setTotalAmount(totalAmount); // Assuming you have useState for totalAmount
         } catch (error) {
             message.error('Failed to fetch balance data.');
         }
+    };
+    
+
+    const handleModalOk = () => {
+        setIsModalVisible(false);
     };
 
     return (
@@ -144,11 +155,35 @@ const App = () => {
                     </div>
                 </div>
             </Content>
+            <Modal
+                title="Remaining Balance"
+                visible={isModalVisible}
+                onOk={handleModalOk}
+                onCancel={handleModalOk}
+                footer={[
+                <Button key="ok" type="primary" onClick={handleModalOk}>
+                    OK
+                </Button>,
+                ]}
+            >
+                <p>The remaining balance is: {remainingBalance}</p>
+             <p>Total budget amount is: {totalAmount}</p>
+            </Modal>
         </div>
     );
 };
 
 export default App;
+
+
+
+
+
+
+
+
+
+
 
 
 // import React, { useState, useEffect } from 'react';

@@ -3,24 +3,28 @@ import '../Styling/Accepted-Application.css';
 import { Button, List, Col, Row, Layout, Avatar } from 'antd';
 import logo from './BiitLogo.jpeg';
 import { ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
-import EndPoint from '../endpoints'; 
 import { useNavigate } from 'react-router-dom';
+import EndPoint from '../endpoints';
 
 const { Header } = Layout;
 
 const AcceptedApplication = () => {
-    const navigate = useNavigate(); // Call useNavigate inside the component
+    const navigate = useNavigate();
     const [applications, setApplications] = useState([]);
     const [selectedOption, setSelectedOption] = useState('');
 
     useEffect(() => {
         const fetchAcceptedApplications = async () => {
             try {
-                const response = await fetch(EndPoint.acceptApplication);
-                const data = await response.json();
-                setApplications(data);
+                const response = await fetch(`${EndPoint.Accepted}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setApplications(data);
+                } else {
+                    console.error('Failed to fetch Accepted applications:', response.statusText);
+                }
             } catch (error) {
-                console.error('Error fetching accepted applications:', error);
+                console.error('Error fetching Accepted applications:', error);
             }
         };
 
@@ -32,24 +36,26 @@ const AcceptedApplication = () => {
     };
 
     const Back = () => {
-        navigate('/Admin-Dashboard'); // Use navigate function here
+        navigate('/Admin-Dashboard');
     };
 
-    const handleAcceptApplication = async (amount, applicationId) => {
+    const handleAcceptedApplication = async (applicationId) => {
         try {
-            const response = await fetch(`${EndPoint.acceptApplication}?amount=${amount}&applicationid=${applicationId}`, {
+            const response = await fetch(`/api/RejectApplication?applicationId=${applicationId}`, {
                 method: 'POST'
             });
             if (response.ok) {
                 const updatedApplications = applications.filter(app => app.id !== applicationId);
                 setApplications(updatedApplications);
             } else {
-                console.error('Failed to accept application:', response.statusText);
+                console.error('Failed to reject application:', response.statusText);
             }
         } catch (error) {
-            console.error('Error accepting application:', error);
+            console.error('Error rejecting application:', error);
         }
     };
+
+    const filteredApplications = applications.filter(app => app.type === selectedOption);
 
     return (
         <div className="container">
@@ -67,9 +73,9 @@ const AcceptedApplication = () => {
                 </Row>
             </Header>
             <div className="form-box">
-                <h3>Accepted Applications</h3>
+                <h2>Accepted Applications</h2>
                 <div>
-                    <select value={selectedOption} onChange={SelectChange} style={{ width: '100%', textAlign: 'center' }}>
+                    <select value={selectedOption} onChange={SelectChange} style={{ width: '100%' ,textAlign: 'center'}}>
                         <option value="">---Select---</option>
                         <option value="needbase">NeedBase</option>
                         <option value="meritbase">MeritBase</option>
@@ -78,7 +84,7 @@ const AcceptedApplication = () => {
                 <div className="scrollable-list">
                     <List
                         itemLayout="horizontal"
-                        dataSource={applications}
+                        dataSource={filteredApplications}
                         renderItem={item => (
                             <List.Item>
                                 <Avatar size={64} icon={<UserOutlined />} />
@@ -86,7 +92,7 @@ const AcceptedApplication = () => {
                                     title={item.name}
                                     description={item.id}
                                 />
-                                <Button onClick={() => handleAcceptApplication(item.amount, item.id)}>Accept</Button>
+                                <Button onClick={() => handleAcceptedApplication(item.id)} danger>Reject</Button>
                             </List.Item>
                         )}
                     />

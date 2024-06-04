@@ -3,22 +3,26 @@ import '../Styling/Rejected-Application.css';
 import { Button, List, Col, Row, Layout, Avatar } from 'antd';
 import logo from './BiitLogo.jpeg';
 import { ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
-import EndPoint from '../endpoints'; 
 import { useNavigate } from 'react-router-dom';
+import EndPoint from '../endpoints';
 
 const { Header } = Layout;
 
 const RejectedApplication = () => {
-    const navigate = useNavigate(); // Call useNavigate inside the component
+    const navigate = useNavigate();
     const [applications, setApplications] = useState([]);
     const [selectedOption, setSelectedOption] = useState('');
 
     useEffect(() => {
         const fetchRejectedApplications = async () => {
             try {
-                const response = await fetch(EndPoint.rejectApplication);
-                const data = await response.json();
-                setApplications(data);
+                const response = await fetch(`${EndPoint.rejected}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setApplications(data);
+                } else {
+                    console.error('Failed to fetch rejected applications:', response.statusText);
+                }
             } catch (error) {
                 console.error('Error fetching rejected applications:', error);
             }
@@ -32,14 +36,12 @@ const RejectedApplication = () => {
     };
 
     const Back = () => {
-        navigate('/Admin-Dashboard'); // Use navigate function here
+        navigate('/Admin-Dashboard');
     };
-
-    const filteredApplications = applications.filter(app => app.type === selectedOption);
 
     const handleRejectApplication = async (applicationId) => {
         try {
-            const response = await fetch(`${EndPoint.rejectApplication}?applicationId=${applicationId}`, {
+            const response = await fetch(`/api/RejectApplication?applicationId=${applicationId}`, {
                 method: 'POST'
             });
             if (response.ok) {
@@ -52,6 +54,8 @@ const RejectedApplication = () => {
             console.error('Error rejecting application:', error);
         }
     };
+
+    const filteredApplications = applications.filter(app => app.type === selectedOption);
 
     return (
         <div className="container">
