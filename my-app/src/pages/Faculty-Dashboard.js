@@ -1,17 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Layout, message, List, Modal, Rate, Input, Form, Avatar, Row, Col, Drawer, Button } from 'antd';
+import { Layout, message, List, Modal, Rate, Input, Form, Avatar, Row, Col, Drawer, Button, Spin } from 'antd';
 import { BarsOutlined, UserOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
-import axios from 'axios'; // Import axios
+import axios from 'axios';
 import logo from './BiitLogo.jpeg';
 import EndPoint from '../endpoints';
 import '../Styling/Faculty-Dashboard.css';
 
 const { Header, Content } = Layout;
 
-const StudentDrawer = ({ visible, onClose, switchToCommittee, onLogout }) => {
+const fetchFacultyInfo = async (id) => {
+  try {
+    if (id) {
+      const response = await axios.get(`${EndPoint.facultyInfo}?id=${id}`);
+      if (response.status === 200) {
+        return response.data;
+      } else {
+        throw new Error('Failed to fetch faculty info');
+      }
+    }
+  } catch (error) {
+    message.error(error.message);
+  }
+  return {};
+};
+
+const StudentDrawer = ({ visible, onClose, switchToCommittee, onLogout, facultyId }) => {
+  const [facultyInfo, setFacultyInfo] = useState({});
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const getFacultyInfo = async () => {
+      const data = await fetchFacultyInfo(facultyId);
+      setFacultyInfo(data);
+      setLoading(false);
+    };
+    getFacultyInfo();
+  }, [facultyId]);
 
   const handleLogout = () => {
     onLogout();
@@ -27,9 +54,14 @@ const StudentDrawer = ({ visible, onClose, switchToCommittee, onLogout }) => {
       visible={visible}
       bodyStyle={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
     >
-      <div className="sider-content">
-        <Avatar size={64} icon={<UserOutlined />} />
-      </div>
+      {loading ? (
+        <Spin size="large" />
+      ) : (
+        <div className="sider-content">
+          <Avatar size={64} icon={<UserOutlined />}/>
+          {/* <h2>{facultyInfo?.name || 'N/A'}</h2> */}
+        </div>
+      )}
       <br />
       <Button type="primary" onClick={switchToCommittee} style={{ width: '80%' }}>Switch to Committee</Button>
       <br />
@@ -43,6 +75,7 @@ StudentDrawer.propTypes = {
   onClose: PropTypes.func.isRequired,
   switchToCommittee: PropTypes.func.isRequired,
   onLogout: PropTypes.func.isRequired,
+  facultyId: PropTypes.number.isRequired,
 };
 
 const StudentModal = ({ visible, student, rating, suggestion, onRatingChange, onSuggestionChange, onOk, onCancel }) => (
@@ -112,7 +145,17 @@ const StudentList = () => {
         message.error(error.message);
       }
     };
-    fetchStudents(facultyId);
+
+    if (facultyId !== null) {
+      fetchStudents(facultyId);
+    } else {
+      // Set the facultyId to a default value or fetch it from a relevant source
+      const fetchInitialFacultyId = async () => {
+        const initialFacultyId = 1; // Replace with the actual method to get initial facultyId
+        setFacultyId(initialFacultyId);
+      };
+      fetchInitialFacultyId();
+    }
   }, [facultyId]);
 
   const showDrawer = () => setIsDrawerVisible(true);
@@ -181,22 +224,6 @@ const StudentList = () => {
           </Col>
         </Row>
       </Header>
-      <Drawer
-        placement="left"
-        width={300}
-        closable
-        onClose={onCloseDrawer}
-        visible={isDrawerVisible}
-        bodyStyle={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
-      >
-        <div className="sider-content">
-          <Avatar size={64} icon={<UserOutlined />} />
-        </div>
-        <br />
-        <Button type="primary" onClick={switchToCommittee} style={{ width: '80%' }}>Switch to Committee</Button>
-        <br />
-        <Button type="primary" onClick={logout} style={{ width: '80%' }}>Logout</Button>
-      </Drawer>
       <Content className='container'>
         <div className="form-box">
           <header><h1>Graders List</h1></header>
@@ -233,6 +260,13 @@ const StudentList = () => {
         onSuggestionChange={handleSuggestionChange}
         onOk={handleModalOk}
         onCancel={handleModalCancel}
+      />
+      <StudentDrawer
+        visible={isDrawerVisible}
+        onClose={onCloseDrawer}
+        switchToCommittee={switchToCommittee}
+        onLogout={logout}
+        facultyId={facultyId}
       />
     </Layout>
   );

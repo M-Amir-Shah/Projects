@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Layout, Row, Col, Badge, Drawer, Button, Avatar, Modal, message } from 'antd';
 import { FilePdfOutlined, FileExcelOutlined, FileImageOutlined, BarsOutlined, UserOutlined } from '@ant-design/icons';
-import '../Styling/Committee-DashBoard.css';
 import { useNavigate } from "react-router-dom";
-import logo from './BiitLogo.jpeg';
 import axios from 'axios';
 import Search from '../components/SearchingButton';
 import EndPoint from '../endpoints'; // Import your API endpoints file
+import logo from './BiitLogo.jpeg';
+import '../Styling/Committee-DashBoard.css';
 
 const { Header, Content } = Layout;
 const { Meta } = Card;
@@ -36,26 +36,26 @@ const DocumentCard = ({ document }) => {
             onClick={handleClick}
         >
             <Meta title={document.name} />
-            <Meta description={`CGPA: ${document.cgpa}, Required Amount: ${document.requiredAmount}`} />
+            <Meta description={document.arid_no} />
         </Card>
     );
 };
 
-const App = () => {
+const App = ({ id }) => {
     const navigate = useNavigate();
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
-    const [showPopup, setShowPopup] = useState(false);
     const [documents, setDocuments] = useState([]);
     const [loading, setLoading] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [remainingBalance, setRemainingBalance] = useState(null);
     const [totalAmount, setTotalAmount] = useState(null);
+    const [committeeInfo, setCommitteeInfo] = useState({ name: '', profilePic: '' });
 
     useEffect(() => {
         const fetchDocuments = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`${EndPoint.getApplication}?id=YOUR_COMMITTEE_ID`); // Replace with your actual committee ID
+                const response = await axios.get(`${EndPoint.getApplication}?id=${id}`);
                 setDocuments(response.data);
             } catch (error) {
                 console.error('Error fetching documents:', error);
@@ -64,11 +64,27 @@ const App = () => {
                 setLoading(false);
             }
         };
-
         fetchDocuments();
-    }, []);
+    }, [id]);
 
-    const Logout = () => {
+    useEffect(() => {
+        const fetchCommitteeInfo = async () => {
+            try {
+                setLoading(true);
+                const response = await axios.get(`${EndPoint.committeeMemberInfo}?id=${id}`);
+                setCommitteeInfo(response.data);
+            } catch (error) {
+                console.error('Error fetching committee info:', error);
+                // Handle error here
+            } finally {
+                setLoading(false);
+            }
+        };
+    
+        fetchCommitteeInfo();
+    }, [id]);
+
+    const logout = () => {
         navigate('/Login');
     };
 
@@ -80,19 +96,18 @@ const App = () => {
         setIsDrawerVisible(false);
     };
 
-    const BalanceCheck = async () => {
+    const balanceCheck = async () => {
         try {
-            const response = await axios.get(EndPoint.budgethistory);
+            const response = await axios.get(EndPoint.getBalance);
+            console.log('API Response:', response.data);
             const budgetList = response.data;
-            // Calculate total amount from the budget list
-            const totalAmount = budgetList.reduce((acc, curr) => acc + curr.amount, 0);
+            setRemainingBalance(budgetList || 0);
             setIsModalVisible(true);
-            setTotalAmount(totalAmount); // Assuming you have useState for totalAmount
         } catch (error) {
+            console.error('Error fetching balance data:', error);
             message.error('Failed to fetch balance data.');
         }
     };
-    
 
     const handleModalOk = () => {
         setIsModalVisible(false);
@@ -115,16 +130,17 @@ const App = () => {
                             bodyStyle={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
                         >
                             <div className="sider-content">
-                                <Avatar size={64} icon={<UserOutlined />} />
+                                <Avatar size={64} src={committeeInfo.profilePic} icon={<UserOutlined />} />
+                                <p>{committeeInfo.name}</p>
                             </div>
                             <br />
-                            <Button type="primary" onClick={BalanceCheck} style={{ width: '80%' }}>Remaining Amount</Button>
+                            <Button type="primary" onClick={balanceCheck} style={{ width: '80%' }}>Remaining Amount</Button>
                             <br />
-                            <Button type="primary" onClick={Logout} style={{ width: '80%' }}>Logout</Button>
+                            <Button type="primary" onClick={logout} style={{ width: '80%' }}>Logout</Button>
                         </Drawer>
                     </Col>
                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#ffff' }}>
-                        BIIT Committee-DashBoard
+                        BIIT Committee-Dashboard
                     </Col>
                     <Col>
                         <img src={logo} alt="BIIT Financial Aid Allocation Tool" style={{ height: '35px', width: '35px', borderRadius: '25px' }} />
@@ -161,20 +177,19 @@ const App = () => {
                 onOk={handleModalOk}
                 onCancel={handleModalOk}
                 footer={[
-                <Button key="ok" type="primary" onClick={handleModalOk}>
-                    OK
-                </Button>,
+                    <Button key="ok" type="primary" onClick={handleModalOk}>
+                        OK
+                    </Button>,
                 ]}
             >
-                <p>The remaining balance is: {remainingBalance}</p>
-             <p>Total budget amount is: {totalAmount}</p>
+                <p>Remaining Balance is: {remainingBalance}</p>
+                {/* <p>Total budget amount is: {totalAmount}</p> */}
             </Modal>
         </div>
     );
 };
 
 export default App;
-
 
 
 

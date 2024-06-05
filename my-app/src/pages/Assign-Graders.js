@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../Styling/Assign-Graders.css';
-import { Button, List, Col, Row, Layout, Avatar, message, Modal } from 'antd';
+import { Button, List, Col, Row, Layout, Avatar, message, Modal, Spin } from 'antd';
 import { ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import logo from './BiitLogo.jpeg';
@@ -80,7 +80,6 @@ const GradersList = () => {
             setModalVisible(false);
         }
     };
-    
 
     const Back = () => {
         navigate('/Admin-Dashboard');
@@ -104,23 +103,24 @@ const GradersList = () => {
             <div className="form-box">
                 <h2 style={{ textAlign: 'center' }}>Assigning Grader</h2>
                 <div className="scrollable-list">
-
-                    <List
-                        itemLayout="horizontal"
-                        dataSource={studentsData}
-                        renderItem={item => (
-                            <List.Item>
-                                <List.Item.Meta
-                                    avatar={<Avatar size={64} icon={<UserOutlined />} />}
-                                    title={item.name}
-                                    description={item.arid_no}
-                                />
-                                <Button onClick={() => { setSelectedTeacher(item); setModalVisible(true); }}>
-                                    Assign
-                                </Button>
-                            </List.Item>
-                        )}
-                    />
+                    <Spin spinning={loading}>
+                        <List
+                            itemLayout="horizontal"
+                            dataSource={studentsData}
+                            renderItem={item => (
+                                <List.Item>
+                                    <List.Item.Meta
+                                        avatar={<Avatar size={64} icon={<UserOutlined />} />}
+                                        title={item.name}
+                                        description={item.arid_no}
+                                    />
+                                    <Button onClick={() => { setSelectedTeacher(item); setModalVisible(true); }}>
+                                        Assign
+                                    </Button>
+                                </List.Item>
+                            )}
+                        />
+                    </Spin>
                 </div>
             </div>
             <Modal
@@ -131,28 +131,28 @@ const GradersList = () => {
                     <Button key="cancel" onClick={() => setModalVisible(false)}>
                         Cancel
                     </Button>,
-
                 ]}
             >
                 <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                    <List
-                        itemLayout="horizontal"
-                        dataSource={facultyData}
-                        renderItem={item => (
-                            <List.Item>
-                                <List.Item.Meta
-                                    avatar={<Avatar size={64} icon={<UserOutlined />} />}
-                                    title={item.name}
-                                />
-                                <Button key="assign" type="primary" onClick={assignTeacher} loading={loading}>
-                                    Assign
-                                </Button>
-                            </List.Item>
-                        )}
-                    />
+                    <Spin spinning={loading}>
+                        <List
+                            itemLayout="horizontal"
+                            dataSource={facultyData}
+                            renderItem={item => (
+                                <List.Item>
+                                    <List.Item.Meta
+                                        avatar={<Avatar size={64} icon={<UserOutlined />} />}
+                                        title={item.name}
+                                    />
+                                    <Button key="assign" type="primary" onClick={assignTeacher} loading={loading}>
+                                        Assign
+                                    </Button>
+                                </List.Item>
+                            )}
+                        />
+                    </Spin>
                 </div>
             </Modal>
-
         </div>
     );
 };
