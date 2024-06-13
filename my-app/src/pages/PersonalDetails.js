@@ -43,27 +43,24 @@ const PersonalDetails = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        // Validation check
-        if (!house || !agreementBase64 || !reason || !amount) {
-            message.error("Please fill in all fields.");
-            return;
-        }
-
-        const updatedFormData = {
-            ...formData,
-            house: house,
-            agreement: agreementBase64,
-            reason: reason,
-            amount: amount
-        };
+        const formDataToSend = new FormData();
+        formDataToSend.append('status', formData.status);
+        formDataToSend.append('occupation', formData.occupation);
+        formDataToSend.append('contactNo', formData.contactNo);
+        formDataToSend.append('gName', formData.gName);
+        formDataToSend.append('gContact', formData.gContact);
+        formDataToSend.append('gRelation', formData.gRelation);
+        formDataToSend.append('house', house);
+        formDataToSend.append('reason', reason);
+        formDataToSend.append('amount', amount);
+        formDataToSend.append('length', '1'); // Assuming 'length' is a string
+        formDataToSend.append('isPicked', formData.isPicked); // Assuming 'isPicked' is a boolean or string
+        formDataToSend.append('studentId', formData.studentId);
 
         try {
             const response = await fetch(EndPoint.sendApplication, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updatedFormData)
+                body: formDataToSend // Submit formData to the server
             });
 
             if (response.ok) {

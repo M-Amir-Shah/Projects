@@ -183,7 +183,6 @@ const App = ({ id }) => {
                 ]}
             >
                 <p>Remaining Balance is: {remainingBalance}</p>
-                {/* <p>Total budget amount is: {totalAmount}</p> */}
             </Modal>
         </div>
     );

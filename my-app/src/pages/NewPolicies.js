@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import logo from './BiitLogo.jpeg';
-import { Layout, Row, Col, Button, Radio, Input, Select, Form, Spin } from 'antd';
+import { Layout, Row, Col, Button, Radio, Input, Select, Form, Spin, message } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import "../Styling/NewPolicies.css";
 import { useNavigate } from 'react-router-dom';
@@ -59,6 +59,7 @@ const NeedMeritPolicy = () => {
             }
         } catch (error) {
             console.error('Error adding policy:', error.response || error.message);
+            message.error('Error adding policy');
         } finally {
             setLoading(false);
         }
