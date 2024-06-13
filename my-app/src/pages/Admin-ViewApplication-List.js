@@ -11,15 +11,18 @@ const { Header, Content } = Layout;
 const { Meta } = Card;
 
 const DocumentCard = ({ document }) => {
+    const navigate = useNavigate();
+
     const handleClick = () => {
-        message.info(`You clicked on ${document.name}`);
+        navigate(`/Admin-ViewApplication/${document.id}`);
     };
 
     const getDocumentIcon = (fileName) => {
-        if (!fileName) {
-            return <FileImageOutlined style={{ fontSize: '100px' }} />; // Display a generic file icon if fileName is undefined or null
+        if (typeof fileName !== 'string') {
+            console.error(`Expected a string for fileName but got ${typeof fileName}`);
+            return <FileImageOutlined style={{ fontSize: '100px' }} />;
         }
-    
+
         const fileType = fileName.split('.').pop().toLowerCase();
         if (fileType === 'pdf') {
             return <FilePdfOutlined style={{ fontSize: '100px' }} />;
@@ -31,7 +34,6 @@ const DocumentCard = ({ document }) => {
             return <FileImageOutlined style={{ fontSize: '100px' }} />; // Display a generic file icon for unsupported file types
         }
     };
-    
 
     return (
         <Card
@@ -40,7 +42,7 @@ const DocumentCard = ({ document }) => {
             onClick={handleClick}
         >
             <Meta title={document.name} />
-            <Meta description={`Arid: ${document.arid_no}`} />
+            <Meta description={document.arid_no} />
         </Card>
     );
 };
@@ -55,18 +57,17 @@ const App = () => {
         const fetchDocuments = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`${EndPoint.applicationSuggestions}`);
-                setDocuments(response.data.map(item => item.re)); // Assuming the API response structure is similar to your previous hard-coded data
+                const response = await axios.get(`${EndPoint.getApplication}?id=${1}`);
+                setDocuments(response.data);
             } catch (error) {
                 console.error('Error fetching documents:', error);
-                message.error('Failed to fetch document data.');
+                message.error('Failed to fetch documents data.');
             } finally {
                 setLoading(false);
             }
         };
-
         fetchDocuments();
-    }, []);
+    }, [id]);
 
     const handleCancel = () => {
         navigate('/Admin-Dashboard');
@@ -99,7 +100,7 @@ const App = () => {
                         <p className='card-para'>Left<sup><Badge count={documents.length} /></sup></p>
                     </Card>
                     <br />
-                    <div className="card-container">
+                    <div className="scrollable-container">
                         {loading ? (
                             <p>Loading...</p>
                         ) : (

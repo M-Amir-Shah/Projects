@@ -39,7 +39,7 @@ const StudentRecords = () => {
     }, []);
 
     const Back = () => {
-        navigate(-1);
+        navigate('/Admin-Dashboard');
     };
 
     const Next = () => {

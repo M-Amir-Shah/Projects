@@ -76,7 +76,7 @@ const AddFaculty = () => {
     };
 
     const Cancel = () => {
-        navigate(-1);
+        navigate('/Admin-Dashboard');
     };
 
     return (

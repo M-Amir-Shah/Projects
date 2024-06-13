@@ -13,30 +13,48 @@ const { Header } = Layout;
 const AddStudent = () => {
     const navigate = useNavigate();
 
-    const [formData, setFormData] = useState({
-        name: '',
-        arid: '',
-        semester: '',
-        cgpa: '',
-        gender: '',
-        father: '',
-        degree: '',
-        section: '',
-        password: '',
-        pic: null
-    });
+    const [name, setName] = useState('');
+    const [arid, setArid] = useState('');
+    const [semester, setSemester] = useState('');
+    const [cgpa, setCgpa] = useState('');
+    const [gender, setGender] = useState('');
+    const [father, setFather] = useState('');
+    const [degree, setDegree] = useState('');
+    const [section, setSection] = useState('');
+    const [password, setPassword] = useState('');
+    const [pic, setPic] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value
-        }));
+    const handleName = (e) => {
+        setName(e.target.value);
+    };
+    const handleArid = (e) => {
+        setArid(e.target.value);
+    };
+    const handleSemester = (e) => {
+        setSemester(e.target.value);
+    };
+    const handleCgpa = (e) => {
+        setCgpa(e.target.value);
+    };
+    const handleGender = (e) => {
+        setGender(e.target.value);
+    };
+    const handleFather = (e) => {
+        setFather(e.target.value);
+    };
+    const handleDegree = (e) => {
+        setDegree(e.target.value);
+    };
+    const handleSection = (e) => {
+        setSection(e.target.value);
+    };
+    const handlePassword = (e) => {
+        setPassword(e.target.value);
     };
 
-    const handleImageUpload = (e) => {
-        const file = e.target.files[0];
+    const ImageUpload = (event) => {
+        const file = event.target.files[0];
         if (!file) return;
 
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
@@ -53,10 +71,7 @@ const AddStudent = () => {
         }
 
         setLoading(true);
-        setFormData((prevData) => ({
-            ...prevData,
-            pic: file
-        }));
+        setPic(file);
         setLoading(false);
     };
 
@@ -65,9 +80,16 @@ const AddStudent = () => {
         setLoading(true);
         try {
             const data = new FormData();
-            Object.keys(formData).forEach((key) => {
-                data.append(key, formData[key]);
-            });
+            data.append('name', name);
+            data.append('cgpa', cgpa);
+            data.append('semester', semester);
+            data.append('aridno', arid);
+            data.append('gender', gender);
+            data.append('fathername', father);
+            data.append('degree', degree);
+            data.append('section', section);
+            data.append('password', password);
+            data.append('pic', pic);
 
             const response = await axios.post(EndPoint.addStudent, data, {
                 headers: {
@@ -86,7 +108,7 @@ const AddStudent = () => {
     };
 
     const handleCancel = () => {
-        navigate('/Admin-Dashboard');
+        navigate('/Student-Record');
     };
 
     return (
@@ -97,7 +119,7 @@ const AddStudent = () => {
                         <Button type="text" icon={<ArrowLeftOutlined />} onClick={handleCancel} />
                     </Col>
                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#fff' }}>
-                        Add Student
+                        Add New Student
                     </Col>
                     <Col>
                         <img src={logo} alt="BIIT Financial Aid Allocation Tool" style={{ height: '35px', width: '35px', borderRadius: '25px' }} />
@@ -111,8 +133,8 @@ const AddStudent = () => {
                             <label htmlFor="upload-button" className="avatar-uploader">
                                 {loading ? (
                                     <LoadingOutlined className="loading-spinner" />
-                                ) : formData.pic ? (
-                                    <img src={URL.createObjectURL(formData.pic)} alt="avatar" className="avatar-image" />
+                                ) : pic ? (
+                                    <img src={URL.createObjectURL(pic)} alt="avatar" className="avatar-image" />
                                 ) : (
                                     <div className="upload-icon">
                                         <CameraOutlined />
@@ -124,50 +146,50 @@ const AddStudent = () => {
                                 id="upload-button"
                                 type="file"
                                 style={{ display: 'none' }}
-                                onChange={handleImageUpload}
+                                onChange={ImageUpload}
                                 required
                             />
                         </div>
                         <Input
                             placeholder="Enter Student Name"
                             name="name"
-                            value={formData.name}
-                            onChange={handleChange}
+                            value={name}
+                            onChange={handleName}
                             required
                         />
                         <Input
                             placeholder="Enter Arid"
                             name="arid"
-                            value={formData.arid}
-                            onChange={handleChange}
+                            value={arid}
+                            onChange={handleArid}
                             required
                         />
                         <Input
                             placeholder="Enter Semester"
                             name="semester"
-                            value={formData.semester}
-                            onChange={handleChange}
+                            value={semester}
+                            onChange={handleSemester}
                             required
                         />
                         <Input
                             placeholder="Enter CGPA"
                             name="cgpa"
-                            value={formData.cgpa}
-                            onChange={handleChange}
+                            value={cgpa}
+                            onChange={handleCgpa}
                             required
                         />
                         <Input
                             placeholder="Enter section [A,B,C]"
                             name="section"
-                            value={formData.section}
-                            onChange={handleChange}
+                            value={section}
+                            onChange={handleSection}
                             required
                         />
                         <label>Gender</label>
                         <Radio.Group
                             name="gender"
-                            value={formData.gender}
-                            onChange={handleChange}
+                            value={gender}
+                            onChange={handleGender}
                             required
                         >
                             <Radio value="male">Male</Radio>
@@ -176,22 +198,22 @@ const AddStudent = () => {
                         <Input
                             placeholder="Enter Degree [BSCS, BSSE, BSIT]"
                             name="degree"
-                            value={formData.degree}
-                            onChange={handleChange}
+                            value={degree}
+                            onChange={handleDegree}
                             required
                         />
                         <Input
                             placeholder="Enter Father Name"
                             name="father"
-                            value={formData.father}
-                            onChange={handleChange}
+                            value={father}
+                            onChange={handleFather}
                             required
                         />
                         <Input.Password
                             placeholder="Enter Password"
                             name="password"
-                            value={formData.password}
-                            onChange={handleChange}
+                            value={password}
+                            onChange={handlePassword}
                             iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
                             required
                         />
@@ -200,7 +222,7 @@ const AddStudent = () => {
                                 Cancel
                             </Button>
                             <Button type="primary" htmlType="submit" size="large">
-                                Submit
+                                Add
                             </Button>
                         </div>
                     </form>

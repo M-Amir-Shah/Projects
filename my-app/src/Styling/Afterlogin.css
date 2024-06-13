@@ -62,3 +62,9 @@ input {
 .Buttons button {
   margin-right: 10px; /* Adjust margin between buttons as needed */
 }
+.parent{
+  text-align: center;
+}
+.buttons{
+  gap: 10px;
+}

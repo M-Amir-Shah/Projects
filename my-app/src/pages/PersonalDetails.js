@@ -10,10 +10,7 @@ const PersonalDetails = () => {
     const location = useLocation();
     const { formData } = location.state || {};
 
-    const [house, setHouse] = useState('');
-    const [agreementBase64, setAgreementBase64] = useState('');
-    const [reason, setReason] = useState('');
-    const [amount, setAmount] = useState('');
+    
 
     const handleHouseDetails = (event) => {
         setHouse(event.target.value);
@@ -84,61 +81,7 @@ const PersonalDetails = () => {
                     <h1 id="title">Personal Details</h1>
                 </header>
                 <form onSubmit={handleSubmit}>
-                    <div>
-                        <label>House</label>
-                        <div className='RadioButton'>
-                            <label>
-                                <input
-                                    type="radio"
-                                    name="house"
-                                    value="own"
-                                    checked={house === "own"}
-                                    onChange={handleHouseDetails}
-                                />
-                                Own
-                            </label>
-                            <label>
-                                <input
-                                    type="radio"
-                                    name="house"
-                                    value="rent"
-                                    checked={house === "rent"}
-                                    onChange={handleHouseDetails}
-                                />
-                                Rent
-                            </label>
-                        </div>
-                        <br />
-                        <label>House Agreement</label>
-                        <input
-                            type="file"
-                            accept=".pdf, .doc, .docx"
-                            onChange={handleFileData}
-                        />
-                        <div>
-                            <label>Reason for scholarship</label>
-                            <br />
-                            <TextArea placeholder="Reason..." value={reason} onChange={handleReasonChange} />
-                        </div>
-                        <div>
-                            <label>Required Amount</label>
-                            <br />
-                            <Input
-                                type="number"
-                                inputMode="numeric"
-                                min={0}
-                                required
-                                placeholder="Enter Amount"
-                                value={amount}
-                                onChange={handleAmountChange}
-                            />
-                        </div>
-                        <br />
-                        <div className='Buttons'>
-                            <Button type='primary' onClick={handleBack} icon={<ArrowLeftOutlined />}>Back</Button>
-                            <Button type='primary' htmlType="submit" icon={<CheckOutlined />}>Submit</Button>
-                        </div>
-                    </div>
+                    
                 </form>
             </div>
         </div>

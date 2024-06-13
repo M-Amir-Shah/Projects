@@ -1,4 +1,11 @@
 /* App.css */
+/* html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; 
+} */
+
 .container {
     width: 100%;
     background: linear-gradient(to right bottom, #119992, #b5c6e0); /* Set the background color directly */
@@ -22,10 +29,11 @@
 
 .content {
     background: linear-gradient(to right bottom, #119992, #b5c6e0); /* Set the background color directly */
-    min-height: calc(100% - 50px); /* Adjust min-height to account for the fixed header */
+    height: calc(100% - 50px); /* Adjust height to account for the fixed header */
     width: 100%;
     padding: 25px;
     margin-top: 50px; /* Adjust margin-top to make space for the fixed header */
+    overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .card-container {
@@ -44,4 +52,11 @@
     margin-top: 10px;
     font-size: 14px;
     text-align: end;
+}
+
+.scrollable-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around; /* Center the cards within the row */
+    width: 100%;
 }

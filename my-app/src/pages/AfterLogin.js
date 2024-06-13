@@ -18,16 +18,20 @@ const AfterLogin = () => {
     const [gender, setGender] = useState('');
     const [status, setStatus] = useState('');
     const [fatherName, setFatherName] = useState('');
-    const [fileBase64, setFileBase64] = useState('');
+    const [file, setFile] = useState(null);
     const [gName, setGName] = useState('');
     const [gContact, setGContact] = useState('');
     const [gRelation, setGRelation] = useState('');
     const [occupation, setOccupation] = useState('');
     const [contactNo, setContactNo] = useState('');
     const [salary, setSalary] = useState('');
-    const [error, setError] = useState('');
+    const [house, setHouse] = useState('');
+    const [agreementFiles, setAgreementFiles] = useState([]);
+    const [reason, setReason] = useState('');
+    const [amount, setAmount] = useState('');
     const [length, setLength] = useState('1');
-    const [isPicked, setIsPicked] = useState('');
+    const [isPicked, setIsPicked] = useState(false);
+    const [studentId, setStudentId] = useState('');
 
     useEffect(() => {
         if (profileId) {
@@ -47,27 +51,22 @@ const AfterLogin = () => {
             setCgpa(data.cgpa);
             setSemester(data.semester);
             setFatherName(data.father_name);
+            setStudentId(profileId); // Assuming profileId is studentId
         } catch (error) {
-            setError('Failed to fetch data');
+            message.error('Failed to fetch data');
         }
     };
 
     const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setFileBase64(reader.result);
-        };
-        reader.readAsDataURL(file);
+        setFile(event.target.files[0]);
     };
 
     const handleSalarySlip = (event) => {
-        const file = event.target.files[0];
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setFileBase64(reader.result);
-        };
-        reader.readAsDataURL(file);
+        setFile(event.target.files[0]);
+    };
+
+    const handleAgreementFiles = (event) => {
+        setAgreementFiles([...event.target.files]);
     };
 
     const handleGenderChange = (event) => {
@@ -78,7 +77,19 @@ const AfterLogin = () => {
         setStatus(event.target.value);
     };
 
-    const handleSubmit = (event) => {
+    const handleHouseDetails = (event) => {
+        setHouse(event.target.value);
+    };
+
+    const handleReasonChange = (event) => {
+        setReason(event.target.value);
+    };
+
+    const handleAmountChange = (event) => {
+        setAmount(event.target.value);
+    };
+
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
         // Validation check
@@ -91,22 +102,50 @@ const AfterLogin = () => {
             return;
         }
 
-        const formData = {
-            status: status,
-            semester: semester,
-            gender: gender,
-            father_name: fatherName,
-            file: fileBase64,
-            guardian_name: status === "Deceased" ? gName : undefined,
-            guardian_contact: status === "Deceased" ? gContact : undefined,
-            guardian_relation: status === "Deceased" ? gRelation : undefined,
-            job_title: status === "Alive" ? occupation : undefined,
-            contact_no: status === "Alive" ? contactNo : undefined,
-            salary: status === "Alive" ? salary : undefined
-        };
+        const formData = new FormData();
+        formData.append('status', status);
+        formData.append('occupation', occupation);
+        formData.append('contactNo', contactNo);
+        formData.append('salary', salary);
+        formData.append('gName', gName);
+        formData.append('gContact', gContact);
+        formData.append('gRelation', gRelation);
+        formData.append('house', house);
+        formData.append('reason', reason);
+        formData.append('amount', amount);
+        formData.append('length', length);
+        formData.append('isPicked', isPicked);
+        formData.append('studentId', studentId);
 
-        // Navigate to PersonalDetails screen with formData
-        navigate('/PersonalDetails', { state: { formData } });
+        if (status === "Alive" && file) {
+            formData.append('docs', file);
+        } else if (status === "Deceased" && file) {
+            formData.append('docs', file);
+        }
+
+        agreementFiles.forEach((file, index) => {
+            formData.append(`agreement${index}`, file);
+        });
+
+        try {
+            const token = localStorage.getItem('token'); // or however you store/retrieve your token
+            const response = await fetch(EndPoint.sendApplication, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json'
+                },
+                body: formData,
+            });
+            if (response.ok) {
+                message.success('Submitted successfully');
+                navigate('/StudentDashboard');
+            } else {
+                throw new Error('Failed to submit');
+            }
+        } catch (error) {
+            message.error('Failed to submit');
+        }
     };
 
     const handleCancel = () => {
@@ -123,25 +162,18 @@ const AfterLogin = () => {
                     <div>
                         <div className='input-container'>
                             <label className='label' htmlFor="name">Name</label>
-                            {/* <Input placeholder="Enter your Name" value={name} onChange={(e) => setName(e.target.value)} disabled/> */}
                             <input type="text" value={name} disabled />
                         </div>
-
                         <div className='input-container'>
                             <label className='label' htmlFor="arid_no">Arid No.</label>
-                            {/* <Input placeholder="Arid eg. 2020-Arid-1234" value={arid_no} onChange={(e) => setArid_no(e.target.value)} disabled/> */}
                             <input type="text" value={arid_no} disabled />
                         </div>
-
                         <div className='input-container'>
                             <label className='label' htmlFor="cgpa">CGPA</label>
-                            {/* <Input placeholder="Enter your CGPA" value={cgpa} onChange={(e) => setCgpa(e.target.value)} disabled/> */}
                             <input type="text" value={cgpa} disabled />
                         </div>
-
                         <div className='input-container'>
                             <label className='label' htmlFor="semester">Semester</label>
-                            {/* <Input placeholder="Enter your Semester" value={semester} onChange={(e) => setSemester(e.target.value)} disabled/> */}
                             <input type="text" value={semester} disabled />
                         </div>
 
@@ -167,13 +199,12 @@ const AfterLogin = () => {
                             </label>
                         </div>
 
-                        <div>
+                        <div className='parent'>
                             <h2>Parent Details</h2>
                         </div>
 
                         <div className='input-container'>
                             <label className='label' htmlFor="father_name">Father Name</label>
-                            {/* <Input placeholder="Enter Father Name" value={fatherName} onChange={(e) => setFatherName(e.target.value)} disabled/> */}
                             <input type="text" value={fatherName} disabled />
                         </div>
 
@@ -233,7 +264,7 @@ const AfterLogin = () => {
                                     <Input placeholder="Job Title" value={occupation} onChange={(e) => setOccupation(e.target.value)} />
                                 </div>
                                 <div className='input-container'>
-                                    <label className='label' htmlFor="contact_no">Contact Number</label>
+                                    <label className='label' htmlFor="contact">Contact No.</label>
                                     <Input placeholder="Contact Number" value={contactNo} onChange={(e) => setContactNo(e.target.value)} />
                                 </div>
                                 <div className='input-container'>
@@ -241,20 +272,50 @@ const AfterLogin = () => {
                                     <Input placeholder="Salary" value={salary} onChange={(e) => setSalary(e.target.value)} />
                                 </div>
                                 <div>
-                                    <label>
-                                        Upload Salary Slip:
-                                        <input
-                                            type="file"
-                                            accept=".pdf, .doc, .docx, .jpg, .jpeg, .png, .gif"
-                                            onChange={handleSalarySlip}
-                                        />
-                                    </label>
+                                    <label>Upload Salary Slip:</label>
+                                    <input
+                                        type="file"
+                                        accept=".pdf, .doc, .docx, .jpg, .jpeg, .png, .gif"
+                                        onChange={handleSalarySlip}
+                                    />
                                 </div>
                             </div>
                         )}
-                        <br />
-                        <Button type="primary" htmlType="submit" className="next">Next</Button>
-                        <Button type="primary" onClick={handleCancel} >Cancel</Button>
+
+                        <div className='parent'>
+                            <h2>Personal Details</h2>
+                        </div>
+                        <div className='input-container'>
+                            <label className='label' htmlFor="house">House Details</label>
+                            <select value={house} onChange={handleHouseDetails}>
+                                <option value="">Select house status</option>
+                                <option value="Own">Own</option>
+                                <option value="Rented">Rented</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Upload House Agreement:</label>
+                            <input
+                                type="file"
+                                multiple
+                                accept=".pdf, .doc, .docx, .jpg, .jpeg, .png, .gif"
+                                onChange={handleAgreementFiles}
+                            />
+                        </div>
+
+                        <div className='input-container'>
+                            <label className='label' htmlFor="reason">Reason for Apply</label>
+                            <TextArea placeholder="Reason" value={reason} onChange={handleReasonChange} rows={4} />
+                        </div>
+                        <div className='input-container'>
+                            <label className='label' htmlFor="amount">Amount Needed</label>
+                            <Input placeholder="Amount" value={amount} onChange={handleAmountChange} />
+                        </div>
+                    </div>
+
+                    <div className='buttons'>
+                        <Button type="primary" htmlType="submit" className="form-button">Submit</Button>
+                        <Button type="primary" onClick={handleCancel} className="form-button">Cancel</Button>
                     </div>
                 </form>
             </div>
