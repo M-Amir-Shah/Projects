@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Avatar, Button, Card, Row, Col, Spin, Alert, Drawer, message, Modal } from 'antd';
+import { Layout, Avatar, Button, Card, Row, Col, Spin, Alert, Drawer, Modal, Typography } from 'antd';
 import { UserOutlined, LogoutOutlined, BarsOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 import EndPoint from '../endpoints'; // Importing the EndPoint object
@@ -12,6 +12,7 @@ import '../Styling/StudentDashboard.css';
 import Image from '../Pictures/admin.jpg';
 
 const { Header, Content } = Layout;
+const { Title } = Typography;
 
 const StudentDashboard = () => {
     const navigate = useNavigate();
@@ -40,17 +41,26 @@ const StudentDashboard = () => {
 
     const fetchApplicationStatus = async (profileId) => {
         try {
-            const response = await fetch(`${EndPoint.checkApplicationStatus}?id=${profileId}`);
-            if (!response.ok) throw new Error('Error fetching application status');
+            const response = await fetch(`${EndPoint.checkApplicationStatus}?id=${profileId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            if (!response.ok) throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}`);
             const data = await response.json();
-            setApplicationStatus(data.applicationStatus);
+            // Ensure the data object and applicationStatus property are valid
+            if (data && data.applicationStatus !== undefined) {
+                setApplicationStatus(data.applicationStatus);
+            } else {
+                setApplicationStatus('Not Submitted');
+            }
+            console.log('Fetched application status:', data);
         } catch (error) {
-            setError(error.message);
-        } finally {
-            setLoading(false);
+            console.error('Error fetching application status:', error);
+            setError('Failed to fetch application status. Please try again later.');
         }
     };
-
 
     useEffect(() => {
         const storedProfileId = localStorage.getItem('profileId');
@@ -72,14 +82,6 @@ const StudentDashboard = () => {
             setError('No profile ID found.'); // in local Storage
         }
     }, []);
-
-    // const navigateToScholarship = () => {
-    //     if (!applicationStatus || applicationStatus === 'Rejected') {
-    //         navigate("/INFOFROM");
-    //     } else {
-    //         message.error('Your scholarship application is currently being processed.');
-    //     }
-    // };
 
     const logout = () => {
         Modal.confirm({
@@ -132,7 +134,8 @@ const StudentDashboard = () => {
                             visible={isDrawerVisible}
                         >
                             <div className="sider-content">
-                            <Avatar size={64} src={Image} />
+                                <Avatar size={64} src={Image} />
+                                <Title level={4}>{name}</Title> {/* Display student's name here */}
                             </div>
                             <br />
                             <Button type="primary" onClick={logout} icon={<LogoutOutlined />} style={{ width: '80%' }}>Logout</Button>

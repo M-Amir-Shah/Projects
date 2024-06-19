@@ -3,6 +3,8 @@ import { Button, Input, message } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import '../Styling/Afterlogin.css'; // Importing CSS file
 import EndPoint from '../endpoints';
+import axios from 'axios';
+
 
 const { TextArea } = Input;
 
@@ -32,6 +34,8 @@ const AfterLogin = () => {
     const [length, setLength] = useState('1');
     const [isPicked, setIsPicked] = useState(false);
     const [studentId, setStudentId] = useState('');
+    const [loading, setLoading] = useState(false);
+
 
     useEffect(() => {
         if (profileId) {
@@ -91,17 +95,8 @@ const AfterLogin = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-
-        // Validation check
-        if (!name || !arid_no || !semester || !gender || !fatherName || !status) {
-            message.error("Please fill in all fields.");
-            return;
-        }
-        if (contactNo.length !== 11) {
-            message.error("Contact number must be 11 digits.");
-            return;
-        }
-
+        setLoading(true);
+        try {
         const formData = new FormData();
         formData.append('status', status);
         formData.append('occupation', occupation);
@@ -127,22 +122,15 @@ const AfterLogin = () => {
             formData.append(`agreement${index}`, file);
         });
 
-        try {
-            const token = localStorage.getItem('token'); // or however you store/retrieve your token
-            const response = await fetch(EndPoint.sendApplication, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Accept': 'application/json'
-                },
-                body: formData,
-            });
-            if (response.ok) {
-                message.success('Submitted successfully');
-                navigate('/StudentDashboard');
-            } else {
-                throw new Error('Failed to submit');
+        
+        const response = await axios.post(EndPoint.sendApplication, formData, {        
+            headers: {
+                'Content-Type': 'multipart/form-data'
             }
+            });
+           console.log(response.formData);
+           message.success('Added Successfully');
+            navigate('/StudentDashboard');
         } catch (error) {
             message.error('Failed to submit');
         }

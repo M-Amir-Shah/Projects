@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Layout, Card, Row, Col, Drawer, Button, Avatar } from 'antd';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Layout, Card, Row, Col, Drawer, Button, Avatar, Modal, Typography } from 'antd';
 import { BarsOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 import '../Styling/Admin-Dashboard.css';
@@ -10,12 +11,17 @@ import committeeMember from '../Pictures/committee-member.png';
 import grader from '../Pictures/grader.png';
 import meritbase from '../Pictures/meritbase.png';
 import needbase from '../Pictures/needbase.png';
+import Image from '../Pictures/ca.jpg';
 
 const { Header, Content } = Layout;
+const { Title } = Typography;
 
 const App = () => {
     const navigate = useNavigate();
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
+    const [data, setData] = useState(null);
+
+    
 
     const showDrawer = () => {
         setIsDrawerVisible(true);
@@ -28,9 +34,21 @@ const App = () => {
     const navigateTo = (path) => {
         navigate(path);
     };
-    const logout = (event) =>{
-        navigate('/Login')
-    }
+
+    const logout = () => {
+        Modal.confirm({
+            title: 'Logout',
+            content: 'Are you sure you want to logout?',
+            okText: 'Yes',
+            cancelText: 'No',
+            onOk: () => {
+                localStorage.clear(); // Clear local storage on logout
+                navigate('/Login');
+            },
+        });
+    };
+
+    const name = "AbdulIslam"; // Define the name variable here
 
     return (
         <Layout>
@@ -46,7 +64,8 @@ const App = () => {
                             visible={isDrawerVisible}
                             bodyStyle={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
                         >
-                            <Avatar size={64} icon={<UserOutlined />} />
+                            <Avatar size={64} src={Image} />
+                            <Title level={4}>{name}</Title>
                             <br />
                             <Button type="primary" style={{ width: '80%' }} onClick={() => navigateTo('/Budget')}>Add Budget Amount</Button>
                             <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Student-Record')}>Students Records</Button>
@@ -115,6 +134,10 @@ const App = () => {
                         Assigning Graders
                     </Card>
                 </div>
+                {data && <div className="data-container">
+                    {/* Render your data here */}
+                    {JSON.stringify(data)}
+                </div>}
             </Content>
         </Layout>
     );
