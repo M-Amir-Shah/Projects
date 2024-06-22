@@ -15,3 +15,22 @@
     z-index: 1000;
     border-bottom: 1px solid #ccc;
 }
+
+.form-box {
+  width: 100%;
+  max-width: 900px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 40px 50px;
+  margin-top: 64px; /* Adjust margin-top to account for fixed navbar */
+}
+
+.form-box header h1 {
+  text-align: center;
+  color: black;
+  font-family: century;
+}
+
+.form-box form {
+  margin-block: 30px;
+}

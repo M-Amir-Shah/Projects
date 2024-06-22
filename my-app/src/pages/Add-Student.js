@@ -97,7 +97,7 @@ const AddStudent = () => {
                 }
             });
             console.log(response.data);
-            message.success('Added Successfully');
+            message.success('Add Successfully');
             navigate('/Admin-Dashboard');
         } catch (error) {
             console.error('Error adding student:', error);
@@ -162,6 +162,8 @@ const AddStudent = () => {
                             name="arid"
                             value={arid}
                             onChange={handleArid}
+                            pattern="\d{4}-Arid-\d{4}"
+                            title="Please enter in the format: 2020-Arid-1234"
                             required
                         />
                         <Input

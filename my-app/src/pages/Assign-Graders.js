@@ -12,8 +12,8 @@ const GradersList = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
-    const [selectedTeacher, setSelectedTeacher] = useState();
-    const [selectedStudent, setSelectedStudent] = useState();
+    const [selectedTeacher, setSelectedTeacher] = useState(null);
+    const [selectedStudent, setSelectedStudent] = useState(null);
     const [studentsData, setStudentsData] = useState([]);
     const [facultyData, setFacultyData] = useState([]);
 
@@ -60,11 +60,15 @@ const GradersList = () => {
         fetchFacultyMembers();
     }, []);
 
-    const assignTeacher = async () => {
+    const assignTeacher = async (facultyId) => {
         try {
+            if (!selectedStudent) {
+                message.error('No student selected');
+                return;
+            }
             setLoading(true);
             const response = await axios.post(EndPoint.assignGrader, {
-                facultyId: selectedTeacher.facultyId,
+                facultyId: facultyId,
                 studentId: selectedStudent.studentId
             });
             if (response.status === 200) {
@@ -114,7 +118,7 @@ const GradersList = () => {
                                         title={item.name}
                                         description={item.arid_no}
                                     />
-                                    <Button onClick={() => { setSelectedTeacher(item); setModalVisible(true); }}>
+                                    <Button onClick={() => { setSelectedStudent(item); setModalVisible(true); }}>
                                         Assign
                                     </Button>
                                 </List.Item>
@@ -144,7 +148,7 @@ const GradersList = () => {
                                         avatar={<Avatar size={64} icon={<UserOutlined />} />}
                                         title={item.name}
                                     />
-                                    <Button key="assign" type="primary" onClick={assignTeacher} loading={loading}>
+                                    <Button key="assign" type="primary" onClick={() => assignTeacher(item.facultyId)} loading={loading}>
                                         Assign
                                     </Button>
                                 </List.Item>

@@ -11,7 +11,7 @@ import { Button, Col, Row, Modal, Layout } from 'antd';
 import EndPoint from "../endpoints";
 const { Header } = Layout;
 
-function App() {
+function App({ id }) {
   const defaultLayoutPluginInstance = defaultLayoutPlugin();
   const navigate = useNavigate();
   const [fileUrl, setFileUrl] = useState(null);
@@ -24,7 +24,7 @@ function App() {
   useEffect(() => {
     const fetchApplicationDetails = async () => {
       try {
-        const response = await fetch(`${EndPoint.getApplication}`);
+        const response = await fetch(`${EndPoint.getApplication}/${id}`); // Pass id in the URL
         if (!response.ok) {
           throw new Error('Failed to fetch application details');
         }
@@ -36,7 +36,7 @@ function App() {
     };
 
     fetchApplicationDetails();
-  }, []);
+  }, [id]); // Ensure useEffect runs when id changes
 
   const showModal = async () => {
     const selectedFormat = await getFileFormat(); // Prompt user to select a file
@@ -152,170 +152,3 @@ function App() {
 }
 
 export default App;
-
-
-
-
-
-
-
-
-
-
-// import "../Styling/View-Application.css"; 
-// import React, { useState, useEffect } from 'react';
-// import { Worker, Viewer } from '@react-pdf-viewer/core';
-// import '@react-pdf-viewer/core/lib/styles/index.css';
-// import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout';
-// import '@react-pdf-viewer/default-layout/lib/styles/index.css';
-// import { ArrowLeftOutlined } from '@ant-design/icons';
-// import logo from './BiitLogo.jpeg';
-// import { useNavigate } from 'react-router-dom';
-// import { Button, Col, Row, Modal, Layout } from 'antd';
-// // import EndPoint from "../endpoints"; // Commented out actual API endpoints
-// const { Header } = Layout;
-
-// function App() {
-//   const defaultLayoutPluginInstance = defaultLayoutPlugin();
-//   const navigate = useNavigate();
-//   const [fileUrl, setFileUrl] = useState(null);
-//   const [fileType, setFileType] = useState(null);
-//   const [isModalVisible, setIsModalVisible] = useState(false);
-//   const [suggestion, setSuggestion] = useState('');
-//   const [applicationDetails, setApplicationDetails] = useState(null);
-//   const supportedFormats = ['pdf', 'png', 'jpeg', 'doc']; // Supported file formats
-
-//   useEffect(() => {
-//     // Simulated fetch call to get application details
-//     const fetchApplicationDetails = async () => {
-//       try {
-//         // Simulated delay
-//         await new Promise((resolve) => setTimeout(resolve, 1000));
-//         const data = {
-//           name: 'Muhammad Amir',
-//           student_id: '2020-Arid-1234',
-//           semester: '8th',
-//           father_name: 'Mukhtar Ahmad',
-//           requiredAmount: 15000
-//         };
-//         setApplicationDetails(data);
-//       } catch (error) {
-//         console.error('Error fetching application details:', error);
-//       }
-//     };
-
-//     fetchApplicationDetails();
-//   }, []);
-
-//   const showModal = async () => {
-//     const selectedFormat = await getFileFormat(); // Simulate user selecting a file
-//     if (selectedFormat) {
-//       setFileType(selectedFormat);
-//       setFileUrl(`path/to/dummy/file.${selectedFormat}`); // Dummy file URL
-//       setIsModalVisible(true);
-//     }
-//   };
-
-//   const getFileFormat = async () => {
-//     // Simulate user selecting a file format
-//     return new Promise((resolve) => {
-//       const randomIndex = Math.floor(Math.random() * supportedFormats.length);
-//       resolve(supportedFormats[randomIndex]);
-//     });
-//   };
-
-//   const handleCancel = () => {
-//     setIsModalVisible(false);
-//   };
-
-//   const Submit = (event) => {
-//     event.preventDefault();
-//     console.log('Suggestion submitted:', suggestion);
-//     setSuggestion(''); // Clear the suggestion box after submission
-//   };
-  
-//   const Back = () => {
-//     navigate('/Committee-Dashboard'); // Use navigate function here
-//   };
-
-//   const renderViewer = () => {
-//     switch (fileType) {
-//       case 'pdf':
-//         return (
-//           <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-//             <Viewer
-//               fileUrl={fileUrl}
-//               plugins={[defaultLayoutPluginInstance]}
-//             />
-//           </Worker>
-//         );
-//       case 'doc':
-//         return <iframe src={fileUrl} title="Document Viewer" style={{ width: '100%', height: '100%' }} />;
-//       case 'png':
-//       case 'jpeg':
-//         return <img src={fileUrl} alt="Image Viewer" style={{ maxWidth: '100%', maxHeight: '100%' }} />;
-//       default:
-//         return null;
-//     }
-//   };
-
-//   return (
-//     <div className="container">
-//       <Header className="navbar">
-//         <Row justify="space-between" align="middle">
-//           <Col>
-//             <Button onClick={Back} icon={<ArrowLeftOutlined />} />
-//           </Col>
-//           <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#ffff' }}>
-//             BIIT View Application
-//           </Col>
-//           <Col>
-//             <img src={logo} alt="BIIT Financial Aid Allocation Tool" style={{ height: '35px', width: '35px', borderRadius: '25px' }} />
-//           </Col>
-//         </Row>
-//       </Header>
-//       <div className="form-box">
-//         <Button onClick={showModal}>View Documents</Button>
-//         <div>
-//           <h2>Application Details</h2>
-//           {applicationDetails && (
-//             <>
-//               <p><strong>Name:</strong> {applicationDetails.name}</p>
-//               <p><strong>ARID:</strong> {applicationDetails.student_id}</p>
-//               <p><strong>Semester:</strong> {applicationDetails.semester}</p>
-//               <p><strong>Father Name:</strong> {applicationDetails.father_name}</p>
-//               <p><strong>Required Amount:</strong> ${applicationDetails.requiredAmount}</p>
-//             </>
-//           )}
-//           <form onSubmit={Submit}>
-//             <div>
-//               <label htmlFor="suggestion">Suggestion:</label>
-//               <textarea
-//                 id="suggestion"
-//                 value={suggestion}
-//                 onChange={(e) => setSuggestion(e.target.value)}
-//                 rows="4"
-//                 cols="50"
-//               />
-//             </div>
-//             <button type="submit">Submit</button>
-//           </form>
-//         </div>
-//         <Modal
-//           title="Document Viewer"
-//           visible={isModalVisible}
-//           onCancel={handleCancel}
-//           footer={null}
-//           width="80%"
-//           style={{ top: 20 }}
-//         >
-//           <div style={{ height: '500px' }}>
-//             {fileUrl && renderViewer()}
-//           </div>
-//         </Modal>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default App;

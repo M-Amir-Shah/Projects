@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Layout, Row, Col, Badge, Drawer, Button, Avatar, Modal, message } from 'antd';
+import { Card, Layout, Row, Col, Badge, Drawer, Button, Avatar, Modal, message, Typography } from 'antd';
 import { FilePdfOutlined, FileExcelOutlined, FileImageOutlined, BarsOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
@@ -9,11 +9,14 @@ import logo from './BiitLogo.jpeg';
 import '../Styling/Committee-DashBoard.css';
 
 const { Header, Content } = Layout;
+const { Title } = Typography;
 const { Meta } = Card;
 
 const DocumentCard = ({ document }) => {
+    const navigate = useNavigate();
+
     const handleClick = () => {
-        message.info(`You clicked on ${document.name}`);
+        navigate('/View-Application', { state: { documentId: document.id } });
     };
 
     const getDocumentIcon = (fileName) => {
@@ -48,6 +51,7 @@ const DocumentCard = ({ document }) => {
 
 const App = ({ id }) => {
     const navigate = useNavigate();
+    const [name,setName]=useState('');
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
     const [documents, setDocuments] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -55,6 +59,7 @@ const App = ({ id }) => {
     const [remainingBalance, setRemainingBalance] = useState(null);
     const [totalAmount, setTotalAmount] = useState(null);
     const [committeeInfo, setCommitteeInfo] = useState({ name: '', profilePic: '' });
+    
 
     useEffect(() => {
         const fetchDocuments = async () => {
@@ -135,8 +140,8 @@ const App = ({ id }) => {
                             bodyStyle={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
                         >
                             <div className="sider-content">
-                                <Avatar size={64} src={committeeInfo.profilePic} icon={<UserOutlined />} />
-                                <p>{committeeInfo.name}</p>
+                                <Avatar size={64} icon={<UserOutlined />} />
+                                <Title level={4}>{name}</Title>
                             </div>
                             <br />
                             <Button type="primary" onClick={balanceCheck} style={{ width: '80%' }}>Remaining Amount</Button>
@@ -152,7 +157,7 @@ const App = ({ id }) => {
                     </Col>
                 </Row>
             </Header>
-            <Content className='content'>
+            <Content className='container'>
                 <div>
                     <Card
                         title="Remaining Application"
@@ -161,9 +166,9 @@ const App = ({ id }) => {
                             margin: '20px auto',
                         }}
                     >
-                        <p className='card-para'>Left<sup><Badge count={documents.length} /></sup></p>
+                        <p className='card-para'>Left <sup><Badge count={documents.length} /></sup></p>
                     </Card>
-                    <Search placeholder="Search" />
+                    {/* <Search placeholder="Search" /> */}
                     <br />
                     <div className="scrollable-container">
                         {loading ? (

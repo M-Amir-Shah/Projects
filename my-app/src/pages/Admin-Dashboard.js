@@ -69,7 +69,7 @@ const App = () => {
                             <br />
                             <Button type="primary" style={{ width: '80%' }} onClick={() => navigateTo('/Budget')}>Add Budget Amount</Button>
                             <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Student-Record')}>Students Records</Button>
-                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Policies')}>Add New Policies</Button>
+                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Policies')}>View Policies</Button>
                             <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Add-Faculty-Member')}>Add Faculty Member</Button>
                             <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Add-New-Committee-Member')}>Add Committee Member</Button>
                             <Button type="primary" style={{ width: '80%', marginTop: '100px' }} onClick={logout}>Logout</Button>

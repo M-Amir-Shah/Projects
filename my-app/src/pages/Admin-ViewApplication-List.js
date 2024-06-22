@@ -88,7 +88,7 @@ const App = () => {
                     </Col>
                 </Row>
             </Header>
-            <Content className='content'>
+            <Content className='container'>
                 <div>
                     <Card
                         title="Remaining Application"
@@ -97,7 +97,7 @@ const App = () => {
                             margin: '20px auto',
                         }}
                     >
-                        <p className='card-para'>Left<sup><Badge count={documents.length} /></sup></p>
+                        <p className='card-para'>Left <sup><Badge count={documents.length} /></sup></p>
                     </Card>
                     <br />
                     <div className="scrollable-container">

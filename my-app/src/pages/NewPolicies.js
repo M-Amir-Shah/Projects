@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import logo from './BiitLogo.jpeg';
-import { Layout, Row, Col, Button, Radio, Input, Select, Form, Spin, message } from 'antd';
+import { Layout, Row, Col, Button, Radio, Input, Select, Spin, message } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import "../Styling/NewPolicies.css";
 import { useNavigate } from 'react-router-dom';
-import EndPoint from '../endpoints'; // Import the endpoints file
-import axios from 'axios';
 
 const { Header, Content } = Layout;
 const { Option } = Select;
@@ -13,9 +11,10 @@ const { TextArea } = Input;
 
 const NeedMeritPolicy = () => {
     const history = useNavigate();
+    const [description,setDescription] = useState('');
+    
     const [selection, setSelection] = useState('');
     const [meritType, setMeritType] = useState('');
-    const [form] = Form.useForm(); // Create form instance
     const [loading, setLoading] = useState(false); // State to manage loading
 
     const handleSelectionChange = (value) => {
@@ -27,46 +26,20 @@ const NeedMeritPolicy = () => {
         setMeritType(e.target.value);
     };
 
-    const handleFormSubmit = async (values) => {
-        setLoading(true); // Start loading
-        try {
-            const formData = new FormData();
-            formData.append('description', values.description);
-            formData.append('policyFor', values.policyFor);
-
-            // Add other fields based on the policy type
-            if (values.policyFor === 'Needbase') {
-                formData.append('val1', values.minimumCGPA);
-                formData.append('policy', values.description); // Assuming policy description is the same for both types
-            } else if (values.policyFor === 'Meritbase') {
-                formData.append('val1', values.meritType === 'CGPA' ? values.minimumCGPA : values.minimumStrength);
-                formData.append('val2', values.meritType === 'Strength' ? values.maximumStrength : ''); // Assuming val2 is not always used
-                formData.append('policy', values.description); // Assuming policy description is the same for both types
-                formData.append('strength', values.meritType === 'Strength' ? values.studentsCount : ''); // Assuming strength is only used for 'Strength' type
-            }
-
-            const response = await axios.post(EndPoint.addPolicies, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data' // Make sure to set correct content type
-                }
-            });
-
-            if (response.status === 200) {
-                console.log('Policy added successfully');
-                form.resetFields();
-            } else {
-                console.error('Failed to add policy:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error adding policy:', error.response || error.message);
-            message.error('Error adding policy');
-        } finally {
-            setLoading(false);
-        }
+    const Back = () => {
+        history('/Policies');
     };
 
-    const Back = () => {
-        history(-1);
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        // Simulating form submission delay with setTimeout
+        setTimeout(() => {
+            setLoading(false);
+            message.success('Form submitted successfully');
+            // Further logic can be added here for actual form submission
+        }, 2000); // Example delay of 2 seconds
     };
 
     return (
@@ -86,68 +59,67 @@ const NeedMeritPolicy = () => {
             </Header>
             <div className='container'>
                 <Content>
-                    <Form form={form} layout="vertical" onFinish={handleFormSubmit}>
-                        <Form.Item name="policyFor" label="Policy Type">
-                            <Select placeholder="Select policy type" onChange={handleSelectionChange}>
-                                <Option value="Needbase">Needbase</Option>
-                                <Option value="Meritbase">Meritbase</Option>
-                            </Select>
-                        </Form.Item>
+                    <form onSubmit={handleSubmit}>
+                        <label htmlFor="policyFor">Policy Type:</label>
+                        <Select id="policyFor" placeholder="Select policy type" onChange={handleSelectionChange}>
+                            <Option value="Needbase">Needbase</Option>
+                            <Option value="Meritbase">Meritbase</Option>
+                        </Select>
                         {selection === 'Needbase' && (
                             <>
-                                <Form.Item name="minimumCGPA" label="Minimum CGPA" rules={[{ required: true, message: 'Please enter minimum CGPA' }]}>
-                                    <Input placeholder="Minimum CGPA" />
-                                </Form.Item>
-                                <Form.Item name="description" label="Policy Description" rules={[{ required: true, message: 'Please enter policy description' }]}>
-                                    <TextArea placeholder="Policy Description" rows={4} />
-                                </Form.Item>
+                            <br/>
+                                <label htmlFor="minimumCGPA">Minimum CGPA:</label>
+                                <Input id="minimumCGPA" type="text" placeholder="Minimum CGPA" />
+                                <label htmlFor="description">Policy Description:</label>
+                                <TextArea id="description" placeholder="Policy Description" rows={4} />
                             </>
                         )}
                         {selection === 'Meritbase' && (
                             <>
-                                <Form.Item name="meritType" label="Merit Type">
-                                    <Radio.Group onChange={handleMeritTypeChange} value={meritType}>
-                                        <Radio value="CGPA">CGPA</Radio>
-                                        <Radio value="Strength">Strength</Radio>
-                                    </Radio.Group>
-                                </Form.Item>
+                            <br/>
+                                <label>Merit Type:</label>
+                                <br/>
+                                <Radio.Group onChange={handleMeritTypeChange} value={meritType}>
+                                    <Radio value="CGPA">CGPA</Radio>
+                                    <Radio value="Strength">Strength</Radio>
+                                </Radio.Group>
                                 {meritType === 'CGPA' && (
                                     <>
-                                        <Form.Item name="minimumCGPA" label="Minimum CGPA" rules={[{ required: true, message: 'Please enter minimum CGPA' }]}>
-                                            <Input placeholder="Minimum CGPA" />
-                                        </Form.Item>
-                                        <Form.Item name="description" label="Policy Description" rules={[{ required: true, message: 'Please enter policy description' }]}>
-                                            <TextArea placeholder="Policy Description" rows={4} />
-                                        </Form.Item>
+                                    <br/>
+                                        <label htmlFor="minimumCGPA">Minimum CGPA:</label>
+                                        <br/>
+                                        <Input id="minimumCGPA" type="text" placeholder="Minimum CGPA" />
+                                        <br/>
+                                        <label htmlFor="description">Policy Description:</label>
+                                        <TextArea id="description" placeholder="Policy Description" rows={4} />
                                     </>
                                 )}
                                 {meritType === 'Strength' && (
-                                    <>
-                                        <Form.Item name="minimumStrength" label="Minimum Strength" rules={[{ required: true, message: 'Please enter minimum strength' }]}>
-                                            <Input placeholder="Minimum Strength" />
-                                        </Form.Item>
-                                        <Form.Item name="maximumStrength" label="Maximum Strength" rules={[{ required: true, message: 'Please enter maximum strength' }]}>
-                                            <Input placeholder="Maximum Strength" />
-                                        </Form.Item>
-                                        <Form.Item name="studentsCount" label="Students Count">
-                                            <Select placeholder="Select number">
-                                                <Option value="1">1</Option>
-                                                <Option value="2">2</Option>
-                                                <Option value="3">3</Option>
-                                            </Select>
-                                        </Form.Item>
-                                        <Form.Item name="description" label="Policy Description" rules={[{ required: true, message: 'Please enter policy description' }]}>
-                                            <TextArea placeholder="Policy Description" rows={4} />
-                                        </Form.Item>
+                                    <> 
+                                    <br/>
+                                        <label htmlFor="minimumStrength">Minimum Strength:</label>
+                                        <Input id="minimumStrength" type="text" placeholder="Minimum Strength" />
+                                        <label htmlFor="maximumStrength">Maximum Strength:</label>
+                                        <Input id="maximumStrength" type="text" placeholder="Maximum Strength" />
+                                        <label htmlFor="studentsCount">Students Count:</label>
+                                        <Select id="studentsCount" placeholder="Select number">
+                                            <Option value="1">1</Option>
+                                            <Option value="2">2</Option>
+                                            <Option value="3">3</Option>
+                                        </Select>
+                                        <br/>
+                                        <label htmlFor="description">Policy Description:</label>
+                                        <TextArea id="description" placeholder="Policy Description" rows={4} />
                                     </>
                                 )}
                             </>
                         )}
-                        <Form.Item>
-                            <Button type="primary" htmlType="submit" loading={loading}>Submit</Button>
-                            <Button style={{ marginLeft: '8px' }} onClick={() => form.resetFields()}>Cancel</Button>
-                        </Form.Item>
-                    </Form>
+                        <div>
+                        <br/>
+                        <Button type="primary" htmlType="submit" loading={loading}>Add</Button>
+                        <Button style={{ marginLeft: '8px' }} onClick={() => setLoading(false)}>Cancel</Button>
+                        </div>
+                    </form>
                 </Content>
             </div>
         </div>
