@@ -72,6 +72,9 @@ const App = () => {
                             <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Policies')}>View Policies</Button>
                             <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Add-Faculty-Member')}>Add Faculty Member</Button>
                             <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Add-New-Committee-Member')}>Add Committee Member</Button>
+                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Add-Session')}>Add Session</Button>
+                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Allocation-Sheet')}>Allocation Sheet</Button>
+                            
                             <Button type="primary" style={{ width: '80%', marginTop: '100px' }} onClick={logout}>Logout</Button>
                         </Drawer>
                     </Col>

@@ -8,61 +8,54 @@ import EndPoint from '../endpoints';
 
 const { Header } = Layout;
 
+const fetchAcceptedApplications = async () => {
+    try {
+        const response = await fetch(EndPoint.accepted);
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching student records:', error);
+        return [];
+    }
+};
+
 const AcceptedApplication = () => {
     const navigate = useNavigate();
     const [applications, setApplications] = useState([]);
     const [selectedOption, setSelectedOption] = useState('');
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const fetchAcceptedApplications = async () => {
-            try {
-                const response = await fetch(`${EndPoint.Accepted}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setApplications(data);
-                } else {
-                    console.error('Failed to fetch Accepted applications:', response.statusText);
-                }
-            } catch (error) {
-                console.error('Error fetching Accepted applications:', error);
-            }
+        const loadAcceptedApplications = async () => {
+            setLoading(true);
+            const data = await fetchAcceptedApplications();
+            setApplications(data);
+            setLoading(false);
         };
-
-        fetchAcceptedApplications();
+        loadAcceptedApplications();
     }, []);
 
-    const SelectChange = (event) => {
+    const handleSelectChange = (event) => {
         setSelectedOption(event.target.value);
     };
 
-    const Back = () => {
+    const handleBack = () => {
         navigate('/Admin-Dashboard');
     };
 
-    const handleAcceptedApplication = async (applicationId) => {
-        try {
-            const response = await fetch(`/api/RejectApplication?applicationId=${applicationId}`, {
-                method: 'POST'
-            });
-            if (response.ok) {
-                const updatedApplications = applications.filter(app => app.id !== applicationId);
-                setApplications(updatedApplications);
-            } else {
-                console.error('Failed to reject application:', response.statusText);
-            }
-        } catch (error) {
-            console.error('Error rejecting application:', error);
-        }
-    };
-
-    const filteredApplications = applications.filter(app => app.type === selectedOption);
+    const filteredApplications = selectedOption 
+        ? applications.filter(app => app.type === selectedOption)
+        : applications;
 
     return (
         <div className="container">
             <Header className="navbar">
                 <Row justify="space-between" align="middle">
                     <Col>
-                        <Button onClick={Back} icon={<ArrowLeftOutlined />} />
+                        <Button onClick={handleBack} icon={<ArrowLeftOutlined />} />
                     </Col>
                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#ffff' }}>
                         BIIT
@@ -75,7 +68,7 @@ const AcceptedApplication = () => {
             <div className="form-box">
                 <h2>Accepted Applications</h2>
                 <div>
-                    <select value={selectedOption} onChange={SelectChange} style={{ width: '100%' ,textAlign: 'center'}}>
+                    <select value={selectedOption} onChange={handleSelectChange} style={{ width: '100%', textAlign: 'center' }}>
                         <option value="">---Select---</option>
                         <option value="needbase">NeedBase</option>
                         <option value="meritbase">MeritBase</option>
@@ -87,12 +80,11 @@ const AcceptedApplication = () => {
                         dataSource={filteredApplications}
                         renderItem={item => (
                             <List.Item>
-                                <Avatar size={64} icon={<UserOutlined />} />
                                 <List.Item.Meta
+                                    avatar={<Avatar size={64} icon={<UserOutlined />} />}
                                     title={item.name}
-                                    description={item.id}
+                                    description={item.arid_no}
                                 />
-                                <Button onClick={() => handleAcceptedApplication(item.id)} danger>Reject</Button>
                             </List.Item>
                         )}
                     />

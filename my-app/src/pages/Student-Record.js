@@ -66,7 +66,7 @@ const StudentRecords = () => {
                 </Row>
             </Header>
             <div className="form-box">
-                <h2 style={{textAlign: 'center'}}>Records</h2>
+                <h2 style={{ textAlign: 'center' }}>Records</h2>
                 <form onSubmit={Submit}>
                     <div className="scrollable-list">
                         {loading ? (

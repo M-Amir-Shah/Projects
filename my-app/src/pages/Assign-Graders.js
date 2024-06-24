@@ -10,9 +10,10 @@ const { Header } = Layout;
 
 const GradersList = () => {
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
+    const [loadingStudents, setLoadingStudents] = useState(false);
+    const [loadingFaculty, setLoadingFaculty] = useState(false);
+    const [assigningTeacher, setAssigningTeacher] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
-    const [selectedTeacher, setSelectedTeacher] = useState(null);
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [studentsData, setStudentsData] = useState([]);
     const [facultyData, setFacultyData] = useState([]);
@@ -20,17 +21,17 @@ const GradersList = () => {
     useEffect(() => {
         const fetchStudents = async () => {
             try {
-                setLoading(true);
+                setLoadingStudents(true);
                 // Simulating loading delay of 3-5 seconds
                 setTimeout(async () => {
-                    const response = await axios.get(EndPoint.getAllStudents);
+                    const response = await axios.get(EndPoint.unAssignedStudents);
                     setStudentsData(response.data);
                 }, Math.floor(Math.random() * 3000) + 3000); // Random delay between 3 to 5 seconds
             } catch (error) {
                 console.error('Error fetching students:', error);
                 message.error('Failed to fetch students data.');
             } finally {
-                setLoading(false);
+                setLoadingStudents(false);
             }
         };
 
@@ -40,7 +41,7 @@ const GradersList = () => {
     useEffect(() => {
         const fetchFacultyMembers = async () => {
             try {
-                setLoading(true);
+                setLoadingFaculty(true);
                 // Simulating loading delay of 3-5 seconds
                 setTimeout(async () => {
                     const response = await axios.get(EndPoint.getFacultyMembers);
@@ -53,7 +54,7 @@ const GradersList = () => {
                 console.error('Error fetching Faculty Members:', error);
                 message.error('Failed to load Faculty Members.');
             } finally {
-                setLoading(false);
+                setLoadingFaculty(false);
             }
         };
 
@@ -66,7 +67,7 @@ const GradersList = () => {
                 message.error('No student selected');
                 return;
             }
-            setLoading(true);
+            setAssigningTeacher(true);
             const response = await axios.post(EndPoint.assignGrader, {
                 facultyId: facultyId,
                 studentId: selectedStudent.studentId
@@ -80,7 +81,7 @@ const GradersList = () => {
             console.error('Error assigning teacher:', error);
             message.error('Failed to assign teacher');
         } finally {
-            setLoading(false);
+            setAssigningTeacher(false);
             setModalVisible(false);
         }
     };
@@ -107,7 +108,7 @@ const GradersList = () => {
             <div className="form-box">
                 <h2 style={{ textAlign: 'center' }}>Assigning Grader</h2>
                 <div className="scrollable-list">
-                    <Spin spinning={loading}>
+                    <Spin spinning={loadingStudents}>
                         <List
                             itemLayout="horizontal"
                             dataSource={studentsData}
@@ -138,7 +139,7 @@ const GradersList = () => {
                 ]}
             >
                 <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                    <Spin spinning={loading}>
+                    <Spin spinning={loadingFaculty}>
                         <List
                             itemLayout="horizontal"
                             dataSource={facultyData}
@@ -148,7 +149,7 @@ const GradersList = () => {
                                         avatar={<Avatar size={64} icon={<UserOutlined />} />}
                                         title={item.name}
                                     />
-                                    <Button key="assign" type="primary" onClick={() => assignTeacher(item.facultyId)} loading={loading}>
+                                    <Button key="assign" type="primary" onClick={() => assignTeacher(item.facultyId)} loading={assigningTeacher}>
                                         Assign
                                     </Button>
                                 </List.Item>

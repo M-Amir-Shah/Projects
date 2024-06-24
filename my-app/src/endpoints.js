@@ -1,4 +1,4 @@
-const baseUrl = "http://192.168.100.10/Backend/";
+const baseUrl = "http://192.168.96.81/Backend/";
 
 const EndPoint = {
     login: `${baseUrl}api/User/Login`,
@@ -33,10 +33,10 @@ const EndPoint = {
     getCommitteeMembers: `${baseUrl}api/Admin/CommitteeMembers`,
     addCommitteeMember: `${baseUrl}api/Admin/AddCommitteeMember`,
     adminApplication: `${baseUrl}api/Admin/ApplicationSuggestions`,
-    acceptApplication: `${baseUrl}api/Admin/AcceptApplication`,
-    rejectApplication: `${baseUrl}api/Admin/RejectApplication`,
-    accepted: `${baseUrl}api/Admin/AcceptedApplication`,
-    rejected: `${baseUrl}api/Admin/RejectedApplication`,
+    acceptApplication: `${baseUrl}api/Admin/AcceptApplication`, //post
+    rejectApplication: `${baseUrl}api/Admin/RejectApplication`, //post
+    accepted: `${baseUrl}api/Admin/AcceptedApplication`, //get
+    rejected: `${baseUrl}api/Admin/RejectedApplication`, //get
     assignGrader: `${baseUrl}api/Admin/AssignGrader`,
     meritBaseShortListing: `${baseUrl}api/Admin/GetMeritBaseShortListedStudent`,
     addStudent: `${baseUrl}api/Admin/AddStudent`,

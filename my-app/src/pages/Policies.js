@@ -71,8 +71,8 @@ const Navbar = () => {
                             <div key={index}>
                                 <Card>
                                 <p><b>Session: </b>{policy.p.session}</p>
-                                    <p><b>Policy: </b>{policy.p.policyfor}</p> {/* Display policyFor */}
-                                    <p><b>Description: </b>{policy.c.description}</p>
+                                    <p><b>Policy For: </b>{policy.p.policyfor}</p> {/* Display policyFor */}
+                                    <p><b>Description: </b>{policy.p.Criteria[0].description}</p>
                                 </Card>
                                 <br />
                             </div>

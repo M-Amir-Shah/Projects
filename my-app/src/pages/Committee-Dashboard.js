@@ -51,7 +51,7 @@ const DocumentCard = ({ document }) => {
 
 const App = ({ id }) => {
     const navigate = useNavigate();
-    const [name,setName]=useState('');
+    const [name, setName] = useState('');
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
     const [documents, setDocuments] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -60,7 +60,6 @@ const App = ({ id }) => {
     const [totalAmount, setTotalAmount] = useState(null);
     const [committeeInfo, setCommitteeInfo] = useState({ name: '', profilePic: '' });
     
-
     useEffect(() => {
         const fetchDocuments = async () => {
             try {
@@ -83,6 +82,7 @@ const App = ({ id }) => {
                 setLoading(true);
                 const response = await axios.get(`${EndPoint.committeeMemberInfo}?id=${id}`);
                 setCommitteeInfo(response.data);
+                setName(response.data.name); // Set the name here
             } catch (error) {
                 console.error('Error fetching committee info:', error);
                 // Handle error here

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Row, Col, Button, Card } from 'antd';
-import { ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import "../Styling/Criterias.css";
 import logo from './BiitLogo.jpeg';
 import { useNavigate } from "react-router-dom";
@@ -36,25 +36,25 @@ const Navbar = () => {
         fetchPolicies();
     }, []);
 
-    const Back = (event) => {
-        event.preventDefault();
+    const navigateToDashboard = () => {
         history('/StudentDashboard');
     };
 
+    // Filter policies array to show only 'Needbase' policies
+    const filteredPolicies = policies.filter(policy => policy.p.policyfor === 'NeedBase');
 
     return (
         <div>
             <Header className="navbar">
                 <Row justify="space-between" align="middle">
                     <Col>
-                        <Button onClick={Back} icon={<ArrowLeftOutlined />} />
+                        <Button onClick={navigateToDashboard} icon={<ArrowLeftOutlined />} />
                     </Col>
                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large' }}>
                         Needbase Criteria
                     </Col>
                     <Col>
-                    <img src={logo} alt="BIIT logo" style={{ height: '35px', width: '35px', borderRadius: '25px' }} />
-
+                        <img src={logo} alt="BIIT logo" style={{ height: '35px', width: '35px', borderRadius: '25px' }} />
                     </Col>
                 </Row>
             </Header>
@@ -65,12 +65,12 @@ const Navbar = () => {
                     ) : error ? (
                         <div>Error: {error}</div>
                     ) : (
-                        policies.map((policy, index) => (
+                        filteredPolicies.map((item, index) => (
                             <div key={index}>
                                 <Card>
-                                    <p><b>Session: </b>{policy.p.session}</p>
-                                    <p><b>Policy: </b>{policy.p.policyfor}</p> {/* Display policyFor */}
-                                    <p><b>Description: </b>{policy.c.description}</p>
+                                    <p><b>Session: </b>{item.p.session}</p>
+                                    <p><b>Policy: </b>{item.p.policyfor}</p>
+                                    <p><b>Description: </b>{item.p.Criteria[0].description}</p>
                                 </Card>
                                 <br />
                             </div>
