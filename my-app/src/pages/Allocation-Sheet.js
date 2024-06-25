@@ -1,173 +1,152 @@
 import React, { useState, useEffect } from 'react';
+import { Tabs, Layout, Row, Col, Button, Table, Typography } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Layout, Table, Typography, Spin, Row, Col } from 'antd';
+import logo from './BiitLogo.jpeg';
+import "../Styling/Allocation-Sheet.css";
 import EndPoint from '../endpoints';
 
-const { Header, Content } = Layout;
-const { Title, Text } = Typography;
+const { Header } = Layout;
+const { TabPane } = Tabs;
+const { Text } = Typography;
 
-function AllocationDetails({ session }) {
-  const [loading, setLoading] = useState(true);
-  const [mGirl, setMGirl] = useState(0);
-  const [mBoy, setMBoy] = useState(0);
-  const [mGirlsAmount, setMGirlsAmount] = useState(0);
-  const [mBoysAmount, setMBoysAmount] = useState(0);
-  const [nGirl, setNGirl] = useState(0);
-  const [nBoy, setNBoy] = useState(0);
-  const [nGirlsAmount, setNGirlsAmount] = useState(0);
-  const [nBoysAmount, setNBoysAmount] = useState(0);
-  const [totalNeedBase, setTotalNeedBase] = useState(0);
-  const [totalMeritBase, setTotalMeritBase] = useState(0);
+const AddFaculty = () => {
+    const navigate = useNavigate();
+    const [needBaseData, setNeedBaseData] = useState([]);
+    const [meritBaseData, setMeritBaseData] = useState([]);
+    const [summaryData, setSummaryData] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        setLoading(true);
-        const [needBaseRes, meritBaseRes] = await Promise.all([
-          axios.get('/path/to/needbase/api'),
-          axios.get('/path/to/meritbase/api')
-        ]);
+    useEffect(() => {
+        fetchData();
+    }, []);
 
-        let totalNeed = 0;
-        let nGirlCount = 0;
-        let nBoyCount = 0;
-        let nGirlAmt = 0;
-        let nBoyAmt = 0;
+    const fetchData = async () => {
+        try {
+            const [needBaseResponse, meritBaseResponse, summaryResponse] = await Promise.all([
+                getNeedBaseData(),
+                getMeritBaseData(),
+                getSummaryData(),
+            ]);
+            setNeedBaseData(needBaseResponse.data);
+            setMeritBaseData(meritBaseResponse.data);
+            setSummaryData(summaryResponse.data);
+            setLoading(false);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
 
-        needBaseRes.data.forEach(app => {
-          totalNeed += parseInt(app.amount, 10);
-          if (app.gender === 'Female') {
-            nGirlCount++;
-            nGirlAmt += parseInt(app.amount, 10);
-          } else {
-            nBoyCount++;
-            nBoyAmt += parseInt(app.amount, 10);
-          }
-        });
+    const getNeedBaseData = async () => {
+        return axios.get(`${EndPoint.accepted}`);
+    };
 
-        setTotalNeedBase(totalNeed);
-        setNGirl(nGirlCount);
-        setNBoy(nBoyCount);
-        setNGirlsAmount(nGirlAmt);
-        setNBoysAmount(nBoyAmt);
+    const getMeritBaseData = async () => {
+        return axios.get(`${EndPoint.meritBaseShortListing}`);
+    };
 
-        let totalMerit = 0;
-        let mGirlCount = 0;
-        let mBoyCount = 0;
-        let mGirlAmt = 0;
-        let mBoyAmt = 0;
+    const getSummaryData = async () => {
+        return axios.get(`${EndPoint.summaryData}`);
+    };
 
-        meritBaseRes.data.forEach(student => {
-          totalMerit += parseInt(student.amount, 10);
-          if (student.gender === 'Female') {
-            mGirlCount++;
-            mGirlAmt += parseInt(student.amount, 10);
-          } else {
-            mBoyCount++;
-            mBoyAmt += parseInt(student.amount, 10);
-          }
-        });
+    const Cancel = () => {
+        navigate('/Admin-Dashboard');
+    };
 
-        setTotalMeritBase(totalMerit);
-        setMGirl(mGirlCount);
-        setMBoy(mBoyCount);
-        setMGirlsAmount(mGirlAmt);
-        setMBoysAmount(mBoyAmt);
+    // Calculate total fee for Needbase tab
+    const totalFee = needBaseData.reduce((total, item) => {
+        const amount = item.exemptedAmount?.replace('$', '').replace(',', '');
+        return total + parseFloat(amount || 0);
+    }, 0);
 
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setLoading(false);
-      }
-    }
+    // Calculate total amount for Summary tab
+    const totalAmount = summaryData.reduce((total, item) => {
+        const amount = item.total?.replace('$', '').replace(',', '');
+        return total + parseFloat(amount || 0);
+    }, 0);
 
-    fetchData();
-  }, []);
+    const needBaseColumns = [
+        { title: 'Arid No', dataIndex: 'arid_no', key: 'arid_no' },
+        { title: 'Name', dataIndex: 'name', key: 'name' },
+        { title: 'Discipline', dataIndex: 'degree', key: 'degree' },
+        { title: 'Gender', dataIndex: 'gender', key: 'gender' },
+        { title: 'Current CGPA', dataIndex: 'current-cgpa', key: 'current-cgpa' },
+        { title: 'Previous CGPA', dataIndex: 'previous-cgpa', key: 'previous-cgpa' },
+        { title: 'Fee Exempted', dataIndex: 'feeExempted', key: 'feeExempted' }
+    ];
 
-  const needBaseColumns = [
-    { title: 'Arid No', dataIndex: 'aridNo', key: 'aridNo' },
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Discipline', dataIndex: 'degree', key: 'degree' },
-    { title: 'Gender', dataIndex: 'gender', key: 'gender' },
-    { title: 'Current CGPA', dataIndex: 'cgpa', key: 'cgpa' },
-    { title: 'Previous CGPA', dataIndex: 'prevCgpa', key: 'prevCgpa' },
-    { title: 'Fee Exempted', dataIndex: 'exemptedAmount', key: 'exemptedAmount' }
-  ];
+    const meritBaseColumns = [
+        { title: 'Arid No', dataIndex: 'arid_no', key: 'arid_no' },
+        { title: 'Name', dataIndex: 'name', key: 'name' },
+        { title: 'Discipline', dataIndex: 'degree', key: 'degree' },
+        { title: 'Semester', dataIndex: 'semester', key: 'semester' },
+        { title: 'Section', dataIndex: 'section', key: 'section' },
+        { title: 'Gender', dataIndex: 'gender', key: 'gender' },
+        { title: 'Current CGPA', dataIndex: 'current-cgpa', key: 'current-cgpa' },
+        { title: 'Previous CGPA', dataIndex: 'previous-cgpa', key: 'previous-cgpa' },
+        { title: 'Position', dataIndex: 'position', key: 'position' },
+        { title: 'Amount', dataIndex: 'amount', key: 'amount' },
+    ];
 
-  const meritBaseColumns = [
-    { title: 'Arid No', dataIndex: 'aridNo', key: 'aridNo' },
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Discipline', dataIndex: 'degree', key: 'degree' },
-    { title: 'Semester', dataIndex: 'semester', key: 'semester' },
-    { title: 'Section', dataIndex: 'section', key: 'section' },
-    { title: 'Gender', dataIndex: 'gender', key: 'gender' },
-    { title: 'Current CGPA', dataIndex: 'cgpa', key: 'cgpa' },
-    { title: 'Previous CGPA', dataIndex: 'prevCgpa', key: 'prevCgpa' },
-    { title: 'Position', dataIndex: 'position', key: 'position' },
-    { title: 'Amount', dataIndex: 'amount', key: 'amount' }
-  ];
+    const summaryColumns = [
+        { title: 'Aid-Type', dataIndex: 'aidType', key: 'aidType' },
+        { title: 'Gender', dataIndex: 'gender', key: 'gender' },
+        { title: 'Strength', dataIndex: 'strength', key: 'strength' },
+        { title: 'Amount', dataIndex: 'amount', key: 'amount' },
+        { title: 'Total', dataIndex: 'total', key: 'total' },
+    ];
 
-  return (
-    <Layout>
-      <Header style={{ backgroundColor: '#fff', textAlign: 'center' }}>
-        <Title level={3}>Allocation Details</Title>
-      </Header>
-      <Content style={{ padding: '24px' }}>
-        {loading ? (
-          <Spin tip="Loading...">
-            <Table columns={needBaseColumns} dataSource={[]} pagination={false} />
-            <Table columns={meritBaseColumns} dataSource={[]} pagination={false} />
-          </Spin>
-        ) : (
-          <>
-            <Title level={4}>{session} Allocation Summary</Title>
-            <Row>
-              <Col span={5}><Text strong>AidType</Text></Col>
-              <Col span={5}><Text strong>Gender</Text></Col>
-              <Col span={4}><Text strong>Strength</Text></Col>
-              <Col span={5}><Text strong>Amount</Text></Col>
-              <Col span={5}><Text strong>Total</Text></Col>
-            </Row>
-            <Row>
-              <Col span={5}><Text>MeritBase Amount</Text></Col>
-              <Col span={5}>
-                <Row><Text>Female</Text></Row>
-                <Row><Text>Male</Text></Row>
-              </Col>
-              <Col span={4}>
-                <Row><Text>{mGirl}</Text></Row>
-                <Row><Text>{mBoy}</Text></Row>
-              </Col>
-              <Col span={5}>
-                <Row><Text>{mGirlsAmount}</Text></Row>
-                <Row><Text>{mBoysAmount}</Text></Row>
-              </Col>
-              <Col span={5}><Text>{totalMeritBase}</Text></Col>
-            </Row>
-            <Row>
-              <Col span={5}><Text>NeedBase Amount</Text></Col>
-              <Col span={5}>
-                <Row><Text>Female</Text></Row>
-                <Row><Text>Male</Text></Row>
-              </Col>
-              <Col span={4}>
-                <Row><Text>{nGirl}</Text></Row>
-                <Row><Text>{nBoy}</Text></Row>
-              </Col>
-              <Col span={5}>
-                <Row><Text>{nGirlsAmount}</Text></Row>
-                <Row><Text>{nBoysAmount}</Text></Row>
-              </Col>
-              <Col span={5}><Text>{totalNeedBase}</Text></Col>
-            </Row>
-            <Row justify="center" style={{ marginTop: 20 }}>
-              <Text>Total Amount: {totalMeritBase + totalNeedBase}</Text>
-            </Row>
-          </>
-        )}
-      </Content>
-    </Layout>
-  );
-}
+    return (
+        <div>
+            <Header className="navbar">
+                <Row justify="space-between" align="middle">
+                    <Col>
+                        <Button type="text" icon={<ArrowLeftOutlined />} onClick={Cancel} />
+                    </Col>
+                    <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large' }}>
+                        Allocation Sheet
+                    </Col>
+                    <Col>
+                        <img src={logo} alt="BIIT Financial Aid Allocation Tool" style={{ height: '35px', width: '35px', borderRadius: '25px' }} />
+                    </Col>
+                </Row>
+            </Header>
+            <div className="container">
+                <Tabs defaultActiveKey="1" className="custom-tabs">
+                    <TabPane tab="Needbase" key="1" className="custom-tabpane">
+                        <div className="tab-content">
+                            <div className="tab-table">
+                                <Table columns={needBaseColumns} dataSource={needBaseData} pagination={false} loading={loading} />
+                                <div style={{ marginTop: '20px' }}>
+                                    <Text strong>Total Fee: </Text>
+                                    <Text>{`$${totalFee.toLocaleString()}`}</Text>
+                                </div>
+                            </div>
+                        </div>
+                    </TabPane>
+                    <TabPane tab="Meritbase" key="2" className="custom-tabpane">
+                        <div className="tab-content">
+                            <div className="tab-table">
+                                <Table columns={meritBaseColumns} dataSource={meritBaseData} pagination={false} loading={loading} />
+                            </div>
+                        </div>
+                    </TabPane>
+                    <TabPane tab="Summary" key="3" className="custom-tabpane">
+                        <div className="tab-content">
+                            <div className="tab-table">
+                                <Table columns={summaryColumns} dataSource={summaryData} pagination={false} loading={loading} />
+                                <div style={{ marginTop: '20px' }}>
+                                    <Text strong>Total Amount: </Text>
+                                    <Text>{`$${totalAmount.toLocaleString()}`}</Text>
+                                </div>
+                            </div>
+                        </div>
+                    </TabPane>
+                </Tabs>
+            </div>
+        </div>
+    );
+};
 
-export default AllocationDetails;
+export default AddFaculty;

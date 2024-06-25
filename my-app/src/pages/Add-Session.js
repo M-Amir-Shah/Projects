@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Row, Col, Button, Select, DatePicker, Form, message } from 'antd';
+import { Layout, Row, Col, Button, DatePicker, Form, Input, message } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import logo from './BiitLogo.jpeg';
 import "../Styling/Budget.css";
@@ -9,16 +9,24 @@ import axios from 'axios';
 import EndPoint from '../endpoints';
 
 const { Header } = Layout;
-const { Option } = Select;
 
 const Session = () => {
     const navigate = useNavigate();
     
     // State variables
     const [name, setName] = useState('');
-    const [startDate, setStartDate] = useState(null);
-    const [endDate, setEndDate] = useState(null);
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
 
+    const handleName = (event) => {
+        setName(event.target.value);
+    }
+    const handleStart = (date, dateString) => {
+        setStartDate(dateString);
+    }
+    const handleEnd = (date, dateString) => {
+        setEndDate(dateString);
+    }
     const Back = (event) => {
         event.preventDefault();
         navigate('/Admin-Dashboard');
@@ -26,31 +34,45 @@ const Session = () => {
 
     const handleFormSubmit = async () => {
         try {
-            const formData = new FormData();
-            formData.append('name', name);
-            formData.append('startDate', formatDate(startDate)); // Format startDate
-            formData.append('endDate', formatDate(endDate)); // Format endDate
-    
-            const response = await axios.post(`${EndPoint.addSession}`, formData,{
+            // Format the dates to match the format expected by the backend
+            const formattedStartDate = formatDate(startDate);
+            const formattedEndDate = formatDate(endDate);
+            const formattedLastDate = calculateLastDate(formattedStartDate);
+
+            // Construct the URL with query parameters
+            const url = `${EndPoint.addSession}?name=${name}&startDate=${formattedStartDate}&endDate=${formattedEndDate}&lastDate=${formattedLastDate}`;
+
+            // Send the request
+            const response = await axios.post(url, null, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    'Content-Type': 'application/json'
                 }
             });
             console.log(response.data);
-            message.success('Added Successfully');
+            message.success('Session added successfully');
+            navigate('/Admin-Dashboard')
         } catch (error) {
-            console.error('Error submitting form:', error);
+            console.error('Error adding session', error);
+            message.error('Failed to add session');
         }
     };
-    
+
     // Format date function
     const formatDate = (date) => {
         if (!date) return ''; // Handle case when date is null or undefined
         const d = new Date(date);
+        const month = (d.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
         const day = d.getDate().toString().padStart(2, '0');
-        const month = (d.getMonth() + 1).toString().padStart(2, '0'); // Months are zero based
         const year = d.getFullYear();
-        return `${day}/${month}/${year}`;
+        return `${month}/${day}/${year}`;
+    };
+
+    // Calculate last date function
+    const calculateLastDate = (startDate) => {
+        if (!startDate) return ''; // Handle case when startDate is null or undefined
+        const d = new Date(startDate);
+        d.setDate(d.getDate() + 10); // Add 10 days to the start date
+        return formatDate(d);
     };
 
     return (
@@ -72,31 +94,25 @@ const Session = () => {
                 <Content className="form-box">
                     <h2 style={{ textAlign: 'center' }}>Add Session</h2>
                     <Form layout="vertical" onFinish={handleFormSubmit}>
-                        <Form.Item label="Session">
-                            <Select
-                                placeholder="Select Session"
-                                onChange={(value) => setName(value)}
+                        <Form.Item>
+                            <Input
+                                placeholder="Fall-2024, Summer-YYYY, Spring-YYYY"
+                                onChange={handleName}
                                 value={name}
-                            >
-                                <Option value="Fall">Fall</Option>
-                                <Option value="Summer">Summer</Option>
-                                <Option value="Spring">Spring</Option>
-                            </Select>
+                            />
                         </Form.Item>
                         <Form.Item label="Start Session">
                             <DatePicker
                                 style={{ width: '100%' }}
                                 placeholder="Select Start Date"
-                                onChange={(date, dateString) => setStartDate(date)}
-                                value={startDate}
+                                onChange={handleStart}
                             />
                         </Form.Item>
                         <Form.Item label="End Session">
                             <DatePicker
                                 style={{ width: '100%' }}
                                 placeholder="Select End Date"
-                                onChange={(date, dateString) => setEndDate(date)}
-                                value={endDate}
+                                onChange={handleEnd}
                             />
                         </Form.Item>
                         <Form.Item>
@@ -109,11 +125,6 @@ const Session = () => {
                         </Form.Item>
                     </Form>
                 </Content>
-            </div>
-            {/* Display formatted dates */}
-            <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                <p>Formatted Start Date: {startDate && formatDate(startDate)}</p>
-                <p>Formatted End Date: {endDate && formatDate(endDate)}</p>
             </div>
         </div>
     );

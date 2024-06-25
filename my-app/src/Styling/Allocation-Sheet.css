@@ -1,0 +1,53 @@
+/* Allocation-Sheet.css */
+
+.container {
+    background: linear-gradient(to right bottom, #119992, #b5c6e0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5%;
+    height: 100vh; /* Use 100vh to ensure it takes the full viewport height */
+}
+
+.navbar {
+    background: linear-gradient(to right bottom, #119992, #b5c6e0);
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+    border-bottom: 1px solid #ccc;
+}
+
+/* Style for the tabs */
+.custom-tabs .ant-tabs-nav .ant-tabs-tab {
+    font-size: 24px; /* Increase font size */
+    padding: 20px 30px; /* Increase padding */
+}
+
+/* Style for the active tab */
+.custom-tabs .ant-tabs-nav .ant-tabs-tab-active {
+    font-weight: bold; /* Make the active tab bold */
+    background: rgba(255, 255, 255, 0.7); /* Highlight the active tab */
+    border-radius: 8px; /* Add some border radius for better appearance */
+}
+
+/* Additional styles for the tab panes */
+.custom-tabpane {
+    padding: 0 50px; /* Remove padding from top and bottom to make space for fixed title */
+    background-color: #f5f5f5;
+    min-height: calc(100vh - 200px); /* Ensure the tab pane has a minimum height minus header and title */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    overflow: auto; /* Allow scrolling */
+}
+
+.tab-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+
+.tab-table {
+    flex: 1;
+    overflow-y: auto; /* Allow vertical scrolling for the table */
+}
