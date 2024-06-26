@@ -15,7 +15,6 @@ const AddFaculty = () => {
     const navigate = useNavigate();
     const [needBaseData, setNeedBaseData] = useState([]);
     const [meritBaseData, setMeritBaseData] = useState([]);
-    const [summaryData, setSummaryData] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -24,14 +23,12 @@ const AddFaculty = () => {
 
     const fetchData = async () => {
         try {
-            const [needBaseResponse, meritBaseResponse, summaryResponse] = await Promise.all([
+            const [needBaseResponse, meritBaseResponse] = await Promise.all([
                 getNeedBaseData(),
                 getMeritBaseData(),
-                getSummaryData(),
             ]);
             setNeedBaseData(needBaseResponse.data);
             setMeritBaseData(meritBaseResponse.data);
-            setSummaryData(summaryResponse.data);
             setLoading(false);
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -46,10 +43,6 @@ const AddFaculty = () => {
         return axios.get(`${EndPoint.meritBaseShortListing}`);
     };
 
-    const getSummaryData = async () => {
-        return axios.get(`${EndPoint.summaryData}`);
-    };
-
     const Cancel = () => {
         navigate('/Admin-Dashboard');
     };
@@ -57,12 +50,6 @@ const AddFaculty = () => {
     // Calculate total fee for Needbase tab
     const totalFee = needBaseData.reduce((total, item) => {
         const amount = item.exemptedAmount?.replace('$', '').replace(',', '');
-        return total + parseFloat(amount || 0);
-    }, 0);
-
-    // Calculate total amount for Summary tab
-    const totalAmount = summaryData.reduce((total, item) => {
-        const amount = item.total?.replace('$', '').replace(',', '');
         return total + parseFloat(amount || 0);
     }, 0);
 
@@ -87,14 +74,6 @@ const AddFaculty = () => {
         { title: 'Previous CGPA', dataIndex: 'previous-cgpa', key: 'previous-cgpa' },
         { title: 'Position', dataIndex: 'position', key: 'position' },
         { title: 'Amount', dataIndex: 'amount', key: 'amount' },
-    ];
-
-    const summaryColumns = [
-        { title: 'Aid-Type', dataIndex: 'aidType', key: 'aidType' },
-        { title: 'Gender', dataIndex: 'gender', key: 'gender' },
-        { title: 'Strength', dataIndex: 'strength', key: 'strength' },
-        { title: 'Amount', dataIndex: 'amount', key: 'amount' },
-        { title: 'Total', dataIndex: 'total', key: 'total' },
     ];
 
     return (
@@ -129,17 +108,6 @@ const AddFaculty = () => {
                         <div className="tab-content">
                             <div className="tab-table">
                                 <Table columns={meritBaseColumns} dataSource={meritBaseData} pagination={false} loading={loading} />
-                            </div>
-                        </div>
-                    </TabPane>
-                    <TabPane tab="Summary" key="3" className="custom-tabpane">
-                        <div className="tab-content">
-                            <div className="tab-table">
-                                <Table columns={summaryColumns} dataSource={summaryData} pagination={false} loading={loading} />
-                                <div style={{ marginTop: '20px' }}>
-                                    <Text strong>Total Amount: </Text>
-                                    <Text>{`$${totalAmount.toLocaleString()}`}</Text>
-                                </div>
                             </div>
                         </div>
                     </TabPane>

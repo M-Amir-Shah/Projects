@@ -49,6 +49,7 @@ const Session = () => {
                 }
             });
             console.log(response.data);
+            console.log('Session added')
             message.success('Session added successfully');
             navigate('/Admin-Dashboard')
         } catch (error) {

@@ -8,6 +8,7 @@ const EndPoint = {
     checkApplicationStatus: `${baseUrl}api/Student/getStudentApplicationStatus`,
     sendApplication: `${baseUrl}api/Student/sendApplication`,
     updateProfileImage: `${baseUrl}api/Student/UpdateProfileImage`,
+    getSession: `${baseUrl}api/Student/getSession`,
 
     imageUrl: `${baseUrl}Content/profileImages/`,
     houseAgreement: `${baseUrl}Content/HouseAgreement/`,

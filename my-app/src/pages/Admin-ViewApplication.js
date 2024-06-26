@@ -43,6 +43,19 @@ function App() {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                const response = await fetch(`${EndPoint}`); // Replace with your API endpoint
+                const data = await response.json();
+                setTeachers(data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
                 const response = await fetch('https://api.example.com/teachers'); // Replace with your API endpoint
                 const data = await response.json();
                 setTeachers(data);

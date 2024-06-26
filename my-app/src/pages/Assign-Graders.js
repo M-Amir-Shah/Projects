@@ -24,7 +24,7 @@ const GradersList = () => {
                 setLoadingStudents(true);
                 // Simulating loading delay of 3-5 seconds
                 setTimeout(async () => {
-                    const response = await axios.get(EndPoint.unAssignedStudents);
+                    const response = await axios.get(EndPoint.getAllStudents);
                     setStudentsData(response.data);
                 }, Math.floor(Math.random() * 3000) + 3000); // Random delay between 3 to 5 seconds
             } catch (error) {

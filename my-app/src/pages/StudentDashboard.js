@@ -24,6 +24,7 @@ const StudentDashboard = () => {
     const [error, setError] = useState(null);
     const [profileId, setProfileId] = useState('');
     const [username, setUsername] = useState('');
+    const [session1, setSession] = useState('');
 
     const fetchStudentInfo = async (profileId) => {
         try {
@@ -39,25 +40,26 @@ const StudentDashboard = () => {
         }
     };
 
+    const fetchSession = async () => {
+        try {
+            const response = await fetch(`${EndPoint.getSession}`);
+            if (!response.ok) throw new Error('Error fetching Session');
+            const data = await response.json();
+            setSession(data.session1);
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const fetchApplicationStatus = async (profileId) => {
         try {
-            const response = await fetch(`${EndPoint.checkApplicationStatus}?id=${profileId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+            const response = await fetch(`${EndPoint.checkApplicationStatus}?id=${profileId}`);
             if (!response.ok) throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}`);
             const data = await response.json();
-            // Ensure the data object and applicationStatus property are valid
-            if (data && data.applicationStatus !== undefined) {
-                setApplicationStatus(data.applicationStatus);
-            } else {
-                setApplicationStatus('Not Submitted');
-            }
-            console.log('Fetched application status:', data);
+            setApplicationStatus(data.applicationStatus || 'Not Submitted');
         } catch (error) {
-            console.error('Error fetching application status:', error);
             setError('Failed to fetch application status. Please try again later.');
         }
     };
@@ -68,19 +70,18 @@ const StudentDashboard = () => {
 
         if (storedProfileId) {
             setProfileId(storedProfileId);
+            fetchStudentInfo(storedProfileId);
+            fetchApplicationStatus(storedProfileId);
+        } else {
+            setLoading(false);
+            setError('No profile ID found.');
         }
+
         if (storedUsername) {
             setUsername(storedUsername);
         }
 
-        if (storedProfileId) {
-            fetchStudentInfo(storedProfileId);
-            console.log(storedProfileId)
-            fetchApplicationStatus(storedProfileId);
-        } else {
-            setLoading(false);
-            setError('No profile ID found.'); // in local Storage
-        }
+        fetchSession();
     }, []);
 
     const logout = () => {
@@ -90,14 +91,14 @@ const StudentDashboard = () => {
             okText: 'Yes',
             cancelText: 'No',
             onOk: () => {
-                localStorage.clear(); // Clear local storage on logout
+                localStorage.clear();
                 navigate('/Login');
             },
         });
     };
 
     const Apply = (profileId) => {
-        navigate('/AfterLogin', { state: { profileId: profileId } });
+        navigate('/AfterLogin', { state: { profileId } });
     };
 
     const NeedCriteria = () => {
@@ -135,7 +136,8 @@ const StudentDashboard = () => {
                         >
                             <div className="sider-content">
                                 <Avatar size={64} src={Image} />
-                                <Title level={4}>{name}</Title> {/* Display student's name here */}
+                                <Title level={4}>{name}</Title>
+                                <description level={4}>{arid_no}</description>
                             </div>
                             <br />
                             <Button type="primary" onClick={logout} icon={<LogoutOutlined />} style={{ width: '80%' }}>Logout</Button>
@@ -159,7 +161,8 @@ const StudentDashboard = () => {
                         <Card title="Welcome" className="welcome-card">
                             <b>Name:</b> <input type="text" value={name} disabled /><br />
                             <b>Arid :</b> <input type="text" value={arid_no} disabled /><br />
-                            <b>Status:</b> {applicationStatus}
+                            <b>Status:</b> {applicationStatus}<br />
+                            <b>Session:</b> <b>{session1}</b>
                         </Card>
                         <div className="card-container">
                             <Card
