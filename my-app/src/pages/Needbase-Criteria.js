@@ -70,7 +70,7 @@ const Navbar = () => {
                                 <Card>
                                     <p><b>Session: </b>{item.p.session}</p>
                                     <p><b>Policy: </b>{item.p.policyfor}</p>
-                                    <p><b>Description: </b>{item.c.description}</p>
+                                    <p><b>Description: </b>{item.p.Criteria[0].description}</p>
                                 </Card>
                                 <br />
                             </div>

@@ -1,4 +1,4 @@
-const baseUrl = "http://192.168.96.81/Backend/";
+const baseUrl = "http://192.168.0.114/Backend/";
 
 const EndPoint = {
     login: `${baseUrl}api/User/Login`,
