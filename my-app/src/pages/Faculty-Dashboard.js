@@ -58,7 +58,7 @@ const StudentDrawer = ({ visible, onClose, switchToCommittee, onLogout, facultyI
         <Spin size="large" />
       ) : (
         <div className="sider-content">
-          <Avatar size={64} icon={<UserOutlined />}/>
+          <Avatar size={64} icon={<UserOutlined />} />
           {/* <h2>{facultyInfo?.name || 'N/A'}</h2> */}
         </div>
       )}
@@ -122,14 +122,15 @@ const StudentList = () => {
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
   const [students, setStudents] = useState([]);
   const [facultyId, setFacultyId] = useState(null);
-
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchStudents = async (id) => {
       try {
         if (id) {
+          console.log(`Fetching students with faculty ID: ${id}`);
           const response = await axios.get(`${EndPoint.teachersGraders}?id=${id}`);
+          console.log('Response:', response);
           if (response.status === 200) {
             const data = response.data;
             console.log('Fetched graders:', data);
@@ -142,6 +143,7 @@ const StudentList = () => {
           }
         }
       } catch (error) {
+        console.error('Error fetching students:', error);
         message.error(error.message);
       }
     };
@@ -151,8 +153,9 @@ const StudentList = () => {
     } else {
       // Set the facultyId to a default value or fetch it from a relevant source
       const fetchInitialFacultyId = async () => {
-        const initialFacultyId = 1; // Replace with the actual method to get initial facultyId
+        const initialFacultyId = 11; // Replace with the actual method to get initial facultyId
         setFacultyId(initialFacultyId);
+        fetchStudents(initialFacultyId); // Fetch students with the initial faculty ID
       };
       fetchInitialFacultyId();
     }
@@ -234,9 +237,9 @@ const StudentList = () => {
             renderItem={(student) => (
               <List.Item onClick={() => showModal(student)} style={{ cursor: 'pointer' }}>
                 <List.Item.Meta
-                  avatar={<Avatar src={student.avatar || 'https://via.placeholder.com/40'} />}
+                  avatar={<Avatar />}
                   title={student.name}
-                  description={student.arid}
+                  description={student.arid_no}
                 />
                 {studentRatings[student.id] && (
                   <div style={{ marginLeft: 'auto', textAlign: 'right' }}>
