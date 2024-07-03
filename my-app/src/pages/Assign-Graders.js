@@ -22,11 +22,8 @@ const GradersList = () => {
         const fetchStudents = async () => {
             try {
                 setLoadingStudents(true);
-                // Simulating loading delay of 3-5 seconds
-                setTimeout(async () => {
-                    const response = await axios.get(EndPoint.getAllStudents);
-                    setStudentsData(response.data);
-                }, Math.floor(Math.random() * 3000) + 3000); // Random delay between 3 to 5 seconds
+                const response = await axios.get(EndPoint.assignGrader);
+                setStudentsData(response.data);
             } catch (error) {
                 console.error('Error fetching students:', error);
                 message.error('Failed to fetch students data.');
@@ -34,7 +31,6 @@ const GradersList = () => {
                 setLoadingStudents(false);
             }
         };
-
         fetchStudents();
     }, []);
 
@@ -42,14 +38,11 @@ const GradersList = () => {
         const fetchFacultyMembers = async () => {
             try {
                 setLoadingFaculty(true);
-                // Simulating loading delay of 3-5 seconds
-                setTimeout(async () => {
-                    const response = await axios.get(EndPoint.getFacultyMembers);
-                    if (!response.data || !Array.isArray(response.data)) {
-                        throw new Error('Invalid data received');
-                    }
-                    setFacultyData(response.data);
-                }, Math.floor(Math.random() * 3000) + 3000); // Random delay between 3 to 5 seconds
+                const response = await axios.get(EndPoint.getFacultyMembers);
+                if (!response.data || !Array.isArray(response.data)) {
+                    throw new Error('Invalid data received');
+                }
+                setFacultyData(response.data);
             } catch (error) {
                 console.error('Error fetching Faculty Members:', error);
                 message.error('Failed to load Faculty Members.');
@@ -57,18 +50,14 @@ const GradersList = () => {
                 setLoadingFaculty(false);
             }
         };
-
         fetchFacultyMembers();
     }, []);
 
     const assignTeacher = async (facultyId) => {
         try {
-            if (!selectedStudent) {
-                message.error('No student selected');
-                return;
-            }
+            if (!selectedStudent) return;
             setAssigningTeacher(true);
-            const response = await axios.post(EndPoint.assignGrader, {
+            const response = await axios.post(EndPoint.unAssignedStudents, {
                 facultyId: facultyId,
                 studentId: selectedStudent.studentId
             });
@@ -98,7 +87,7 @@ const GradersList = () => {
                         <Button onClick={Back} icon={<ArrowLeftOutlined />} />
                     </Col>
                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#ffff' }}>
-                        BIIT Student List
+                        BIIT Graders List
                     </Col>
                     <Col>
                         <img src={logo} alt="BIIT Financial Aid Allocation Tool" style={{ height: '35px', width: '35px', borderRadius: '25px' }} />
@@ -113,11 +102,11 @@ const GradersList = () => {
                             itemLayout="horizontal"
                             dataSource={studentsData}
                             renderItem={item => (
-                                <List.Item>
+                                <List.Item style={{ backgroundColor: item.AverageRating <= 3 && item.AverageRating !== null ? '#fcacb5' : 'transparent' }}>
                                     <List.Item.Meta
                                         avatar={<Avatar size={64} icon={<UserOutlined />} />}
-                                        title={item.name}
-                                        description={item.arid_no}
+                                        title={`${item.name} (${item.arid_no})`}
+                                        description={<div>Previous Rating: {item.AverageRating}</div>}
                                     />
                                     <Button onClick={() => { setSelectedStudent(item); setModalVisible(true); }}>
                                         Assign
@@ -128,6 +117,7 @@ const GradersList = () => {
                     </Spin>
                 </div>
             </div>
+
             <Modal
                 title="Assign Faculty Member"
                 visible={modalVisible}

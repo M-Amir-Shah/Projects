@@ -10,6 +10,7 @@ const { Header } = Layout;
 const fetchStudentRecords = async () => {
     try {
         const response = await fetch(EndPoint.meritBaseShortListing);
+        
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }

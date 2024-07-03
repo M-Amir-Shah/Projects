@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Row, Col, Button, List } from 'antd';
+import { Layout, Row, Col, Button, List, Input } from 'antd';
 import { ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons';
-import Searching from "../components/SearchingButton";
 import "../Styling/Budget.css";
 import { Content } from 'antd/es/layout/layout';
 import { useNavigate } from "react-router-dom";
@@ -13,6 +12,7 @@ const Navbar = () => {
     const navigate = useNavigate(); // Correctly use useNavigate hook
     const [budgetList, setBudgetList] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [searchInput, setSearchInput] = useState('');
 
     useEffect(() => {
         const fetchBudgetData = async () => {
@@ -42,6 +42,14 @@ const Navbar = () => {
         navigate('/Admin-Dashboard'); // Navigate to '/Admin-Dashboard' route
     };
 
+    const handleSearchInputChange = (event) => {
+        setSearchInput(event.target.value);
+    };
+
+    const filteredBudgetList = budgetList.filter(item =>
+        item.budget_session.toLowerCase().includes(searchInput.toLowerCase())
+    );
+
     return (
         <div>
             <Header className="navbar">
@@ -59,18 +67,22 @@ const Navbar = () => {
             </Header>
             <div className='container'>
                 <Content className="form-box">
-                <h2 style={{ textAlign: 'center' }}>Budget History</h2>
+                    <h2 style={{ textAlign: 'center' }}>Budget History</h2>
                     <form>
-                    <Searching placeholder="Search" />
+                        <Input 
+                            placeholder="Search" 
+                            value={searchInput} 
+                            onChange={handleSearchInputChange} 
+                            style={{ marginBottom: '20px' }}
+                        />
                         <div className="scrollable-list">
-                            
                             <br />
                             {loading ? (
                                 <p>Loading...</p>
                             ) : (
                                 <List
                                     itemLayout="horizontal"
-                                    dataSource={budgetList}
+                                    dataSource={filteredBudgetList}
                                     renderItem={item => (
                                         <List.Item>
                                             <List.Item.Meta

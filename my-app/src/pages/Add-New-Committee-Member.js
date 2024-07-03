@@ -1,58 +1,43 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from 'axios'; // Import Axios for HTTP requests
 import '../Styling/Add-Committee-Member.css'; // Import CSS for styling
 import Search from '../components/SearchingButton.js';
 import { Button, List, Col, Row, Layout, message, Avatar } from 'antd';
 import logo from './BiitLogo.jpeg';
 import { ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
-import EndPoint from '../endpoints.js'; // Ensure endpoints are correctly imported
+import EndPoint from '../endpoints.js';
 
 const { Header } = Layout;
 
 const MeritBase = () => {
-    const [loading, setLoading] = useState(false);
-    const [applications, setApplications] = useState([]);
     const navigate = useNavigate();
+    const [facultyMembers, setFacultyMembers] = useState([]);
 
     useEffect(() => {
-        GetFacultyMember();
+        // Fetch faculty members on component mount
+        const fetchFacultyMembers = async () => {
+            try {
+                const response = await axios.get(`${EndPoint.getFacultyMembers}`); // Adjust endpoint as needed
+                setFacultyMembers(response.data);
+                console.log(response.data);
+            } catch (error) {
+                console.error('Failed to fetch faculty members:', error);
+                
+            }
+        };
+
+        fetchFacultyMembers();
     }, []);
 
-    const GetFacultyMember = async () => {
-        setLoading(true);
+    const handleAdd = async (id) => {
         try {
-            const response = await axios.get(`${EndPoint.getFacultyMembers}`);
-            console.log('Fetched applications:', response.data);
-            if (response.data && Array.isArray(response.data)) {
-                response.data.forEach(item => {
-                    console.log('Application item:', item);
-                });
-            } else {
-                console.error('Invalid data structure:', response.data);
-            }
-            setApplications(response.data);
-        } catch (error) {
-            console.error('Error fetching applications:', error);
-            message.error('Failed to fetch applications');
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleAccept = async (id) => {
-        try {
-            const url = `${EndPoint.addCommitteeMember}?id=${id}`;
-            console.log('Sending POST request to:', url);
-            const response = await axios.post(url);
-            console.log('Response:', response.data);
-            setApplications(applications.map(app =>
-                app.id === id ? { ...app, status: 'Already Member' } : app
-            ));
+            await axios.post(EndPoint.addCommitteeMember, { id }); // Adjust endpoint and data as needed
             message.success('Successfully Added');
+            console.log('Response');
         } catch (error) {
-            console.error('Failed to add member');
-            message.error(`Failed to add member`);
+            console.error('Failed to add member:', error);
+            message.error('Failed to add member');
         }
     };
 
@@ -65,7 +50,7 @@ const MeritBase = () => {
             <Header className="navbar">
                 <Row justify="space-between" align="middle">
                     <Col>
-                        <Button type="text" icon={<ArrowLeftOutlined />} onClick={handleBack} />
+                        <Button  icon={<ArrowLeftOutlined />} onClick={handleBack} />
                     </Col>
                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#ffff' }}>
                         BIIT
@@ -85,27 +70,19 @@ const MeritBase = () => {
                         <div className="scrollable-list">
                             <List
                                 itemLayout="horizontal"
-                                dataSource={applications}
-                                loading={loading}
-                                renderItem={item => {
-                                    console.log('Rendering item:', item);
-                                    if (!item.id) {
-                                        console.error('Item ID is undefined:', item);
-                                    }
-                                    return (
-                                        <List.Item
-                                            actions={[
-                                                <Button type="primary" onClick={() => handleAccept(item.id)}>Add</Button>
-                                            ]}
-                                        >
-                                            <List.Item.Meta
-                                                avatar={<Avatar size={64} icon={<UserOutlined />} />}
-                                                title={item.name}
-                                                
-                                            />
-                                        </List.Item>
-                                    );
-                                }}
+                                dataSource={facultyMembers}
+                                renderItem={item => (
+                                    <List.Item
+                                        actions={[
+                                            <Button type="primary" onClick={() => handleAdd(item.id)}>Add</Button>
+                                        ]}
+                                    >
+                                        <List.Item.Meta
+                                            avatar={<Avatar size={64} icon={<UserOutlined />} />}
+                                            title={item.name}
+                                        />
+                                    </List.Item>
+                                )}
                             />
                         </div>
                     </div>

@@ -67,13 +67,13 @@ const AcceptedApplication = () => {
             </Header>
             <div className="form-box">
                 <h2>Accepted Applications</h2>
-                <div>
+                {/* <div>
                     <select value={selectedOption} onChange={handleSelectChange} style={{ width: '100%', textAlign: 'center' }}>
                         <option value="">---Select---</option>
                         <option value="needbase">NeedBase</option>
                         <option value="meritbase">MeritBase</option>
                     </select>
-                </div>
+                </div> */}
                 <div className="scrollable-list">
                     <List
                         itemLayout="horizontal"
@@ -82,8 +82,8 @@ const AcceptedApplication = () => {
                             <List.Item>
                                 <List.Item.Meta
                                     avatar={<Avatar size={64} icon={<UserOutlined />} />}
-                                    title={item.name}
-                                    description={item.arid_no}
+                                    title={item.re.name}
+                                    description={item.re.arid_no}
                                 />
                             </List.Item>
                         )}

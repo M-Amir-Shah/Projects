@@ -20,8 +20,15 @@ const App = () => {
     const navigate = useNavigate();
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
     const [data, setData] = useState(null);
+    const [currentTime, setCurrentTime] = useState(new Date());
 
-    
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentTime(new Date());
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, []);
 
     const showDrawer = () => {
         setIsDrawerVisible(true);
@@ -66,7 +73,11 @@ const App = () => {
                         >
                             <Avatar size={64} src={Image} />
                             <Title level={4}>{name}</Title>
-                            <br />
+                            <div style={{ marginBottom: '20px' }}>
+                                <Typography.Text>
+                                    {currentTime.toLocaleDateString()} {currentTime.toLocaleTimeString()}
+                                </Typography.Text>
+                            </div>
                             <Button type="primary" style={{ width: '80%' }} onClick={() => navigateTo('/Budget')}>Add Budget Amount</Button>
                             <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Student-Record')}>Students Records</Button>
                             <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Policies')}>View Policies</Button>
@@ -74,7 +85,6 @@ const App = () => {
                             <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Add-New-Committee-Member')}>Add Committee Member</Button>
                             <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Add-Session')}>Add Session</Button>
                             <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Allocation-Sheet')}>Allocation Sheet</Button>
-                            
                             <Button type="primary" style={{ width: '80%', marginTop: '100px' }} onClick={logout}>Logout</Button>
                         </Drawer>
                     </Col>
@@ -118,7 +128,15 @@ const App = () => {
                         cover={<img src={rejected} alt="Rejected" />}
                         className="content-card"
                     >
-                        Rejected Application
+                        NeedBase Rejected Application
+                    </Card>
+                    <Card
+                        onClick={() => navigateTo('/Meritbase-Rejected')}
+                        hoverable
+                        cover={<img src={rejected} alt="Rejected" />}
+                        className="content-card"
+                    >
+                        MeritBase Rejected Application
                     </Card>
                     <Card
                         onClick={() => navigateTo('/Committee-Members')}

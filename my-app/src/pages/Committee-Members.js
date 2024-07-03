@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import '../Styling/Committee-Members.css';
 import { Button, List, Col, Row, Layout, Avatar, message, Spin } from 'antd';
 import { ArrowLeftOutlined, UserOutlined, PlusOutlined, CloseOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import EndPoint from '../endpoints';
+import '../Styling/Committee-Members.css';
+
 const { Header } = Layout;
 
 const fetchStudentRecords = async () => {
@@ -12,8 +13,7 @@ const fetchStudentRecords = async () => {
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
-        const data = await response.json();
-        return data;
+        return await response.json();
     } catch (error) {
         console.error('Error fetching student records:', error);
         message.error('Failed to load student records.');
@@ -52,21 +52,9 @@ const CommitteeMembers = () => {
         loadStudentRecords();
     }, []);
 
-    const Back = () => {
-        navigate('/Admin-Dashboard');
-    };
-    const Add = () => {
-        navigate('/Faculty-Members');
-    };
-    const Submit = (event) => {
-        event.preventDefault();
-    };
-
     const handleRemoveMember = async (memberId) => {
         await removeMemberFromDB(memberId);
-        // After successful removal, update the state to reflect the changes
-        const updatedApplications = applications.filter(member => member.id !== memberId);
-        setApplications(updatedApplications);
+        setApplications(applications.filter(member => member.id !== memberId));
     };
 
     return (
@@ -74,42 +62,45 @@ const CommitteeMembers = () => {
             <Header className="navbar">
                 <Row justify="space-between" align="middle">
                     <Col>
-                        <Button onClick={Back} icon={<ArrowLeftOutlined />} />
+                        <Button onClick={() => navigate('/Admin-Dashboard')} icon={<ArrowLeftOutlined />} />
                     </Col>
-                    <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#ffff' }}>
-                        BIIT Committee-Members
+                    <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#fff' }}>
+                        BIIT Committee Members
                     </Col>
                     <Col>
-                        <Button onClick={Add} icon={<PlusOutlined />} />
+                        <Button onClick={() => navigate('/Faculty-Members')} icon={<PlusOutlined />} />
                     </Col>
                 </Row>
             </Header>
             <div className="form-box">
-                <h2 style={{ textAlign: 'center' }}>Committee-Members</h2>
-                <form onSubmit={Submit}>
-                    <div className="scrollable-list">
-                        {loading ? (
-                            <div style={{ textAlign: 'center' }}>
-                                <Spin size="large" />
-                            </div>
-                        ) : (
-                            <List
-                                itemLayout="horizontal"
-                                dataSource={applications}
-                                renderItem={item => (
-                                    <List.Item>
-                                        <List.Item.Meta
-                                        // <Avatar size={64} src={Image} />
-                                            avatar={<Avatar size={64} icon={<UserOutlined />} />}
-                                            title={item.name}
-                                        />
-                                        {/* <Button icon={<CloseOutlined />} onClick={() => handleRemoveMember(item.id)} danger>Remove</Button> */}
-                                    </List.Item>
-                                )}
-                            />
-                        )}
-                    </div>
-                </form>
+                <h2 style={{ textAlign: 'center' }}>Committee Members</h2>
+                <div className="scrollable-list">
+                    {loading ? (
+                        <div style={{ textAlign: 'center' }}>
+                            <Spin size="large" />
+                        </div>
+                    ) : (
+                        <List
+                            itemLayout="horizontal"
+                            dataSource={applications}
+                            renderItem={item => (
+                                <List.Item
+                                    //actions={[<Button icon={<CloseOutlined />} onClick={() => handleRemoveMember(item.id)} danger>Remove</Button>]}
+                                >
+                                    <List.Item.Meta
+                                        avatar={
+                                            item.profilePic ? 
+                                            <Avatar size={64} src={item.profilePic} /> : 
+                                            <Avatar size={64} icon={<UserOutlined />} />
+                                        }
+                                        title={item.name}
+                                        description={item.contactNo}
+                                    />
+                                </List.Item>
+                            )}
+                        />
+                    )}
+                </div>
             </div>
         </div>
     );

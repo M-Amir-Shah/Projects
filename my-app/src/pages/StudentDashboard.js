@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Avatar, Button, Card, Row, Col, Spin, Alert, Drawer, Modal, Typography } from 'antd';
+import { Layout, Avatar, Button, Card, Row, Col, Spin, Alert, Drawer, Modal, Typography,message } from 'antd';
 import { UserOutlined, LogoutOutlined, BarsOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 import EndPoint from '../endpoints'; // Importing the EndPoint object
@@ -10,12 +10,15 @@ import help from '../Pictures/Help.png';
 import logo from './BiitLogo.jpeg';
 import '../Styling/StudentDashboard.css';
 import Image from '../Pictures/admin.jpg';
+import axios from 'axios';
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
 
 const StudentDashboard = () => {
     const navigate = useNavigate();
+    const [id, setId] = useState('');
+    const [status, setStatus] = useState('');
     const [name, setName] = useState('');
     const [arid_no, setArid_no] = useState('');
     const [applicationStatus, setApplicationStatus] = useState('');
@@ -83,6 +86,28 @@ const StudentDashboard = () => {
 
         fetchSession();
     }, []);
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setLoading(true);
+        try {
+        const formData = new FormData();
+        formData.append('id', id);
+        formData.append('Status',status)
+
+        
+        const response = await axios.post(EndPoint.decideMeritBaseApplication, formData, {        
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+            });
+           console.log(response.formData);
+           message.success('Added Successfully');
+            navigate('/StudentDashboard');
+        } catch (error) {
+            message.error('Failed to submit');
+        }
+    };
 
     const logout = () => {
         Modal.confirm({
@@ -162,8 +187,13 @@ const StudentDashboard = () => {
                             <b>Name:</b> <input type="text" value={name} disabled /><br />
                             <b>Arid :</b> <input type="text" value={arid_no} disabled /><br />
                             <b>Status:</b> {applicationStatus}<br />
-                            <b>Session:</b> <b>{session1}</b>
+                            <b>Session:</b> <b>{session1}</b><br />
+                            <b>Amount:</b> <b>{ }</b><br />
                         </Card>
+                        <div>
+                            <Button onClick={handleSubmit}>Accepted</Button>
+                            <Button onClick={handleSubmit}>Rejected</Button>
+                        </div>
                         <div className="card-container">
                             <Card
                                 onClick={() => Apply(profileId)}

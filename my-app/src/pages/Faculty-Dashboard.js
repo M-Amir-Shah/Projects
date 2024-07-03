@@ -59,7 +59,6 @@ const StudentDrawer = ({ visible, onClose, switchToCommittee, onLogout, facultyI
       ) : (
         <div className="sider-content">
           <Avatar size={64} icon={<UserOutlined />} />
-          {/* <h2>{facultyInfo?.name || 'N/A'}</h2> */}
         </div>
       )}
       <br />
@@ -88,7 +87,7 @@ const StudentModal = ({ visible, student, rating, suggestion, onRatingChange, on
     {student && (
       <div>
         <p>Name: {student.name}</p>
-        <p>ARID: {student.arid}</p>
+        <p>ARID: {student.arid_no}</p>
         <Form>
           <Form.Item label="Rating">
             <Rate onChange={onRatingChange} value={rating} />
@@ -128,22 +127,18 @@ const StudentList = () => {
     const fetchStudents = async (id) => {
       try {
         if (id) {
-          console.log(`Fetching students with faculty ID: ${id}`);
           const response = await axios.get(`${EndPoint.teachersGraders}?id=${id}`);
-          console.log('Response:', response);
           if (response.status === 200) {
-            const data = response.data;
-            console.log('Fetched graders:', data);
-            setStudents(data);
-            if (data.length > 0) {
-              setFacultyId(data[0].facultyId);
+            setStudents(response.data);
+            if (response.data.length > 0) {
+              setFacultyId(response.data[0].facultyId);
+              console.log(response.data)
             }
           } else {
             throw new Error('Failed to fetch graders');
           }
         }
       } catch (error) {
-        console.error('Error fetching students:', error);
         message.error(error.message);
       }
     };
@@ -151,13 +146,9 @@ const StudentList = () => {
     if (facultyId !== null) {
       fetchStudents(facultyId);
     } else {
-      // Set the facultyId to a default value or fetch it from a relevant source
-      const fetchInitialFacultyId = async () => {
-        const initialFacultyId = 11; // Replace with the actual method to get initial facultyId
-        setFacultyId(initialFacultyId);
-        fetchStudents(initialFacultyId); // Fetch students with the initial faculty ID
-      };
-      fetchInitialFacultyId();
+      const initialFacultyId = 11; // Replace with actual method to get initial facultyId
+      setFacultyId(initialFacultyId);
+      fetchStudents(initialFacultyId);
     }
   }, [facultyId]);
 
@@ -177,11 +168,10 @@ const StudentList = () => {
         facultyId: facultyId,
         graderId: selectedStudent.id,
         rate: rating,
-        session: selectedStudent.session // Assuming session is available in selectedStudent
+        session: selectedStudent.session
       });
       if (response.status === 200) {
         message.success('Grader rated successfully');
-        // Update state or handle success scenario
       } else {
         message.error('Failed to rate grader');
       }

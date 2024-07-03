@@ -10,7 +10,7 @@ const { Header } = Layout;
 
 const fetchAcceptedApplications = async () => {
     try {
-        const response = await fetch(EndPoint.rejected);
+        const response = await fetch(EndPoint.meritRejected);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
@@ -67,7 +67,7 @@ const AcceptedApplication = () => {
                 </Row>
             </Header>
             <div className="form-box">
-                <h2>NeedBase Rejected Applications</h2>
+                <h2>Meritbase Rejected Applications</h2>
                 {/* <div>
                     <select value={selectedOption} onChange={handleSelectChange} style={{ width: '100%', textAlign: 'center' }}>
                         <option value="">---Select---</option>
@@ -84,8 +84,8 @@ const AcceptedApplication = () => {
                                 <List.Item>
                                         <List.Item.Meta
                                             avatar={<Avatar size={64} icon={<UserOutlined />} />}
-                                            title={item.re.name}
-                                            description={item.re.arid_no}
+                                            title={item.name}
+                                            description={item.arid_no}
                                         />
                                     </List.Item>
                             </List.Item>

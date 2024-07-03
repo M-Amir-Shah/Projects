@@ -70,9 +70,9 @@ const Navbar = () => {
                         policies.map((policy, index) => (
                             <div key={index}>
                                 <Card>
-                                <p><b>Session: </b>{policy.p.session}</p>
-                                    <p><b>Policy For: </b>{policy.p.policyfor}</p> {/* Display policyFor */}
-                                    <p><b>Description: </b>{policy.p.Criteria[0].description}</p>
+                                    <p><b>Session: </b>{policy.p.session}</p>
+                                    <p><b>Policy For: </b>{policy.p.policyfor}</p>
+                                    <p><b>Description: </b>{policy.c.description }</p>
                                 </Card>
                                 <br />
                             </div>

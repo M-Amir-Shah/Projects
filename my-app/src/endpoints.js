@@ -1,4 +1,6 @@
-const baseUrl = "http://192.168.96.81/Backend/";
+import { rejects } from "assert";
+
+const baseUrl = "http://localhost/Backend/";
 
 const EndPoint = {
     login: `${baseUrl}api/User/Login`,
@@ -38,7 +40,8 @@ const EndPoint = {
     rejectApplication: `${baseUrl}api/Admin/RejectApplication`, //post
     accepted: `${baseUrl}api/Admin/AcceptedApplication`, //get
     rejected: `${baseUrl}api/Admin/RejectedApplication`, //get
-    assignGrader: `${baseUrl}api/Admin/AssignGrader`,
+    meritRejected: `${baseUrl}api/Admin/MeritBaseRejectedApplication`,
+    assignGrader: `${baseUrl}api/Admin/unAssignedGraders1`,
     meritBaseShortListing: `${baseUrl}api/Admin/GetMeritBaseShortListedStudent`,
     addStudent: `${baseUrl}api/Admin/AddStudent`,
     addPolicies: `${baseUrl}api/Admin/AddPolicies`,
@@ -51,6 +54,10 @@ const EndPoint = {
     getGiveRating : `${baseUrl}api/Admin/GiveRating`,
     meritbase : `${baseUrl}api/Admin/MeritBase`,
     addUser : `${baseUrl}api/Admin/AddUser`,
+    decideMeritBaseApplication: `${baseUrl}api/Student/decideMeritBaseApplication`,
+    uploadfile: `${baseUrl}api/Student/UploadFile1`,
+    getAmount:`${baseUrl}api/Student/GetAmount`,
+    
 };
 
 export default EndPoint;
