@@ -20,6 +20,7 @@ const Navbar = () => {
                 const response = await fetch(`${EndPoint.getPolicies}`);
                 if (response.ok) {
                     const data = await response.json();
+                    console.log('Fetched Policies:', data); // Debugging line
                     setPolicies(data);
                 } else {
                     const errorText = await response.text();
@@ -71,7 +72,10 @@ const Navbar = () => {
                                     <p><b>Session: </b>{item.p.session}</p>
                                     <p><b>Policy: </b>{item.p.policyfor}</p>
                                     <p><b>Depend on: </b>{item.p.policy1}</p>
-                                    <p><b>Description: </b>{item.p.Criteria[0].description}</p>
+                                    <p>
+                                        <b>Description: </b>
+                                        {item.c.description}
+                                    </p>
                                 </Card>
                                 <br />
                             </div>

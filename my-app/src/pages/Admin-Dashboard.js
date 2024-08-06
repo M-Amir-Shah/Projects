@@ -89,7 +89,7 @@ const App = () => {
                         </Drawer>
                     </Col>
                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'x-large', color: '#fff' }}>
-                        BIIT
+                        BIIT Admin Dashboard
                     </Col>
                     <Col>
                         <img src={logo} alt="BIIT Financial Aid Allocation Tool" style={{ height: '35px', width: '35px', borderRadius: '25px' }} />
