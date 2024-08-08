@@ -80,7 +80,7 @@ const FacultyDashboard = () => {
     };
 
     const Back = () => {
-        navigate('/Admin-Dashboard');
+        navigate('/Login');
     };
 
     return (

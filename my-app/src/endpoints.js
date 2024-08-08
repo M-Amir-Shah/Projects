@@ -11,6 +11,8 @@ const EndPoint = {
     sendApplication: `${baseUrl}api/Student/sendApplication`,
     updateProfileImage: `${baseUrl}api/Student/UpdateProfileImage`,
     getSession: `${baseUrl}api/Student/getSession`,
+    uploadfile: `${baseUrl}api/Student/UploadFile1`,
+    getAmount:`${baseUrl}api/Student/GetAmount`,
 
     imageUrl: `${baseUrl}Content/profileImages/`,
     houseAgreement: `${baseUrl}Content/HouseAgreement/`,
@@ -49,14 +51,12 @@ const EndPoint = {
     unAssignedStudents: `${baseUrl}api/Admin/unAssignedGraders`,
     budgethistory: `${baseUrl}api/Admin/BudgetHistory`,
     getGraderInfo: `${baseUrl}api/Admin/gradersInformation`,
-    getMeritBaseShortListedStudent: `${baseUrl}api/Admin/GetMeritBaseShortListedStudent`,
     addSession : `${baseUrl}api/Admin/AddSession`,
     getGiveRating : `${baseUrl}api/Admin/GiveRating`,
     meritbase : `${baseUrl}api/Admin/MeritBase`,
     addUser : `${baseUrl}api/Admin/AddUser`,
     decideMeritBaseApplication: `${baseUrl}api/Student/decideMeritBaseApplication`,
-    uploadfile: `${baseUrl}api/Student/UploadFile1`,
-    getAmount:`${baseUrl}api/Student/GetAmount`,
+    removeGrader: `${baseUrl}api/Admin/Removegrader`
     
 };
 
