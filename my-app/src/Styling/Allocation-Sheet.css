@@ -1,12 +1,11 @@
-/* Allocation-Sheet.css */
-
 .container {
     background: linear-gradient(to right bottom, #119992, #b5c6e0);
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 5%;
-    height: 100vh; /* Use 100vh to ensure it takes the full viewport height */
+    height: 100vh; /* Ensure the container takes the full viewport height */
+    overflow: hidden; /* Prevent any unexpected overflow */
 }
 
 .navbar {
@@ -19,35 +18,48 @@
 
 /* Style for the tabs */
 .custom-tabs .ant-tabs-nav .ant-tabs-tab {
-    font-size: 24px; /* Increase font size */
-    padding: 20px 30px; /* Increase padding */
+    font-size: 20px; /* Keep font size large but slightly more compact */
+    padding: 15px 25px; /* Slightly reduce padding for a balanced look */
 }
 
 /* Style for the active tab */
 .custom-tabs .ant-tabs-nav .ant-tabs-tab-active {
-    font-weight: bold; /* Make the active tab bold */
-    background: rgba(255, 255, 255, 0.7); /* Highlight the active tab */
-    border-radius: 8px; /* Add some border radius for better appearance */
+    font-weight: bold; /* Keep the active tab bold */
+    background: rgba(255, 255, 255, 0.8); /* Slightly increase the opacity for better contrast */
+    border-radius: 8px; /* Keep the border radius for a rounded appearance */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Add a slight shadow to the active tab for emphasis */
 }
 
 /* Additional styles for the tab panes */
 .custom-tabpane {
-    padding: 0 50px; /* Remove padding from top and bottom to make space for fixed title */
+    padding: 20px 40px; /* Add padding to top and bottom for better spacing */
     background-color: #f5f5f5;
-    min-height: calc(100vh - 200px); /* Ensure the tab pane has a minimum height minus header and title */
+    min-height: calc(100vh - 150px); /* Adjust the height to fit content better */
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
-    overflow: auto; /* Allow scrolling */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Retain the subtle shadow */
+    overflow: hidden; /* Ensure the tab pane content stays within bounds */
 }
 
 .tab-content {
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow: hidden; /* Prevent overflow within the tab content */
 }
-
 
 .tab-table {
     flex: 1;
     overflow-y: auto; /* Allow vertical scrolling for the table */
+    margin-bottom: 20px; /* Add some margin to prevent content from sticking to the bottom */
+}
+
+/* Ensure table headers and rows have consistent styling */
+.ant-table-thead > tr > th, .ant-table-tbody > tr > td {
+    text-align: center; /* Center-align text for a clean look */
+    padding: 12px; /* Add some padding for better readability */
+}
+
+.ant-table {
+    border-radius: 8px; /* Ensure the table follows the rounded corner theme */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for a consistent appearance */
 }

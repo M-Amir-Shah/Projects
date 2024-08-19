@@ -194,8 +194,8 @@ const AddStudent = () => {
                             onChange={handleGender}
                             required
                         >
-                            <Radio value="male">Male</Radio>
-                            <Radio value="female">Female</Radio>
+                            <Radio value="M">Male</Radio>
+                            <Radio value="F">Female</Radio>
                         </Radio.Group>
                         <Input
                             placeholder="Enter Degree [BSCS, BSSE, BSIT]"

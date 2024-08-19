@@ -62,7 +62,9 @@ const StudentDashboard = () => {
             const response = await fetch(`${EndPoint.checkApplicationStatus}?id=${profileId}`);
             if (!response.ok) throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}`);
             const data = await response.json();
-            setApplicationStatus(data.applicationStatus || 'Not Submitted');
+            console.log("Hello"+applicationStatus);
+            setApplicationStatus(data.applicationStatus);
+            console.log('hello')
         } catch (error) {
             setError('Failed to fetch application status. Please try again later.');
         }
@@ -216,9 +218,12 @@ const StudentDashboard = () => {
                                 hoverable
                                 cover={<img src={application} alt="Error loading image" />}
                                 className="content-card"
+                                disabled={applicationStatus === 'Accepted' || applicationStatus === 'Rejected'}
+                                style={applicationStatus === 'Accepted' || applicationStatus === 'Rejected' ? { pointerEvents: 'none', opacity: 0.5 } : {}}
                             >
                                 Apply Needbase
                             </Card>
+
                             <Card
                                 onClick={NeedCriteria}
                                 hoverable

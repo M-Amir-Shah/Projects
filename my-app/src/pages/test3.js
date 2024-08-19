@@ -50,7 +50,7 @@
 
 import React, { useState, useEffect } from 'react';
 import EndPoint from '../endpoints';
-import '../Styling/test3.css'; // Import the CSS file for styling
+import '../Styling/test3.css';
 
 const FacultyMember = (props) => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -192,12 +192,12 @@ const FacultyMember = (props) => {
                 </button>
             </div>
             <div className="search-bar">
-                <img src="./Search.png" alt="Search" />
                 <input
                     type="text"
                     placeholder="Search Faculty Members"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
+                    
                 />
             </div>
             {loading ? (

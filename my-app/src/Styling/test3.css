@@ -98,3 +98,16 @@
     border-radius: 4px;
     cursor: pointer;
 }
+
+/* Media query for responsive design */
+@media (max-width: 768px) {
+    .faculty-member, .modal-member {
+        width: calc(50% - 20px); /* Adjusts width for smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .faculty-member, .modal-member {
+        width: 100%; /* Stacks items in a column for very small screens */
+    }
+}
