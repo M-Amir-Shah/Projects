@@ -61,14 +61,22 @@ const StudentDashboard = () => {
         try {
             const response = await fetch(`${EndPoint.checkApplicationStatus}?id=${profileId}`);
             if (!response.ok) throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}`);
+    
             const data = await response.json();
-            console.log("Hello"+applicationStatus);
-            setApplicationStatus(data.applicationStatus);
-            console.log('hello')
+            console.log("API Response:", data); // Log the entire response
+    
+            // If data is null or applicationStatus is null, set status to "Pending"
+            const applicationStatus = data?.applicationStatus ?? "Pending";
+            setApplicationStatus(applicationStatus);
+    
         } catch (error) {
+            console.error("Error fetching application status:", error.message);
             setError('Failed to fetch application status. Please try again later.');
         }
     };
+    
+    
+    
 
     useEffect(() => {
         const storedProfileId = localStorage.getItem('profileId');

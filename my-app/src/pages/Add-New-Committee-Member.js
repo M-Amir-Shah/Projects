@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // Import Axios for HTTP requests
 import '../Styling/Add-Committee-Member.css'; // Import CSS for styling
 import Search from '../components/SearchingButton.js';
-import { Button, List, Col, Row, Layout, message, Avatar } from 'antd';
+import { Button, List, Col, Row, Layout, message, Avatar, Input } from 'antd';
 import logo from './BiitLogo.jpeg';
 import { ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
@@ -13,6 +13,7 @@ const { Header } = Layout;
 const MeritBase = () => {
     const navigate = useNavigate();
     const [facultyMembers, setFacultyMembers] = useState([]);
+    const [searchQuery, setSearchQuery] = useState(''); // State to store search query
 
     useEffect(() => {
         // Fetch faculty members on component mount
@@ -23,7 +24,6 @@ const MeritBase = () => {
                 console.log(response.data);
             } catch (error) {
                 console.error('Failed to fetch faculty members:', error);
-                
             }
         };
 
@@ -45,12 +45,17 @@ const MeritBase = () => {
         navigate('/Admin-Dashboard');
     };
 
+    // Filter faculty members based on search query
+    const filteredFacultyMembers = facultyMembers.filter((member) =>
+        member.name.toLowerCase().startsWith(searchQuery.toLowerCase())
+    );
+
     return (
         <div className="container">
             <Header className="navbar">
                 <Row justify="space-between" align="middle">
                     <Col>
-                        <Button  icon={<ArrowLeftOutlined />} onClick={handleBack} />
+                        <Button icon={<ArrowLeftOutlined />} onClick={handleBack} />
                     </Col>
                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#ffff' }}>
                         BIIT
@@ -65,12 +70,16 @@ const MeritBase = () => {
                 <form>
                     <div>
                         <div>
-                            <Search placeholder="Search Name" />
+                            <Input
+                                placeholder="Search Name"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)} // Update search query
+                            />
                         </div>
                         <div className="scrollable-list">
                             <List
                                 itemLayout="horizontal"
-                                dataSource={facultyMembers}
+                                dataSource={filteredFacultyMembers} // Use filtered list
                                 renderItem={item => (
                                     <List.Item
                                         actions={[
