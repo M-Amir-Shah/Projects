@@ -61,22 +61,27 @@ const StudentDashboard = () => {
         try {
             const response = await fetch(`${EndPoint.checkApplicationStatus}?id=${profileId}`);
             if (!response.ok) throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}`);
-    
+
             const data = await response.json();
             console.log("API Response:", data); // Log the entire response
-    
-            // If data is null or applicationStatus is null, set status to "Pending"
-            const applicationStatus = data?.applicationStatus ?? "Pending";
+
+            // If data is null, set applicationStatus to "Not Submitted"
+            let applicationStatus = "Not Submitted";
+            if (data) {
+                // If applicationStatus is null, set it to "Pending"
+                applicationStatus = data.applicationStatus ?? "Pending";
+            }
             setApplicationStatus(applicationStatus);
-    
+
         } catch (error) {
             console.error("Error fetching application status:", error.message);
             setError('Failed to fetch application status. Please try again later.');
         }
     };
-    
-    
-    
+
+
+
+
 
     useEffect(() => {
         const storedProfileId = localStorage.getItem('profileId');
@@ -226,11 +231,12 @@ const StudentDashboard = () => {
                                 hoverable
                                 cover={<img src={application} alt="Error loading image" />}
                                 className="content-card"
-                                disabled={applicationStatus === 'Accepted' || applicationStatus === 'Rejected'}
-                                style={applicationStatus === 'Accepted' || applicationStatus === 'Rejected' ? { pointerEvents: 'none', opacity: 0.5 } : {}}
+                                disabled={applicationStatus === 'Accepted' || applicationStatus === 'Rejected' || applicationStatus === 'Pending'}
+                                style={applicationStatus === 'Accepted' || applicationStatus === 'Rejected' || applicationStatus === 'Pending' ? { pointerEvents: 'none', opacity: 0.5 } : {}}
                             >
                                 Apply Needbase
                             </Card>
+
 
                             <Card
                                 onClick={NeedCriteria}
