@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../Styling/Assign-Graders.css';
 import { Button, List, Col, Row, Layout, Avatar, message, Modal, Spin } from 'antd';
-import { ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, UserOutlined, BellOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import logo from './BiitLogo.jpeg';
 import axios from 'axios';
 import EndPoint from '../endpoints'; // Import your API endpoints file
 const { Header } = Layout;
@@ -17,6 +16,8 @@ const GradersList = () => {
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [studentsData, setStudentsData] = useState([]);
     const [facultyData, setFacultyData] = useState([]);
+    const [data, setData] = useState([]);
+    const [showListModal, setShowListModal] = useState(false); // State for controlling the modal
 
     useEffect(() => {
         const fetchStudents = async () => {
@@ -56,7 +57,10 @@ const GradersList = () => {
     const assignTeacher = async (facultyId) => {
         try {
             if (!selectedStudent) return;
+            console.log(facultyId);
+            
             setAssigningTeacher(true);
+            // console.log(studentId);
             const response = await axios.post(EndPoint.unAssignedStudents, {
                 facultyId: facultyId,
                 studentId: selectedStudent.studentId
@@ -79,6 +83,25 @@ const GradersList = () => {
         navigate('/Admin-Dashboard');
     };
 
+    const fetchData = async () => {
+        try {
+            const response = await fetch(`${EndPoint.notifications}`);
+            const result = await response.json();
+            console.log('Fetched data:', result); // Log the data to verify its structure
+            setData(result.sort((a, b) => b.feedback - a.feedback));
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchData(); // Initial fetch
+    }, []);
+
+    const handleBellClick = () => {
+        setShowListModal(true);
+    };
+
     return (
         <div className="container">
             <Header className="navbar">
@@ -90,7 +113,7 @@ const GradersList = () => {
                         BIIT Graders List
                     </Col>
                     <Col>
-                        <img src={logo} alt="BIIT Financial Aid Allocation Tool" style={{ height: '35px', width: '35px', borderRadius: '25px' }} />
+                        <Button onClick={handleBellClick} icon={<BellOutlined />} />
                     </Col>
                 </Row>
             </Header>
@@ -102,7 +125,7 @@ const GradersList = () => {
                             itemLayout="horizontal"
                             dataSource={studentsData}
                             renderItem={item => (
-                                <List.Item style={{ backgroundColor: item.AverageRating <= 3 && item.AverageRating !== null ? '#fcacb5' : 'transparent' }}>
+                                <List.Item>
                                     <List.Item.Meta
                                         avatar={<Avatar size={64} icon={<UserOutlined />} />}
                                         title={`${item.name} (${item.arid_no})`}
@@ -146,6 +169,34 @@ const GradersList = () => {
                             )}
                         />
                     </Spin>
+                </div>
+            </Modal>
+
+            {/* Modal to show the list */}
+            <Modal
+                title="Notifications List"
+                visible={showListModal}
+                onCancel={() => setShowListModal(false)}
+                footer={[
+                    <Button key="close" onClick={() => setShowListModal(false)}>
+                        Close
+                    </Button>,
+                ]}
+            >
+                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                    <List
+                        itemLayout="horizontal"
+                        dataSource={data}
+                        renderItem={item => (
+                            <List.Item>
+                                <List.Item.Meta
+                                    avatar={<Avatar size={64} icon={<UserOutlined />} />}
+                                    title={`${item.name} (${item.arid_no})`}
+                                    description={`Rating: ${item.feedback} | (${item.session})`}
+                                />
+                            </List.Item>
+                        )}
+                    />
                 </div>
             </Modal>
         </div>

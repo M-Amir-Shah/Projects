@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Layout, Card, Row, Col, Drawer, Button, Avatar, Modal, Typography } from 'antd';
+import { Layout, Card, Row, Col, Drawer, Button, Avatar, Modal, Typography, message } from 'antd';
 import { BarsOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 import '../Styling/Admin-Dashboard.css';
@@ -12,6 +12,7 @@ import grader from '../Pictures/grader.png';
 import meritbase from '../Pictures/meritbase.png';
 import needbase from '../Pictures/needbase.png';
 import Image from '../Pictures/ca.jpg';
+import EndPoint from '../endpoints';
 
 const { Header, Content } = Layout;
 const { Title } = Typography;
@@ -20,6 +21,8 @@ const App = () => {
     const navigate = useNavigate();
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
     const [data, setData] = useState(null);
+    const [remainingBalance, setRemainingBalance] = useState(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
     const [currentTime, setCurrentTime] = useState(new Date());
 
     useEffect(() => {
@@ -54,6 +57,21 @@ const App = () => {
             },
         });
     };
+    const balanceCheck = async () => {
+        try {
+            const response = await axios.get(EndPoint.getBalance);
+            console.log('API Response:', response.data);
+            const budgetList = response.data;
+            setRemainingBalance(budgetList || 0);
+            setIsModalVisible(true);
+        } catch (error) {
+            console.error('Error fetching balance data:', error);
+            message.error('Failed to fetch balance data.');
+        }
+    };
+    const handleModalOk = () => {
+        setIsModalVisible(false);
+    };
 
     const name = "AbdulIslam"; // Define the name variable here
 
@@ -79,6 +97,7 @@ const App = () => {
                                 </Typography.Text>
                             </div>
                             <Button type="primary" style={{ width: '80%' }} onClick={() => navigateTo('/Budget')}>Add Budget Amount</Button>
+                            {/* <Button type="primary" onClick={balanceCheck} style={{ width: '80%',marginTop: '10px'  }}>Remaining Amount</Button> */}
                             <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Student-Record')}>Students Records</Button>
                             <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Policies')}>View Policies</Button>
                             <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Add-Faculty-Member')}>Add Faculty Member</Button>
@@ -160,6 +179,19 @@ const App = () => {
                     {JSON.stringify(data)}
                 </div>}
             </Content>
+            <Modal
+                title="Remaining Balance"
+                visible={isModalVisible}
+                onOk={handleModalOk}
+                onCancel={handleModalOk}
+                footer={[
+                    <Button key="ok" type="primary" onClick={handleModalOk}>
+                        OK
+                    </Button>,
+                ]}
+            >
+                <p>Remaining Balance is: {remainingBalance}</p>
+            </Modal>
         </Layout>
     );
 };

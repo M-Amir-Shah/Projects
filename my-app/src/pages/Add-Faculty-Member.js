@@ -66,7 +66,6 @@ const AddFaculty = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-
             console.log(response.data);
             message.success('Added Successfully');
         } catch (error) {

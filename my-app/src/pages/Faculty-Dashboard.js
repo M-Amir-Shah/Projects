@@ -162,11 +162,13 @@
 // export default FacultyDashboard;
 
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Input, Rate, Col, Row, List, Layout, Drawer, Typography } from 'antd';
-import { LogoutOutlined, BarsOutlined } from '@ant-design/icons';
+import { Modal, Button, Input, Rate, Col, Row, List, Layout, Avatar, Drawer, Typography, message } from 'antd';
+import { LogoutOutlined, BarsOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 import EndPoint from '../endpoints';
 import logo from './BiitLogo.jpeg';
+import Image from '../Pictures/admin.jpg';
+import axios from 'axios';
 
 const { Header } = Layout;
 const { Title } = Typography;
@@ -256,32 +258,46 @@ const FormScreen = () => {
         setIsModalVisible(true);
     };
 
-    const handleRate = async () => {
-        try {
-            const studentId = selectedItem?.s.student_id;
-            if (!studentId) {
-                console.error('Error: Student ID not found');
-                return;
-            }
-
-            const url = `${EndPoint.rateGraderPerformance}?facultyId=${profileId}&studentId=${studentId}&rate=${rating}&comment=${comment}`;
-            const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' } });
-
-            if (response.ok) {
-                alert('Rate submitted successfully');
-            } else {
-                const errorMessage = await response.text();
-                alert('Error message:', errorMessage);
-            }
-
-            setComment('');
-            setRating(0);
-            setIsModalVisible(false);
-        } catch (error) {
-            console.error('Error submitting rate:', error);
-        }
+    const navigateTo = (path) => {
+        navigate(path);
     };
 
+    const handleRate = async () => {
+        try {
+            // Assuming correct property names are facultyId and graderId
+            const facultyId = selectedItem?.facultyId; 
+            const graderId = selectedItem?.graderId;  
+            const session = '2024'; // Example session, replace with actual session data if needed
+    
+            if (!facultyId || !graderId) {
+                console.error('Error: Required IDs not found');
+                return;
+            }
+    
+            const formData = new FormData();
+            formData.append('facultyId', facultyId);
+            formData.append('graderId', graderId);
+            formData.append('rate', rating);
+            formData.append('session', session);
+    
+            const response = await axios.post(EndPoint.rateGraderPerformance, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+    
+            if (response.status === 200) {
+                message.success('Added Successfully');
+            } else {
+                message.warning(response.data || 'Unable to add rating.');
+            }
+        } catch (error) {
+            console.error('Error adding rating:', error);
+            message.error('Failed to add rating');
+        }
+    };
+    
+    
     return (
         <div className='container'>
             <Header className="navbar">
@@ -298,13 +314,14 @@ const FormScreen = () => {
                             <div className="sider-content">
                                 <Title level={4}>{facultyInfo && (
                                     <>
+                                        <Avatar size={64} src={Image} />
                                         <h2>{facultyInfo.name}</h2>
                                     </>
                                 )}</Title>
-
                             </div>
                             <br />
-                            <Button type="primary" onClick={logout} icon={<LogoutOutlined />} style={{ width: '80%' }}>Logout</Button>
+                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Committee-Dashboard')}>Switch to Committee</Button>
+                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={logout} icon={<LogoutOutlined />}>Logout</Button>
                         </Drawer>
                     </Col>
                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#ffff' }}>
@@ -317,20 +334,20 @@ const FormScreen = () => {
             </Header>
 
             <div className="form-box">
-            <h2 style={{ textAlign: 'center' }}>Rate Students</h2>
+                <h2 style={{ textAlign: 'center' }}>Rate Students</h2>
                 <div className="scrollable-list">
-                <List
-                    dataSource={data}
-                    renderItem={item => (
-                        <List.Item onClick={() => handleItemPress(item)}>
-                            <List.Item.Meta
-                                title={item.s.name}
-                                description={`Arid No: ${item.s.arid_no} | Semester: ${item.s.semester}`}
-                            />
-                        </List.Item>
-                    )}
-                />
-
+                    <List
+                        dataSource={data}
+                        renderItem={item => (
+                            <List.Item onClick={() => handleItemPress(item)}>
+                                <List.Item.Meta
+                                    avatar={<Avatar size={64} icon={<UserOutlined />} />}
+                                    title={item.s.name}
+                                    description={`Arid No: ${item.s.arid_no} | Semester: ${item.s.semester}`}
+                                />
+                            </List.Item>
+                        )}
+                    />
                 </div>
                 <Modal
                     title={`Give Rate & Comment To ${selectedItem?.s.name}`}

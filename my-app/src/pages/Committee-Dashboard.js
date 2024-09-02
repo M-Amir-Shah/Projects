@@ -3,7 +3,6 @@ import { Card, Layout, Row, Col, Badge, Drawer, Button, Avatar, Modal, message, 
 import { FilePdfOutlined, FileExcelOutlined, FileImageOutlined, BarsOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import Search from '../components/SearchingButton';
 import EndPoint from '../endpoints'; // Import your API endpoints file
 import logo from './BiitLogo.jpeg';
 import '../Styling/Committee-DashBoard.css';
@@ -16,6 +15,8 @@ const DocumentCard = ({ document }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
+        // Save the selected document data to localStorage
+        localStorage.setItem('selectedApplication', JSON.stringify(document));
         navigate('/View-Application', { state: { documentId: document.id } });
     };
 
@@ -59,7 +60,7 @@ const App = ({ id }) => {
     const [remainingBalance, setRemainingBalance] = useState(null);
     const [totalAmount, setTotalAmount] = useState(null);
     const [committeeInfo, setCommitteeInfo] = useState({ name: '', profilePic: '' });
-    
+
     useEffect(() => {
         const fetchDocuments = async () => {
             try {
@@ -90,7 +91,7 @@ const App = ({ id }) => {
                 setLoading(false);
             }
         };
-    
+
         fetchCommitteeInfo();
     }, [id]);
 
@@ -122,6 +123,9 @@ const App = ({ id }) => {
     const handleModalOk = () => {
         setIsModalVisible(false);
     };
+    const navigateTo = (path) => {
+        navigate(path);
+    };
 
     return (
         <div>
@@ -144,9 +148,8 @@ const App = ({ id }) => {
                                 <Title level={4}>{name}</Title>
                             </div>
                             <br />
-                            <Button type="primary" onClick={balanceCheck} style={{ width: '80%' }}>Remaining Amount</Button>
-                            <br />
-                            <Button type="primary" onClick={logout} style={{ width: '80%' }}>Logout</Button>
+                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Faculty-Dashboard')}>Switch to Faculty</Button>
+                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={balanceCheck}>Remaining Balance</Button>
                         </Drawer>
                     </Col>
                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#ffff' }}>
@@ -168,7 +171,6 @@ const App = ({ id }) => {
                     >
                         <p className='card-para'>Left <sup><Badge count={documents.length} /></sup></p>
                     </Card>
-                    {/* <Search placeholder="Search" /> */}
                     <br />
                     <div className="scrollable-container">
                         {loading ? (

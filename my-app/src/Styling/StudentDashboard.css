@@ -44,3 +44,17 @@ html, body {
     margin-top: 20px;
     
 }
+.blinking-text {
+    animation: blink-animation 1.5s infinite step-start;
+}
+
+.highlight-text {
+    background-color: yellow;
+    font-weight: bold;
+}
+
+@keyframes blink-animation {
+    50% {
+        opacity: 0;
+    }
+}

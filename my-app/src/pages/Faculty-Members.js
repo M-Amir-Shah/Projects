@@ -14,6 +14,7 @@ const fetchStudentRecords = async () => {
             throw new Error('Network response was not ok');
         }
         const data = await response.json();
+        console.log(data)
         return data;
     } catch (error) {
         console.error('Error fetching Faculty Members:', error);
@@ -101,6 +102,7 @@ const CommitteeMembers = () => {
                                         <List.Item.Meta
                                             avatar={<Avatar size={64} src={item.profilePic} />}
                                             title={item.name}
+                                            description={item.contactNo}
                                         />
                                         {/* Uncomment the following line to add a "Remove" button */}
                                         {/* <Button icon={<CloseOutlined />} onClick={() => handleRemoveMember(item.id)} danger>Remove</Button> */}

@@ -1,0 +1,20 @@
+.list-container {
+    overflow-y: auto; /* Allow vertical scrolling */
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    max-height: 0;
+    opacity: 0;
+}
+
+.list-container.open {
+    max-height: 500px; /* Adjust based on expected content height */
+    opacity: 1;
+}
+
+.list-container.closed {
+    max-height: 0;
+    opacity: 0;
+}
+
+.highlight {
+    background-color: #e6f7ff; /* Light blue background to highlight new items */
+}

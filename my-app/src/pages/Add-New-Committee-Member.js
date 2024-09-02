@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Import Axios for HTTP requests
 import '../Styling/Add-Committee-Member.css'; // Import CSS for styling
 import Search from '../components/SearchingButton.js';
 import { Button, List, Col, Row, Layout, message, Avatar, Input } from 'antd';
@@ -14,14 +13,19 @@ const MeritBase = () => {
     const navigate = useNavigate();
     const [facultyMembers, setFacultyMembers] = useState([]);
     const [searchQuery, setSearchQuery] = useState(''); // State to store search query
+    const [addedMembers, setAddedMembers] = useState({});
 
     useEffect(() => {
         // Fetch faculty members on component mount
         const fetchFacultyMembers = async () => {
             try {
-                const response = await axios.get(`${EndPoint.getFacultyMembers}`); // Adjust endpoint as needed
-                setFacultyMembers(response.data);
-                console.log(response.data);
+                const response = await fetch(`${EndPoint.getFacultyMembers}`); // Use fetch instead of axios
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                setFacultyMembers(data);
+                console.log(data);
             } catch (error) {
                 console.error('Failed to fetch faculty members:', error);
             }
@@ -32,7 +36,19 @@ const MeritBase = () => {
 
     const handleAdd = async (id) => {
         try {
-            await axios.post(EndPoint.addCommitteeMember, { id }); // Adjust endpoint and data as needed
+            const response = await fetch(EndPoint.addCommitteeMember, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            setAddedMembers(prev => ({ ...prev, [id]: true })); // Mark this member as added
             message.success('Successfully Added');
             console.log('Response');
         } catch (error) {
@@ -47,7 +63,7 @@ const MeritBase = () => {
 
     // Filter faculty members based on search query
     const filteredFacultyMembers = facultyMembers.filter((member) =>
-        member.name.toLowerCase().startsWith(searchQuery.toLowerCase())
+        member.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     return (
@@ -83,12 +99,19 @@ const MeritBase = () => {
                                 renderItem={item => (
                                     <List.Item
                                         actions={[
-                                            <Button type="primary" onClick={() => handleAdd(item.id)}>Add</Button>
+                                            <Button
+                                                type="primary"
+                                                onClick={() => handleAdd(item.id)}
+                                                disabled={addedMembers[item.id]}
+                                            >
+                                                {addedMembers[item.id] ? 'Added' : 'Add'}
+                                            </Button>
                                         ]}
                                     >
                                         <List.Item.Meta
                                             avatar={<Avatar size={64} icon={<UserOutlined />} />}
                                             title={item.name}
+                                            description={item.contactNo}
                                         />
                                     </List.Item>
                                 )}

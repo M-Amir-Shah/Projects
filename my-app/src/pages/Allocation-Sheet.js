@@ -93,7 +93,7 @@ const AddFaculty = () => {
         { title: 'Discipline', dataIndex: 'degree', key: 'degree' },
         { title: 'Gender', dataIndex: 'gender', key: 'gender' },
         { title: 'Current CGPA', dataIndex: 'cgpa', key: 'cgpa' },
-        { title: 'Previous CGPA', dataIndex: 'prev_cgpa', key: 'prev_cgpa' },
+        //{ title: 'Previous CGPA', dataIndex: 'prev_cgpa', key: 'prev_cgpa' },
         { title: 'Fee Exempted', dataIndex: 'amount', key: 'amount' }
     ];
 
@@ -105,7 +105,7 @@ const AddFaculty = () => {
         { title: 'Section', dataIndex: 'section', key: 'section' },
         { title: 'Gender', dataIndex: 'gender', key: 'gender' },
         { title: 'Current CGPA', dataIndex: 'cgpa', key: 'cgpa' },
-        { title: 'Previous CGPA', dataIndex: 'prev_cgpa', key: 'prev_cgpa' },
+        //{ title: 'Previous CGPA', dataIndex: 'prev_cgpa', key: 'prev_cgpa' },
         { title: 'Position', dataIndex: 'position', key: 'position' },
         { title: 'Amount', dataIndex: 'amount', key: 'amount' },
     ];
@@ -115,7 +115,7 @@ const AddFaculty = () => {
             <Header className="navbar">
                 <Row justify="space-between" align="middle">
                     <Col>
-                        <Button type="text" icon={<ArrowLeftOutlined />} onClick={Cancel} />
+                        <Button icon={<ArrowLeftOutlined />} onClick={Cancel} />
                     </Col>
                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large' }}>
                         Allocation Sheet

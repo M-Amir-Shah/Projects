@@ -56,7 +56,20 @@ const StudentDashboard = () => {
             setLoading(false);
         }
     };
-
+    const fetchAmount = async () => {
+        try {
+            const response = await fetch(`${EndPoint.accepted}`);
+            if (!response.ok) throw new Error('Error fetching Amount');
+            const data = await response.json();
+            
+            setAmount(data.amount);
+            console.log('Amount'+amount)
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
     const fetchApplicationStatus = async (profileId) => {
         try {
             const response = await fetch(`${EndPoint.checkApplicationStatus}?id=${profileId}`);
@@ -73,14 +86,15 @@ const StudentDashboard = () => {
             }
             setApplicationStatus(applicationStatus);
 
+            if (applicationStatus === "Accepted") {
+                fetchAmount(); // This function will fetch the amount and update the state
+            }
+
         } catch (error) {
             console.error("Error fetching application status:", error.message);
             setError('Failed to fetch application status. Please try again later.');
         }
     };
-
-
-
 
 
     useEffect(() => {
@@ -109,7 +123,7 @@ const StudentDashboard = () => {
         try {
             const formData = new FormData();
             formData.append('id', id);
-            formData.append('Status', status)
+            formData.append('status', status)
 
             const response = await axios.post(EndPoint.decideMeritBaseApplication, formData, {
                 headers: {
@@ -203,9 +217,11 @@ const StudentDashboard = () => {
                             <b>Arid :</b> <input type="text" value={arid_no} disabled /><br />
                             <b>Status:</b> {applicationStatus}<br />
                             <b>Session:</b> <b>{session1}</b><br />
+                            <b>Amount:</b><b>{amount}</b><br />
                             {applicationStatus === 'Accepted' && (
                                 <>
-                                    <b>Amount:</b> <b>{amount}</b><br />
+                                    <b>Amount:</b><b>{amount}</b><br />
+                                    <p class="blinking-text highlight-text">Do you want to avail this Amount!</p>
                                     <Button
                                         onClick={handleSubmit}
                                         type='primary'

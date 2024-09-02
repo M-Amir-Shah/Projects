@@ -4,45 +4,72 @@
     box-sizing: border-box;
     font-family: sans-serif;
   } */
-  
-  .container {
-    height: 100%;
-    background: linear-gradient(to right bottom, #119992, #b5c6e0);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 5%;
-    flex-direction: column;
-  }
-  .scrollable-list {
-    max-height: 300px; /* Adjust the max-height as needed */
-    overflow-y: auto;
-  }
-  
-  .form-box {
-    width: 90%;
-    max-width: 900px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    padding: 40px 50px;
-    margin-inline: 20px;
-  }
-  .form-box header h1 {
-    text-align: center;
-    color: black;
-    font-family: century;
-  }
-  
-  .form-box form {
-    margin-block: 30px;
-  }
 
-  .navbar {
-    position: fixed;
-    width: 100%;
-    background: linear-gradient(to right bottom, #119992, #b5c6e0);
-    z-index: 1000;
-    border-bottom: 1px solid #ccc;
-    top: 0;
-    left: 0;
+.container {
+  height: 100%;
+  background: linear-gradient(to right bottom, #119992, #b5c6e0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5%;
+  flex-direction: column;
+}
+
+.scrollable-list {
+  max-height: 300px;
+  /* Adjust the max-height as needed */
+  overflow-y: auto;
+}
+
+.form-box {
+  width: 90%;
+  max-width: 900px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 40px 50px;
+  margin-inline: 20px;
+}
+
+.form-box header h1 {
+  text-align: center;
+  color: black;
+  font-family: century;
+}
+
+.form-box form {
+  margin-block: 30px;
+}
+
+.navbar {
+  position: fixed;
+  width: 100%;
+  background: linear-gradient(to right bottom, #119992, #b5c6e0);
+  z-index: 1000;
+  border-bottom: 1px solid #ccc;
+  top: 0;
+  left: 0;
+}
+
+.list-container {
+  overflow-y: auto;
+  /* Allow vertical scrolling */
+  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  max-height: 0;
+  opacity: 0;
+}
+
+.list-container.open {
+  max-height: 500px;
+  /* Adjust based on expected content height */
+  opacity: 1;
+}
+
+.list-container.closed {
+  max-height: 0;
+  opacity: 0;
+}
+
+.highlight {
+  background-color: #e6f7ff;
+  /* Light blue background to highlight new items */
 }

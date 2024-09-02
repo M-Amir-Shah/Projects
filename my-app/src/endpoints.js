@@ -1,3 +1,4 @@
+import { notification } from "antd";
 import { rejects } from "assert";
 
 const baseUrl = "http://localhost/Backend/";
@@ -23,6 +24,7 @@ const EndPoint = {
     committeeMemberInfo: `${baseUrl}api/Committee/CommitteeMembers`,
     giveSuggestion: `${baseUrl}api/Committee/GiveSuggestion`,
     getBalance: `${baseUrl}api/Committee/GetBalance`,
+    committeeInfo: `${baseUrl}api/Committee/CommitteeInfo`,
 
     rateGraderPerformance: `${baseUrl}api/Faculty/RateGraderPerformance`,
     facultyInfo: `${baseUrl}api/Faculty/FacultyInfo`,
@@ -56,7 +58,18 @@ const EndPoint = {
     meritbase : `${baseUrl}api/Admin/MeritBase`,
     addUser : `${baseUrl}api/Admin/AddUser`,
     decideMeritBaseApplication: `${baseUrl}api/Student/decideMeritBaseApplication`,
-    removeGrader: `${baseUrl}api/Admin/Removegrader`
+    removeGrader: `${baseUrl}api/Admin/Removegrader`,
+    
+    notifications: `${baseUrl}api/Faculty/GetLowFeedbackRatings`,
+
+
+
+    //API 
+    houseAgreement: `${baseUrl}Backend\Content\HouseAgreement`,
+    deathCertificate: `${baseUrl}Backend\Content\DeathCertificates`,
+    profileImages: `${baseUrl}Backend\Content/ProfileImages`,
+    salarySlip: `${baseUrl}Backend\Content/SalarySlip`,
+    //profileImages: `${baseUrl}Backend\Content/ProfileImages`,
     
 };
 
