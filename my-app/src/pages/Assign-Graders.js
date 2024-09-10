@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../Styling/Assign-Graders.css';
 import { Button, List, Col, Row, Layout, Avatar, message, Modal, Spin } from 'antd';
 import { ArrowLeftOutlined, UserOutlined, BellOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import EndPoint from '../endpoints'; // Import your API endpoints file
+
 const { Header } = Layout;
 
 const GradersList = () => {
@@ -23,8 +24,9 @@ const GradersList = () => {
         const fetchStudents = async () => {
             try {
                 setLoadingStudents(true);
-                const response = await axios.get(EndPoint.assignGrader);
+                const response = await axios.get(EndPoint.unAssignedStudents);
                 setStudentsData(response.data);
+                console.log("Unassigned Students ", response.data);
             } catch (error) {
                 console.error('Error fetching students:', error);
                 message.error('Failed to fetch students data.');
@@ -40,10 +42,8 @@ const GradersList = () => {
             try {
                 setLoadingFaculty(true);
                 const response = await axios.get(EndPoint.getFacultyMembers);
-                if (!response.data || !Array.isArray(response.data)) {
-                    throw new Error('Invalid data received');
-                }
                 setFacultyData(response.data);
+                console.log("Faculty Members", response.data);
             } catch (error) {
                 console.error('Error fetching Faculty Members:', error);
                 message.error('Failed to load Faculty Members.');
@@ -54,28 +54,38 @@ const GradersList = () => {
         fetchFacultyMembers();
     }, []);
 
-    const assignTeacher = async (facultyId) => {
+    const assignGrader = async (facultyId, studentId) => {
+        if (!facultyId || !studentId) {
+            message.error('Invalid data.');
+            return;
+        }
+
         try {
-            if (!selectedStudent) return;
-            console.log(facultyId);
-            
             setAssigningTeacher(true);
-            // console.log(studentId);
-            const response = await axios.post(EndPoint.unAssignedStudents, {
-                facultyId: facultyId,
-                studentId: selectedStudent.studentId
+            const response = await fetch('http://localhost/Backend/api/Admin/AssignGrader', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ facultyId, studentId }),
             });
-            if (response.status === 200) {
-                message.success('Teacher assigned successfully');
+
+            const result = await response.json();
+
+            if (response.ok) {
+                console.log('Success:', result);
+                message.success('Grader assigned successfully.');
+                setModalVisible(false); // Close modal on success
+                // Optionally refresh student data or perform other actions
             } else {
-                message.error('Failed to assign teacher');
+                console.log('Error:', result);
+                message.error(`Error: ${result.Message}`);
             }
         } catch (error) {
-            console.error('Error assigning teacher:', error);
-            message.error('Failed to assign teacher');
+            console.error('Network error:', error);
+            message.error('Network error occurred.');
         } finally {
-            setAssigningTeacher(false);
-            setModalVisible(false);
+            setAssigningTeacher(false); // Hide loading state
         }
     };
 
@@ -87,7 +97,7 @@ const GradersList = () => {
         try {
             const response = await fetch(`${EndPoint.notifications}`);
             const result = await response.json();
-            console.log('Fetched data:', result); // Log the data to verify its structure
+            console.log('Notification Fetched data:', result); // Log the data to verify its structure
             setData(result.sort((a, b) => b.feedback - a.feedback));
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -129,7 +139,16 @@ const GradersList = () => {
                                     <List.Item.Meta
                                         avatar={<Avatar size={64} icon={<UserOutlined />} />}
                                         title={`${item.name} (${item.arid_no})`}
-                                        description={<div>Previous Rating: {item.AverageRating}</div>}
+                                        description={
+                                            <div
+                                                style={{
+                                                    background: item.AverageRating <= 3 ? '#ff9999' : 'inherit',
+                                                }}
+                                            >
+                                                <span style={{ fontWeight: 'bold' }}>Previous Rating: </span>
+                                                {item.AverageRating}
+                                            </div>
+                                        }
                                     />
                                     <Button onClick={() => { setSelectedStudent(item); setModalVisible(true); }}>
                                         Assign
@@ -162,7 +181,16 @@ const GradersList = () => {
                                         avatar={<Avatar size={64} icon={<UserOutlined />} />}
                                         title={item.name}
                                     />
-                                    <Button key="assign" type="primary" onClick={() => assignTeacher(item.facultyId)} loading={assigningTeacher}>
+                                    <Button
+                                        key="assign"
+                                        type="primary"
+                                        onClick={() => {
+                                            if (selectedStudent) {
+                                                assignGrader(item.facultyId, selectedStudent.studentId); // Pass both IDs
+                                            }
+                                        }}
+                                        loading={assigningTeacher}
+                                    >
                                         Assign
                                     </Button>
                                 </List.Item>

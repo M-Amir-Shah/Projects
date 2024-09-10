@@ -144,7 +144,7 @@ function App() {
     };
 
     const handleBack = () => {
-        navigate('/Committee-Dashboard'); // Use navigate function here
+        navigate('/Admin-ViewApplication-List'); // Use navigate function here
     };
 
     const renderViewer = () => {

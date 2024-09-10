@@ -13,64 +13,38 @@ const { TextArea } = Input;
 
 const NeedMeritPolicy = () => {
     const [description, setDescription] = useState('');
-    const [policyFor, setPolicyFor] = useState('Needbase');
+    const [policyFor, setPolicyFor] = useState('--Select Type--');
+    const [policy, setPolicy]= useState('');
+    const [strength, setStrength]= useState('');
     const [val1, setVal1] = useState('');
     const [val2, setVal2] = useState('');
-    const [selectedOption, setSelectedOption] = useState('CGPA'); // Initialize with a default value
+    const [selectedOption, setSelectedOption] = useState('');
 
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Prevent default form submission
+        e.preventDefault(); 
+        try{
+            const formData = {
+                description,
+                val1,
+                val2,
+                policyFor, // Adjusted to match the backend parameter
+                policy,
+                strength
+            };
 
-        // Validate description field
-        if (!description) {
-            message.error('Please enter a description');
-            return;
+            const response = await axios.post(EndPoint.addPolicies, formData, {
+                headers: {
+                    'Content-Type': 'application/json' // Changed to JSON as your backend isn't expecting form-data
+                }
+            });
+            console.log(response.data);
+            message.success('Added Successfully');
+            navigate('/Admin-Dashboard');
         }
-
-        let storedVal1 = '';
-        let storedVal2 = '';
-        let policy = '';
-        let strength = '';
-
-        if (policyFor === 'Needbase') {
-            storedVal1 = '3.5'; // Default value for val1
-            policy = 'CGPA'; // Set policy to CGPA
-            strength = '1'; // Set strength to 1
-        } else {
-            if (selectedOption === 'CGPA') {
-                storedVal1 = val1;
-                policy = 'CGPA'; // Set policy to CGPA
-                strength = '1'; // Set strength to 1
-            } else if (selectedOption === 'Strength') {
-                storedVal1 = val1;
-                storedVal2 = val2;
-                policy = 'Strength'; // Set policy to Strength
-            }
-        }
-
-        const policyData = {
-            description,
-            val1: storedVal1,
-            val2: storedVal2,
-            policyFor,
-            policy,
-            strength,
-        };
-
-        try {
-            const response = await axios.post(`${EndPoint.addPolicies}`, policyData);
-
-            if (response.status === 200) {
-                message.success('Policy added successfully!');
-                // Optionally, you can perform any other actions upon successful response
-            } else {
-                message.error('Failed to add policy.');
-            }
-        } catch (error) {
-            console.error('Error adding policy:', error);
-            message.error('Failed to add policy.');
+        catch(error){
+            message.error('Failed To Add Policies.');
         }
     };
 
@@ -80,11 +54,11 @@ const NeedMeritPolicy = () => {
 
     const handleMeritTypeChange = (e) => {
         setSelectedOption(e.target.value);
+        setPolicy(e.target.value); // Update the policy based on selected merit type
     };
 
     const handleBack = () => {
-        navigate(-1); // Go back using react-router's navigate
-        // You can also perform any other action needed on Back button click
+        navigate(-1);
     };
 
     return (
@@ -106,15 +80,15 @@ const NeedMeritPolicy = () => {
                 <Content>
                     <form onSubmit={handleSubmit}>
                         <label htmlFor="policyFor">Policy Type:</label>
-                        <Select id="policyFor" placeholder="Select policy type" onChange={handleSelectionChange} value={policyFor}>
+                        <Select onChange={handleSelectionChange} value={policyFor}>
                             <Option value="Needbase">Needbase</Option>
                             <Option value="Meritbase">Meritbase</Option>
                         </Select>
                         {policyFor === 'Needbase' && (
                             <>
                                 <br/>
-                                <label htmlFor="minimumCGPA">Minimum CGPA:</label>
-                                <Input id="minimumCGPA" type="text" placeholder="Minimum CGPA" value={val1} onChange={(e) => setVal1(e.target.value)} />
+                                <label htmlFor="val1">Minimum CGPA:</label>
+                                <Input id="val1" type="text" placeholder="Minimum CGPA" value={val1} onChange={(e) => setVal1(e.target.value)} />
                             </>
                         )}
                         {policyFor === 'Meritbase' && (
@@ -129,17 +103,17 @@ const NeedMeritPolicy = () => {
                                 {selectedOption === 'CGPA' && (
                                     <>
                                         <br/>
-                                        <label htmlFor="minimumCGPA">Minimum CGPA:</label>
-                                        <Input id="minimumCGPA" type="text" placeholder="Minimum CGPA" value={val1} onChange={(e) => setVal1(e.target.value)} />
+                                        <label htmlFor="val1">Minimum CGPA:</label>
+                                        <Input id="val1" type="text" placeholder="Minimum CGPA" value={val1} onChange={(e) => setVal1(e.target.value)} />
                                     </>
                                 )}
                                 {selectedOption === 'Strength' && (
                                     <> 
                                         <br/>
-                                        <label htmlFor="minimumStrength">Minimum Strength:</label>
-                                        <Input id="minimumStrength" type="text" placeholder="Minimum Strength" value={val1} onChange={(e) => setVal1(e.target.value)} />
-                                        <label htmlFor="maximumStrength">Maximum Strength:</label>
-                                        <Input id="maximumStrength" type="text" placeholder="Maximum Strength" value={val2} onChange={(e) => setVal2(e.target.value)} />
+                                        <label htmlFor="val1">Minimum Strength:</label>
+                                        <Input id="val1" type="text" placeholder="Minimum Strength" value={val1} onChange={(e) => setVal1(e.target.value)} />
+                                        <label htmlFor="val2">Maximum Strength:</label>
+                                        <Input id="val2" type="text" placeholder="Maximum Strength" value={val2} onChange={(e) => setVal2(e.target.value)} />
                                     </>
                                 )}
                             </>

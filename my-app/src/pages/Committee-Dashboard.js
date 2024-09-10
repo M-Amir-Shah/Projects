@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Layout, Row, Col, Badge, Drawer, Button, Avatar, Modal, message, Typography } from 'antd';
-import { FilePdfOutlined, FileExcelOutlined, FileImageOutlined, BarsOutlined, UserOutlined } from '@ant-design/icons';
+import { Card, Layout, Row, List, Col, Badge, Drawer, Button, Avatar, Modal, message, Typography } from 'antd';
+import { FilePdfOutlined, FileExcelOutlined, FileImageOutlined, BarsOutlined, BellOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import EndPoint from '../endpoints'; // Import your API endpoints file
@@ -60,6 +60,9 @@ const App = ({ id }) => {
     const [remainingBalance, setRemainingBalance] = useState(null);
     const [totalAmount, setTotalAmount] = useState(null);
     const [committeeInfo, setCommitteeInfo] = useState({ name: '', profilePic: '' });
+    const [facultyInfo, setFacultyInfo] = useState(null);
+    const [showListModal, setShowListModal] = useState(false);
+    const [data, setData] = useState([]);
 
     useEffect(() => {
         const fetchDocuments = async () => {
@@ -107,6 +110,21 @@ const App = ({ id }) => {
         setIsDrawerVisible(false);
     };
 
+    const fetchData = async () => {
+        try {
+            const response = await fetch(`${EndPoint.notifications}`);
+            const result = await response.json();
+            console.log('Notification Fetched data:', result); // Log the data to verify its structure
+            setData(result.sort((a, b) => b.feedback - a.feedback));
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchData(); // Initial fetch
+    }, []);
+
     const balanceCheck = async () => {
         try {
             const response = await axios.get(EndPoint.getBalance);
@@ -127,6 +145,11 @@ const App = ({ id }) => {
         navigate(path);
     };
 
+    const handleBellClick = () => {
+        setShowListModal(true);
+    };
+
+
     return (
         <div>
             <Header className="navbar">
@@ -144,8 +167,15 @@ const App = ({ id }) => {
                             bodyStyle={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
                         >
                             <div className="sider-content">
-                                <Avatar size={64} icon={<UserOutlined />} />
-                                <Title level={4}>{name}</Title>
+                            <Title level={4}>{facultyInfo && (
+                                    <>
+                                        <Avatar
+                                            src={facultyInfo?.profilePic ? `${EndPoint.imageUrl}${facultyInfo.profilePic}` : "./logo.png"}
+                                            size={64}
+                                        />
+                                        <h2>{facultyInfo.name}</h2>
+                                    </>
+                                )}</Title>
                             </div>
                             <br />
                             <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Faculty-Dashboard')}>Switch to Faculty</Button>
@@ -156,7 +186,7 @@ const App = ({ id }) => {
                         BIIT Committee-Dashboard
                     </Col>
                     <Col>
-                        <img src={logo} alt="BIIT Financial Aid Allocation Tool" style={{ height: '35px', width: '35px', borderRadius: '25px' }} />
+                        <Button onClick={handleBellClick} icon={<BellOutlined />} />
                     </Col>
                 </Row>
             </Header>
@@ -195,6 +225,32 @@ const App = ({ id }) => {
                 ]}
             >
                 <p>Remaining Balance is: {remainingBalance}</p>
+            </Modal>
+            <Modal
+                title="Notifications List"
+                visible={showListModal}
+                onCancel={() => setShowListModal(false)}
+                footer={[
+                    <Button key="close" onClick={() => setShowListModal(false)}>
+                        Close
+                    </Button>,
+                ]}
+            >
+                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                    <List
+                        itemLayout="horizontal"
+                        dataSource={data}
+                        renderItem={item => (
+                            <List.Item>
+                                <List.Item.Meta
+                                    avatar={<Avatar size={64} icon={<UserOutlined />} />}
+                                    title={`${item.name} (${item.arid_no})`}
+                                    description={`Rating: ${item.feedback} | (${item.session})`}
+                                />
+                            </List.Item>
+                        )}
+                    />
+                </div>
             </Modal>
         </div>
     );

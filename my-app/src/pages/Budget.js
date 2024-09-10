@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Row, Col, Button, List, Input } from 'antd';
+import { Layout, Row, Col, Button, List, Input, message } from 'antd';
 import { ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons';
 import "../Styling/Budget.css";
+import axios from 'axios';
 import { Content } from 'antd/es/layout/layout';
 import { useNavigate } from "react-router-dom";
 import EndPoint from '../endpoints';
@@ -9,15 +10,34 @@ import EndPoint from '../endpoints';
 const { Header } = Layout;
 
 const Navbar = () => {
-    const navigate = useNavigate(); // Correctly use useNavigate hook
+    const navigate = useNavigate();
     const [budgetList, setBudgetList] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [remainingBalance, setRemainingBalance] = useState(null);
     const [searchInput, setSearchInput] = useState('');
+
+    const balanceCheck = async () => {
+        try {
+            const response = await axios.get(EndPoint.getBalance);
+            console.log('API Response:', response.data);
+            const balanceData = response.data;
+            setRemainingBalance(balanceData || 0);
+            setIsModalVisible(true);
+        } catch (error) {
+            console.error('Error fetching balance data:', error);
+            message.error('Failed to fetch balance data.');
+        }
+    };
+
+    const handleModalOk = () => {
+        setIsModalVisible(false);
+    };
 
     useEffect(() => {
         const fetchBudgetData = async () => {
             try {
-                const response = await fetch(`${EndPoint.budgethistory}`); // Replace 'API_ENDPOINT_HERE' with your actual API endpoint
+                const response = await fetch(`${EndPoint.budgethistory}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch budget data');
                 }
@@ -34,12 +54,12 @@ const Navbar = () => {
 
     const AddBudget = (event) => {
         event.preventDefault();
-        navigate('/Budget-Add'); // Navigate to '/Budget-Add' route
+        navigate('/Budget-Add');
     };
 
     const Back = (event) => {
         event.preventDefault();
-        navigate('/Admin-Dashboard'); // Navigate to '/Admin-Dashboard' route
+        navigate('/Admin-Dashboard');
     };
 
     const handleSearchInputChange = (event) => {
@@ -49,6 +69,9 @@ const Navbar = () => {
     const filteredBudgetList = budgetList.filter(item =>
         item.budget_session.toLowerCase().includes(searchInput.toLowerCase())
     );
+
+    // Calculate the total amount
+    const totalAmount = filteredBudgetList.reduce((sum, item) => sum + item.budgetAmount, 0);
 
     return (
         <div>
@@ -69,6 +92,8 @@ const Navbar = () => {
                 <Content className="form-box">
                     <h2 style={{ textAlign: 'center' }}>Budget History</h2>
                     <form>
+                        <label>Total Amount: {totalAmount}</label>
+                        <br />
                         <Input 
                             placeholder="Search" 
                             value={searchInput} 

@@ -14,6 +14,7 @@ const MeritBase = () => {
     const [facultyMembers, setFacultyMembers] = useState([]);
     const [searchQuery, setSearchQuery] = useState(''); // State to store search query
     const [addedMembers, setAddedMembers] = useState({});
+    const [facultyId, setFacultyId] = useState('');
 
     useEffect(() => {
         // Fetch faculty members on component mount
@@ -34,23 +35,27 @@ const MeritBase = () => {
         fetchFacultyMembers();
     }, []);
 
-    const handleAdd = async (id) => {
+    const handleAdd = async (id, event) => {
+        event.preventDefault();  // Now this will work correctly
+
         try {
             const response = await fetch(EndPoint.addCommitteeMember, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ id }),
+                body: JSON.stringify({ id: id }),  // Pass the faculty id
             });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            if(response.ok){
+                const data = await response.json();
+                console.log("Response", data);  // Updated console log to show correct data
+                setAddedMembers(prevState => ({
+                    ...prevState,
+                    [id]: true
+                }));
+                message.success('Member added successfully');
             }
-
-            setAddedMembers(prev => ({ ...prev, [id]: true })); // Mark this member as added
-            message.success('Successfully Added');
-            console.log('Response');
+            
         } catch (error) {
             console.error('Failed to add member:', error);
             message.error('Failed to add member');
@@ -101,7 +106,7 @@ const MeritBase = () => {
                                         actions={[
                                             <Button
                                                 type="primary"
-                                                onClick={() => handleAdd(item.id)}
+                                                onClick={(event) => handleAdd(item.id, event)}  // Corrected onClick to pass both id and event
                                                 disabled={addedMembers[item.id]}
                                             >
                                                 {addedMembers[item.id] ? 'Added' : 'Add'}

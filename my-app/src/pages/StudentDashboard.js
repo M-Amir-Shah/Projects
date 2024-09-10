@@ -29,6 +29,8 @@ const StudentDashboard = () => {
     const [username, setUsername] = useState('');
     const [session1, setSession] = useState('');
     const [amount, setAmount] = useState(''); // State variable for amount
+    const [aidtype, setAidType] = useState(''); // State variable for aidtype
+
 
     const fetchStudentInfo = async (profileId) => {
         try {
@@ -61,9 +63,9 @@ const StudentDashboard = () => {
             const response = await fetch(`${EndPoint.accepted}`);
             if (!response.ok) throw new Error('Error fetching Amount');
             const data = await response.json();
-            
-            setAmount(data.amount);
-            console.log('Amount'+amount)
+
+            setAmount(data[0].amount);
+            console.log('Amount', data[0].amount)
         } catch (error) {
             setError(error.message);
         } finally {
@@ -74,27 +76,34 @@ const StudentDashboard = () => {
         try {
             const response = await fetch(`${EndPoint.checkApplicationStatus}?id=${profileId}`);
             if (!response.ok) throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}`);
-
+    
             const data = await response.json();
             console.log("API Response:", data); // Log the entire response
-
+    
             // If data is null, set applicationStatus to "Not Submitted"
             let applicationStatus = "Not Submitted";
+            let aidtype = ""; // Default empty value for aidtype
+            let amount = "";
+    
             if (data) {
                 // If applicationStatus is null, set it to "Pending"
                 applicationStatus = data.applicationStatus ?? "Pending";
+                aidtype = data.aidtype ?? ""; // Set aidtype from the API response
             }
+            
             setApplicationStatus(applicationStatus);
-
+            setAidType(aidtype); // Update the state with the aidtype
+    
             if (applicationStatus === "Accepted") {
-                fetchAmount(); // This function will fetch the amount and update the state
+                fetchAmount(amount); // This function will fetch the amount and update the state
             }
-
+    
         } catch (error) {
             console.error("Error fetching application status:", error.message);
             setError('Failed to fetch application status. Please try again later.');
         }
     };
+    
 
 
     useEffect(() => {
@@ -217,28 +226,31 @@ const StudentDashboard = () => {
                             <b>Arid :</b> <input type="text" value={arid_no} disabled /><br />
                             <b>Status:</b> {applicationStatus}<br />
                             <b>Session:</b> <b>{session1}</b><br />
-                            <b>Amount:</b><b>{amount}</b><br />
                             {applicationStatus === 'Accepted' && (
                                 <>
                                     <b>Amount:</b><b>{amount}</b><br />
+                                </>
+                            )}
+                            {aidtype === 'MeritBase' && (
+                                <>
                                     <p class="blinking-text highlight-text">Do you want to avail this Amount!</p>
                                     <Button
                                         onClick={handleSubmit}
                                         type='primary'
                                         style={{ marginRight: '10px', backgroundColor: 'green' }}
                                     >
-                                        Accepted
+                                        Accept
                                     </Button>
                                     <Button
                                         onClick={handleSubmit}
                                         type='primary'
                                         style={{ backgroundColor: 'red' }}
                                     >
-                                        Rejected
+                                        Reject
                                     </Button>
-
                                 </>
                             )}
+
                         </Card>
 
                         <div className="card-container">

@@ -45,12 +45,12 @@ const EndPoint = {
     accepted: `${baseUrl}api/Admin/AcceptedApplication`, //get
     rejected: `${baseUrl}api/Admin/RejectedApplication`, //get
     meritRejected: `${baseUrl}api/Admin/MeritBaseRejectedApplication`,
-    assignGrader: `${baseUrl}api/Admin/unAssignedGraders1`,
     meritBaseShortListing: `${baseUrl}api/Admin/GetMeritBaseShortListedStudent`,
     addStudent: `${baseUrl}api/Admin/AddStudent`,
     addPolicies: `${baseUrl}api/Admin/AddPolicies`,
     getPolicies: `${baseUrl}api/Admin/getPolicies`,
-    unAssignedStudents: `${baseUrl}api/Admin/unAssignedGraders`,
+    unAssignedStudents: `${baseUrl}api/Admin/unAssignedGraders1`,
+    assignGrader: `${baseUrl}api/Admin/AssignGrader`,
     budgethistory: `${baseUrl}api/Admin/BudgetHistory`,
     getGraderInfo: `${baseUrl}api/Admin/gradersInformation`,
     addSession : `${baseUrl}api/Admin/AddSession`,
@@ -65,10 +65,10 @@ const EndPoint = {
 
 
     //API 
-    houseAgreement: `${baseUrl}Backend\Content\HouseAgreement`,
-    deathCertificate: `${baseUrl}Backend\Content\DeathCertificates`,
-    profileImages: `${baseUrl}Backend\Content/ProfileImages`,
-    salarySlip: `${baseUrl}Backend\Content/SalarySlip`,
+    // houseAgreement: `${baseUrl}Backend\Content\HouseAgreement`,
+    // deathCertificate: `${baseUrl}Backend\Content\DeathCertificates`,
+    // profileImages: `${baseUrl}Backend\Content/ProfileImages`,
+    // salarySlip: `${baseUrl}Backend\Content/SalarySlip`,
     //profileImages: `${baseUrl}Backend\Content/ProfileImages`,
     
 };

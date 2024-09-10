@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Button, Modal, List, Image, Layout } from 'antd';
+import { Row, Col, Button, Modal, List, Image, Layout, Form, Input, message } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios'; // Import axios
 import logo from './BiitLogo.jpeg';
 import '../Styling/View-Application.css';
 import EndPoint from '../endpoints';
@@ -21,11 +22,12 @@ const ViewApplication = () => {
     const [house, setHouse] = useState(null);
     const [salary, setSalary] = useState(null);
     const [death, setDeath] = useState(null);
-
+    const [isRTrue, setIsRTrue] = useState(false); // For Reject loading state
+    const [isATrue, setIsATrue] = useState(false); // For Accept loading state
 
     const fetchHouseAgreement = async () => {
         try {
-            const response = await fetch(`${EndPoint.houseAgreement}`); // Replace with your API endpoint
+            const response = await fetch(`${EndPoint.houseAgreement}`);
             const data = await response.json();
             setHouse(data);
         } catch (error) {
@@ -33,10 +35,9 @@ const ViewApplication = () => {
         }
     };
 
-
     const fetchSalarySlip = async () => {
         try {
-            const response = await fetch(`${EndPoint.salarySlip}`); // Replace with your API endpoint
+            const response = await fetch(`${EndPoint.salarySlip}`);
             const data = await response.json();
             setSalary(data);
         } catch (error) {
@@ -44,17 +45,15 @@ const ViewApplication = () => {
         }
     };
 
-
     const fetchDeathCertificate = async () => {
         try {
-            const response = await fetch(`${EndPoint.deathCertificate}`); // Replace with your API endpoint
+            const response = await fetch(`${EndPoint.deathCertificate}`);
             const data = await response.json();
             setDeath(data);
         } catch (error) {
             console.error('Failed to fetch data.', error);
         }
     };
-
 
     useEffect(() => {
         const fetchApplicationData = async () => {
@@ -64,7 +63,6 @@ const ViewApplication = () => {
                     const parsedData = JSON.parse(data);
                     console.log('Fetched application data:', parsedData);
 
-                    // Sort documents if needed
                     const sortedDocuments = parsedData.EvidenceDocuments.sort((a, b) => {
                         if (a.document_type === 'salaryslip') return -1;
                         if (b.document_type === 'salaryslip') return 1;
@@ -88,8 +86,8 @@ const ViewApplication = () => {
         navigate('/Committee-Dashboard');
     };
 
-    const handleImageClick = (uri) => {
-        setSelectedImageUri(uri);
+    const handleImageClick = () => {
+        setSelectedImageUri(fetchDeathCertificate);
         setIsImageModalVisible(true);
     };
 
@@ -98,8 +96,8 @@ const ViewApplication = () => {
         setSelectedImageUri('');
     };
 
-    const handlePdfClick = (uri) => {
-        setSelectedPdfUri(uri);
+    const handlePdfClick = () => {
+        setSelectedPdfUri(fetchDeathCertificate);
         setIsPdfModalVisible(true);
     };
 
@@ -110,7 +108,6 @@ const ViewApplication = () => {
 
     const Submit = (event) => {
         event.preventDefault();
-
         console.log('Suggestion submitted:', suggestion);
         setSuggestion(''); // Clear the suggestion box after submission
     };
@@ -118,6 +115,34 @@ const ViewApplication = () => {
     const toggleCommentVisibility = (id) => {
         setVisibleCommentId(visibleCommentId === id ? null : id);
     };
+
+    const handleReject = async (values) => {
+        setIsRTrue(true);
+        // Handle rejection logic here
+        setIsRTrue(false);
+    };
+
+    const handleAccept = async (values) => {
+        if (!isATrue) {
+            setIsATrue(true);
+            const { comment, committeeId } = values;
+            try {
+                const response = await axios.post(`${EndPoint.giveSuggestion}`, {
+                    comment,
+                    status: 'Accepted',
+                    applicationId: applicationData.applicationId,
+                    committeeId
+                });
+                message.success('Successfully Submitted!');
+                console.log(response.data);
+            } catch (error) {
+                console.error(error);
+                message.error('Error, try again later');
+            }
+            setIsATrue(false);
+        }
+    };
+    
 
     if (!applicationData) {
         return <div>Loading...</div>;
@@ -144,15 +169,15 @@ const ViewApplication = () => {
                 <p><strong>ARID:</strong> {applicationData.arid_no}</p>
                 <p><strong>Semester:</strong> {applicationData.semester}<sup>th</sup></p>
                 <p><strong>Father Name:</strong> {applicationData.father_name}</p>
+                <p><strong>Father Status:</strong> {applicationData.father_status}</p>
                 <p><strong>Required Amount:</strong> ${applicationData.requiredAmount}</p>
-
                 <p><strong>Reason For Apply:</strong></p>
                 <textarea
                     id="suggestion"
                     value={applicationData.reason}
                     readOnly
                     rows="3"
-                    cols="50"
+                    cols="97"
                 />
 
                 <List
@@ -162,14 +187,6 @@ const ViewApplication = () => {
                         <List.Item>
                             <List.Item.Meta
                                 title={document.document_type}
-                            // description={
-                            //     <div>
-                            //         <Button onClick={() => toggleCommentVisibility(document.id)}>
-                            //             {visibleCommentId === document.id ? 'Hide Comment' : 'Show Comment'}
-                            //         </Button>
-                            //         {visibleCommentId === document.id && <p>{document.comments}</p>}
-                            //     </div>
-                            // }
                             />
                             {document.file_name && document.file_name.endsWith('.pdf') ? (
                                 <Button onClick={() => handlePdfClick(document.document_uri)}>View PDF</Button>
@@ -193,10 +210,96 @@ const ViewApplication = () => {
                 >
                     <iframe src={selectedPdfUri} title="PDF Viewer" width="100%" height="500px" />
                 </Modal>
-                <form onSubmit={Submit}>
-
-                    <button type="primary" style={{ backgroundColor: 'green' }}>Submit</button>
-                </form>
+                <Row justify="center" gutter={16}>
+                    <Col>
+                        <Button
+                            type="primary"
+                            danger
+                            onClick={() => {
+                                Modal.confirm({
+                                    title: 'Reject Application',
+                                    content: (
+                                        <Form
+                                            onFinish={handleReject}
+                                            layout="vertical"
+                                        >
+                                            <Form.Item
+                                                name="reason"
+                                                label="Reason for Rejection"
+                                                rules={[{ required: true, message: 'Enter reason for rejection' }]}
+                                            >
+                                                <Input.TextArea rows={4} />
+                                            </Form.Item>
+                                            <Form.Item>
+                                                <Row justify="end">
+                                                    <Button type="default" onClick={() => Modal.destroyAll()}>Cancel</Button>
+                                                    <Button
+                                                        type="primary"
+                                                        htmlType="submit"
+                                                        loading={isRTrue}
+                                                        style={{ marginLeft: '8px' }}
+                                                    >
+                                                        Confirm
+                                                    </Button>
+                                                </Row>
+                                            </Form.Item>
+                                        </Form>
+                                    ),
+                                    onCancel: () => Modal.destroyAll()
+                                });
+                            }}
+                        >
+                            Reject
+                        </Button>
+                    </Col>
+                    <Col>
+                        <Button
+                            type="primary"
+                            onClick={() => {
+                                Modal.confirm({
+                                    title: 'Accept Application',
+                                    content: (
+                                        <Form
+                                            onFinish={handleAccept}
+                                            layout="vertical"
+                                        >
+                                            <Form.Item
+                                                name="reason"
+                                                label="Reason for Acceptance"
+                                                rules={[{ required: true, message: 'Enter reason for acceptance' }]}
+                                            >
+                                                <Input.TextArea rows={4} />
+                                            </Form.Item>
+                                            <Form.Item
+                                                name="amount"
+                                                label="Scholarship Amount"
+                                                rules={[{ required: true, message: 'Enter scholarship amount' }]}
+                                            >
+                                                <Input type="number" />
+                                            </Form.Item>
+                                            <Form.Item>
+                                                <Row justify="end">
+                                                    <Button type="default" onClick={() => Modal.destroyAll()}>Cancel</Button>
+                                                    <Button
+                                                        type="primary"
+                                                        htmlType="submit"
+                                                        loading={isATrue}
+                                                        style={{ marginLeft: '8px' }}
+                                                    >
+                                                        Confirm
+                                                    </Button>
+                                                </Row>
+                                            </Form.Item>
+                                        </Form>
+                                    ),
+                                    onCancel: () => Modal.destroyAll()
+                                });
+                            }}
+                        >
+                            Accept
+                        </Button>
+                    </Col>
+                </Row>
             </div>
         </div>
     );

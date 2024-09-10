@@ -161,6 +161,9 @@
 
 // export default FacultyDashboard;
 
+
+
+
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Input, Rate, Col, Row, List, Layout, Avatar, Drawer, Typography, message } from 'antd';
 import { LogoutOutlined, BarsOutlined, UserOutlined } from '@ant-design/icons';
@@ -190,18 +193,17 @@ const FormScreen = () => {
 
     const getStoredProfileId = async () => {
         try {
-            const storedProfileId = localStorage.getItem('profileId');
+            const storedProfileId = await localStorage.getItem('profileId');
             if (storedProfileId !== null) {
                 setProfileId(storedProfileId);
                 fetchFacultyInfo(storedProfileId);
                 fetchData(storedProfileId);
-            } else {
-                console.log('Profile ID not found in localStorage');
             }
         } catch (error) {
             console.error('Error retrieving profile ID from localStorage:', error);
         }
     };
+
 
     const fetchFacultyInfo = async (profileId) => {
         try {
@@ -263,41 +265,44 @@ const FormScreen = () => {
     };
 
     const handleRate = async () => {
+        if (!selectedItem || !rating || !comment) {
+            message.warning('Please provide a rating and comment.');
+            return;
+        }
+
+        const url = `${EndPoint.rateGraderPerformance}`;
+
+        const data = {
+            facultyId: facultyInfo?.facultyId, // Ensure facultyId is correctly set from facultyInfo
+            graderId: selectedItem.s.id, // Assuming the student's ID is stored in selectedItem.s.id
+            rate: rating,
+            comment: comment
+        };
+
         try {
-            // Assuming correct property names are facultyId and graderId
-            const facultyId = selectedItem?.facultyId; 
-            const graderId = selectedItem?.graderId;  
-            const session = '2024'; // Example session, replace with actual session data if needed
-    
-            if (!facultyId || !graderId) {
-                console.error('Error: Required IDs not found');
-                return;
-            }
-    
-            const formData = new FormData();
-            formData.append('facultyId', facultyId);
-            formData.append('graderId', graderId);
-            formData.append('rate', rating);
-            formData.append('session', session);
-    
-            const response = await axios.post(EndPoint.rateGraderPerformance, formData, {
+            const response = await fetch(url, {
+                method: 'POST',
                 headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
             });
-    
-            if (response.status === 200) {
-                message.success('Added Successfully');
-            } else {
-                message.warning(response.data || 'Unable to add rating.');
+
+            if (response.ok) {
+                console.log("Ok", response.data)
+                message.success(response.data); // Display success message
+                setIsModalVisible(false); // Close the modal
+                fetchData(profileId); // Optionally refresh the data
+            }
+            else {
+                console.error('Error:', response);
             }
         } catch (error) {
-            console.error('Error adding rating:', error);
-            message.error('Failed to add rating');
+            console.error('Error:', error);
+            message.error('An error occurred. Please try again later.');
         }
     };
-    
-    
+
     return (
         <div className='container'>
             <Header className="navbar">
@@ -314,7 +319,10 @@ const FormScreen = () => {
                             <div className="sider-content">
                                 <Title level={4}>{facultyInfo && (
                                     <>
-                                        <Avatar size={64} src={Image} />
+                                        <Avatar
+                                            src={facultyInfo?.profilePic ? `${EndPoint.imageUrl}${facultyInfo.profilePic}` : "./logo.png"}
+                                            size={64}
+                                        />
                                         <h2>{facultyInfo.name}</h2>
                                     </>
                                 )}</Title>
@@ -353,7 +361,7 @@ const FormScreen = () => {
                     title={`Give Rate & Comment To ${selectedItem?.s.name}`}
                     visible={isModalVisible}
                     onCancel={() => setIsModalVisible(false)}
-                    onOk={handleRate}
+                    onOk={handleRate} // This will trigger the handleRate function
                 >
                     <Input
                         placeholder="Enter reason"
