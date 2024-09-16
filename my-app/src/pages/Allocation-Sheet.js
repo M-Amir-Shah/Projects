@@ -48,8 +48,9 @@ const AddFaculty = () => {
 
     const processNeedBaseData = (data) => {
         return data.map(item => {
-            const { arid_no, name, degree, gender, cgpa, prev_cgpa, suggestion } = item.re;
-            const amount = suggestion.reduce((total, sugg) => total + parseFloat(sugg.amount || 0), 0);
+            const { arid_no, name, degree, gender, cgpa, prev_cgpa, suggestion, amount } = item.re;
+            // Use 'amount' directly if available, otherwise fallback to summing suggestions
+            const totalAmount = amount || suggestion.reduce((total, sugg) => total + parseFloat(sugg.amount || 0), 0);
             return {
                 arid_no,
                 name,
@@ -57,10 +58,11 @@ const AddFaculty = () => {
                 gender,
                 cgpa,
                 prev_cgpa: prev_cgpa || null,
-                amount: `$${amount.toLocaleString()}`,
+                amount: `${totalAmount.toLocaleString()}`,  // ensure proper formatting
             };
         });
     };
+    
 
     const Cancel = () => {
         navigate('/Admin-Dashboard');
@@ -68,7 +70,7 @@ const AddFaculty = () => {
 
     // Calculate total fee for Needbase tab
     const totalFee = needBaseData.reduce((total, item) => {
-        const amount = item.amount?.replace('$', '').replace(',', '');
+        const amount = item.amount?.replace('', '').replace(',', '');
         return total + parseFloat(amount || 0);
     }, 0);
 
@@ -76,14 +78,14 @@ const AddFaculty = () => {
     const totalMaleFee = needBaseData
         .filter(item => item.gender === 'M')
         .reduce((total, item) => {
-            const amount = item.amount?.replace('$', '').replace(',', '');
+            const amount = item.amount?.replace('', '').replace(',', '');
             return total + parseFloat(amount || 0);
         }, 0);
 
     const totalFemaleFee = needBaseData
         .filter(item => item.gender === 'F')
         .reduce((total, item) => {
-            const amount = item.amount?.replace('$', '').replace(',', '');
+            const amount = item.amount?.replace('', '').replace(',', '');
             return total + parseFloat(amount || 0);
         }, 0);
 
@@ -93,7 +95,7 @@ const AddFaculty = () => {
         { title: 'Discipline', dataIndex: 'degree', key: 'degree' },
         { title: 'Gender', dataIndex: 'gender', key: 'gender' },
         { title: 'Current CGPA', dataIndex: 'cgpa', key: 'cgpa' },
-        //{ title: 'Previous CGPA', dataIndex: 'prev_cgpa', key: 'prev_cgpa' },
+        { title: 'Previous CGPA', dataIndex: 'prev_cgpa', key: 'prev_cgpa' },
         { title: 'Fee Exempted', dataIndex: 'amount', key: 'amount' }
     ];
 
@@ -105,7 +107,7 @@ const AddFaculty = () => {
         { title: 'Section', dataIndex: 'section', key: 'section' },
         { title: 'Gender', dataIndex: 'gender', key: 'gender' },
         { title: 'Current CGPA', dataIndex: 'cgpa', key: 'cgpa' },
-        //{ title: 'Previous CGPA', dataIndex: 'prev_cgpa', key: 'prev_cgpa' },
+        { title: 'Previous CGPA', dataIndex: 'prev_cgpa', key: 'prev_cgpa' },
         { title: 'Position', dataIndex: 'position', key: 'position' },
         { title: 'Amount', dataIndex: 'amount', key: 'amount' },
     ];
@@ -139,13 +141,13 @@ const AddFaculty = () => {
                                 />
                                 <div style={{ marginTop: '20px' }}>
                                     <Text strong>Total Fee: </Text>
-                                    <Text>{`$${totalFee.toLocaleString()}`}</Text>
+                                    <Text>{`${totalFee.toLocaleString()} Rs.`}</Text>
                                     <br/>
                                     <Text strong>Total Male: </Text>
-                                    <Text>{`$${totalMaleFee.toLocaleString()}`}</Text>
+                                    <Text>{`${totalMaleFee.toLocaleString()} Rs.`}</Text>
                                     <br/>
                                     <Text strong>Total Female: </Text>
-                                    <Text>{`$${totalFemaleFee.toLocaleString()}`}</Text>
+                                    <Text>{`${totalFemaleFee.toLocaleString()} Rs.`}</Text>
                                 </div>
                             </div>
                         </div>
@@ -160,6 +162,7 @@ const AddFaculty = () => {
                                     loading={loading}
                                     scroll={{ y: 400 }}
                                 />
+                                
                             </div>
                         </div>
                     </TabPane>

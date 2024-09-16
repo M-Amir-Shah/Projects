@@ -164,13 +164,15 @@
 
 
 
+
+
+
 import React, { useState, useEffect } from 'react';
 import { Modal, Button, Input, Rate, Col, Row, List, Layout, Avatar, Drawer, Typography, message } from 'antd';
 import { LogoutOutlined, BarsOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
 import EndPoint from '../endpoints';
 import logo from './BiitLogo.jpeg';
-import Image from '../Pictures/admin.jpg';
 import axios from 'axios';
 
 const { Header } = Layout;
@@ -260,48 +262,32 @@ const FormScreen = () => {
         setIsModalVisible(true);
     };
 
+
     const navigateTo = (path) => {
         navigate(path);
     };
 
-    const handleRate = async () => {
-        if (!selectedItem || !rating || !comment) {
-            message.warning('Please provide a rating and comment.');
-            return;
-        }
-
-        const url = `${EndPoint.rateGraderPerformance}`;
-
-        const data = {
-            facultyId: facultyInfo?.facultyId, // Ensure facultyId is correctly set from facultyInfo
-            graderId: selectedItem.s.id, // Assuming the student's ID is stored in selectedItem.s.id
-            rate: rating,
-            comment: comment
-        };
-
+    const rateGraderPerformance = async (facultyId, graderId, rate, comment) => {
+        console.log('Sending:', { facultyId, graderId, rate, comment });
         try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
+            const response = await axios.post(`${EndPoint.rateGraderPerformance}`, {
+                facultyId: facultyId,
+                graderId: graderId,
+                rate: rate,
+                comment: comment
             });
 
-            if (response.ok) {
-                console.log("Ok", response.data)
-                message.success(response.data); // Display success message
-                setIsModalVisible(false); // Close the modal
-                fetchData(profileId); // Optionally refresh the data
-            }
-            else {
-                console.error('Error:', response);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            message.error('An error occurred. Please try again later.');
+            console.log('Rating added successfully:', response.data);
+            message.success('Rating submitted successfully!');
+
+        }
+        catch(error){
+            console.log("Error :",error.message);
+            message.success(`${selectedItem.s.name} Already Rated`);
         }
     };
+
+
 
     return (
         <div className='container'>
@@ -361,8 +347,21 @@ const FormScreen = () => {
                     title={`Give Rate & Comment To ${selectedItem?.s.name}`}
                     visible={isModalVisible}
                     onCancel={() => setIsModalVisible(false)}
-                    onOk={handleRate} // This will trigger the handleRate function
+                    onOk={() => {
+                        if (selectedItem) {
+                            const student_id = selectedItem.s.student_id; // Ensure this is correctly referenced
+                            if (!student_id) {
+                                message.error('Student ID is missing.');
+                                console.log(student_id)
+                                return;
+                            }
+                            rateGraderPerformance(profileId, student_id, rating, comment);
+                            setIsModalVisible(false);
+                        }
+                    }}
                 >
+
+
                     <Input
                         placeholder="Enter reason"
                         value={comment}
@@ -371,6 +370,7 @@ const FormScreen = () => {
                     />
                     <Rate onChange={setRating} value={rating} />
                 </Modal>
+
             </div>
         </div>
     );

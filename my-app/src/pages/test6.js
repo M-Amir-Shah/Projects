@@ -1,15 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import '../Styling/Assign-Graders.css';
-import { Button, List, Col, Row, Layout, Avatar, message, Modal, Spin, Input } from 'antd';
-import { ArrowLeftOutlined, UserOutlined, BellOutlined } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
+import { Modal, Input, List, Button, Avatar, message, Spin } from 'antd';
 import axios from 'axios';
-import EndPoint from '../endpoints'; // Import your API endpoints file
+import EndPoint from '../endpoints';
 
-const { Header } = Layout;
-
-const GradersList = (props) => {
-    const navigate = useNavigate();
+const AssignGrader = (props) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [assignGrader, setAssignGrader] = useState([]);
@@ -20,8 +14,6 @@ const GradersList = (props) => {
     const [filteredModalData, setFilteredModalData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [modalLoading, setModalLoading] = useState(false);
-    const [notifications, setNotifications] = useState([]);
-    const [showListModal, setShowListModal] = useState(false);
 
     useEffect(() => {
         fetchData();
@@ -140,84 +132,49 @@ const GradersList = (props) => {
         setFilteredAssignGrader(filteredData);
     }, [searchQuery, assignGrader]);
 
-    const Back = () => {
-        navigate('/Admin-Dashboard');
-    };
-
-    const fetchNotificationData = async () => {
-        try {
-            const response = await fetch(`${EndPoint.notifications}`);
-            console.log('Response : ', response.data);
-            const result = await response.json();
-            console.log('Notification Fetched data:', result); // Log the data to verify its structure
-            setNotifications(result.sort((a, b) => b.feedback - a.feedback));
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
-
-    useEffect(() => {
-        fetchNotificationData(); // Initial fetch
-    }, []);
-
-    const handleBellClick = () => {
-        setShowListModal(true);
-    };
-
     return (
-        <div className="container">
-            <Header className="navbar">
-                <Row justify="space-between" align="middle">
-                    <Col>
-                        <Button onClick={Back} icon={<ArrowLeftOutlined />} />
-                    </Col>
-                    <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#ffff' }}>
-                        BIIT Graders List
-                    </Col>
-                    <Col>
-                        <Button onClick={handleBellClick} icon={<BellOutlined />} />
-                    </Col>
-                </Row>
-            </Header>
-            <div className="form-box">
-                <h2 style={{ textAlign: 'center' }}>Assigning Grader</h2>
-                <div className="scrollable-list">
-                    {loading ? (
-                        <Spin />
-                    ) : (
-                        <List
-                            dataSource={filteredAssignGrader}
-                            renderItem={item => (
-                                <List.Item
-                                    style={{
-                                        backgroundColor: item.AverageRating < 4 ? '#fcbdbd' : 'inherit', // Light red background if rating < 4
-                                    }}
-                                    actions={[
-                                        <Button
-                                            type="primary"
-                                            disabled={item.assigned || assignedGraders[item.student_id]}
-                                            onClick={() => handleAssignButtonPress(item)}
-                                        >
-                                            {item.assigned || assignedGraders[item.student_id] ? 'Assigned' : 'Assign'}
-                                        </Button>,
-                                    ]}
+        <div>
+            <h1 style={{ color: 'red' }}>UnAssigned Grader List</h1>
+            <Input
+                placeholder="ARID NO#"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ marginBottom: 20 }}
+            />
+            {loading ? (
+                <Spin />
+            ) : (
+                <List
+                    dataSource={filteredAssignGrader}
+                    renderItem={item => (
+                        <List.Item
+                            style={{
+                                backgroundColor: item.AverageRating < 4 ? '#fcbdbd' : 'inherit', // Light red background if rating < 4
+                            }}
+                            actions={[
+                                <Button
+                                    type="primary"
+                                    disabled={item.assigned || assignedGraders[item.student_id]}
+                                    onClick={() => handleAssignButtonPress(item)}
                                 >
-                                    <List.Item.Meta
-                                        avatar={
-                                            <Avatar
-                                                src={item.profilePic ? `${EndPoint.imageUrl}${item.profilePic}` : './logo.png'}
-                                            />
-                                        }
-                                        title={<a onClick={() => handleTouchFlatlist(item)}>{item.name}</a>}
-                                        description={`ARID NO: ${item.arid_no} - Rating Previous semester: ${item.AverageRating}`}
+                                    {item.assigned || assignedGraders[item.student_id] ? 'Assigned' : 'Assign'}
+                                </Button>,
+                            ]}
+                        >
+                            <List.Item.Meta
+                                avatar={
+                                    <Avatar
+                                        src={item.profilePic ? `${EndPoint.imageUrl}${item.profilePic}` : './logo.png'}
                                     />
-                                </List.Item>
-                            )}
-                        />
-                    )}
-                </div>
-            </div>
+                                }
+                                title={<a onClick={() => handleTouchFlatlist(item)}>{item.name}</a>}
+                                description={`ARID NO: ${item.arid_no} - Rating Previous semester: ${item.AverageRating}`}
+                            />
+                        </List.Item>
 
+                    )}
+                />
+            )}
             <Modal
                 title="Assign Grader"
                 visible={isModalVisible}
@@ -246,28 +203,8 @@ const GradersList = (props) => {
                     />
                 )}
             </Modal>
-
-            <Modal
-                title="Notifications"
-                visible={showListModal}
-                onCancel={() => setShowListModal(false)}
-                footer={null}
-            >
-                <List
-                    dataSource={notifications}
-                    renderItem={item => (
-                        <List.Item>
-                            <List.Item.Meta
-                                title={item.title}
-                                description={item.message}
-                            />
-                        </List.Item>
-                    )}
-                />
-            </Modal>
-
         </div>
     );
 };
 
-export default GradersList;
+export default AssignGrader;
