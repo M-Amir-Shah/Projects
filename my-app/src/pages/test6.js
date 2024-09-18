@@ -1,210 +1,118 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Input, List, Button, Avatar, message, Spin } from 'antd';
-import axios from 'axios';
+import { Button, Input, List, Avatar, Spin, Alert, Space, Typography, message } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import EndPoint from '../endpoints';
 
-const AssignGrader = (props) => {
-    const [searchQuery, setSearchQuery] = useState('');
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [assignGrader, setAssignGrader] = useState([]);
-    const [filteredAssignGrader, setFilteredAssignGrader] = useState([]);
-    const [modalData, setModalData] = useState([]);
-    const [assignedGraders, setAssignedGraders] = useState({});
-    const [modalSearchQuery, setModalSearchQuery] = useState('');
-    const [filteredModalData, setFilteredModalData] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [modalLoading, setModalLoading] = useState(false);
+const { Text } = Typography;
 
-    useEffect(() => {
-        fetchData();
-    }, []);
+const AddCommitteeMember = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [facultyMembers, setFacultyMembers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const filteredData = modalData.filter(item =>
-            item.name.toLowerCase().includes(modalSearchQuery.toLowerCase())
-        );
-        setFilteredModalData(filteredData);
-    }, [modalSearchQuery, modalData]);
+  useEffect(() => {
+    fetchFacultyMembers();
+  }, []);
 
-    const handleModalSearchChange = (text) => {
-        setModalSearchQuery(text);
-    };
+  const fetchFacultyMembers = async () => {
+    try {
+      const response = await fetch(`${EndPoint.getFacultyMembers}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch faculty members');
+      }
+      const data = await response.json();
+      setFacultyMembers(data);
+      setIsLoading(false);
+      console.log('Response : ',response.data);
+    } catch (error) {
+      setError(error);
+      setIsLoading(false);
+    }
+  };
 
-    const fetchData = async () => {
-        setLoading(true);
-        try {
-            const response = await axios.get(`${EndPoint.unAssignedStudents}`);
-            console.log('Fetch Unassigned Students OK:', response.data);
-            setAssignGrader(response.data);
-            setFilteredAssignGrader(response.data);
-        } catch (error) {
-            console.error('Error fetching graders:', error);
-            message.error('Failed to fetch unassigned students.');
-        } finally {
-            setLoading(false);
+  const handleAddButtonPress = async (facultyId) => {
+    if (!facultyId) {
+      return;
+    }
+  
+    try {
+      const response = await fetch(`${EndPoint.addCommitteeMember}${facultyId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      // Check if the response is ok
+      if (response.ok) {
+        // Read the response text if needed
+        const responseText = await response.text();
+        message.success('Faculty member added as a committee member.');
+        console.log('Response Text: ', responseText);
+      } else {
+        const errorText = await response.text();
+        if (errorText.includes('Already Exist')) {
+          message.error('This faculty member is already a committee member.');
+        } else {
+          message.error('Failed to add faculty member. ' + (errorText ? errorText : 'Please try again later.'));
         }
-    };
+      }
+    } catch (error) {
+      message.error('An unexpected error occurred. Please try again later.');
+    }
+  };
 
-    const fetchModalData = async () => {
-        setModalLoading(true);
-        try {
-            const response = await axios.get(`${EndPoint.getFacultyMembers}`);
-            console.log('Fetch Faculty Members OK:', response.data);
-            setModalData(response.data);
-        } catch (error) {
-            console.error('Error fetching modal data:', error);
-            message.error('Failed to fetch faculty members.');
-        } finally {
-            setModalLoading(false);
-        }
-    };
+  
+  const filteredMembers = facultyMembers.filter(member =>
+    member.name && member.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
-    useEffect(() => {
-        if (isModalVisible) {
-            fetchModalData();
-        }
-    }, [isModalVisible]);
+  if (isLoading) {
+    return <Spin size="large" />;
+  }
 
-    const handleAssignButtonPress = (faculty) => {
-        if (faculty.assigned || assignedGraders[faculty.student_id]) return;
-        localStorage.setItem('selectedStudentId', faculty.student_id);
-        fetchModalData();
-        setIsModalVisible(true);
-    };
+  if (error) {
+    return <Alert message={`Error: ${error.message}`} type="error" />;
+  }
 
-    const handleAssignGrader = async (item) => {
-        const studentId = localStorage.getItem('selectedStudentId');
-        if (!studentId) {
-            console.error('Student ID not found in localStorage');
-            message.error('Please select a student first.');
-            return;
-        }
-
-        Modal.confirm({
-            title: `Do you want to assign a grader to ${item.name}?`,
-            onOk: async () => {
-                try {
-                    const url = `${EndPoint.assignGrader}?facultyId=${item.facultyId}&studentId=${studentId}`;
-                    const response = await axios.post(url);
-                    console.log('Assign Grader Request OK:', response.data);
-
-                    if (response.status === 200) {
-                        console.log('Grader assigned successfully');
-                        message.success('Grader assigned successfully');
-                        setAssignedGraders(prevState => ({ ...prevState, [studentId]: true }));
-                        setIsModalVisible(false);
-                    } else if (response.status === 302) { // 302 is Found status code in axios
-                        console.warn('Student is already assigned a grader');
-                        message.success('Student is Already Assigned');
-                    } else {
-                        console.error('Failed to assign grader:', response.data);
-                        message.error('Failed to assign grader.');
-                    }
-                } catch (error) {
-                    console.error('Error assigning grader:', error);
-                    message.error('An error occurred while assigning grader.');
-                }
-            },
-        });
-    };
-
-    const handleTouchFlatlist = (item) => {
-        Modal.confirm({
-            title: "Choose Action",
-            content: "Do you want to assign grader?",
-            okText: "Continue",
-            cancelText: "Reject",
-            onOk: () => {
-                console.log('Continue action selected for', item);
-                props.navigation.navigate('');
-            },
-            onCancel: () => {
-                console.log('Reject action selected, navigating to AssignGrader');
-                props.navigation.navigate('AssignGrader');
-            },
-        });
-    };
-
-    useEffect(() => {
-        const filteredData = assignGrader.filter(item =>
-            item && item.arid_no && item.arid_no.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        setFilteredAssignGrader(filteredData);
-    }, [searchQuery, assignGrader]);
-
-    return (
-        <div>
-            <h1 style={{ color: 'red' }}>UnAssigned Grader List</h1>
-            <Input
-                placeholder="ARID NO#"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                style={{ marginBottom: 20 }}
-            />
-            {loading ? (
-                <Spin />
-            ) : (
-                <List
-                    dataSource={filteredAssignGrader}
-                    renderItem={item => (
-                        <List.Item
-                            style={{
-                                backgroundColor: item.AverageRating < 4 ? '#fcbdbd' : 'inherit', // Light red background if rating < 4
-                            }}
-                            actions={[
-                                <Button
-                                    type="primary"
-                                    disabled={item.assigned || assignedGraders[item.student_id]}
-                                    onClick={() => handleAssignButtonPress(item)}
-                                >
-                                    {item.assigned || assignedGraders[item.student_id] ? 'Assigned' : 'Assign'}
-                                </Button>,
-                            ]}
-                        >
-                            <List.Item.Meta
-                                avatar={
-                                    <Avatar
-                                        src={item.profilePic ? `${EndPoint.imageUrl}${item.profilePic}` : './logo.png'}
-                                    />
-                                }
-                                title={<a onClick={() => handleTouchFlatlist(item)}>{item.name}</a>}
-                                description={`ARID NO: ${item.arid_no} - Rating Previous semester: ${item.AverageRating}`}
-                            />
-                        </List.Item>
-
-                    )}
-                />
-            )}
-            <Modal
-                title="Assign Grader"
-                visible={isModalVisible}
-                onCancel={() => setIsModalVisible(false)}
-                footer={null}
+  return (
+    <div style={{ padding: '20px' }}>
+      <Space direction="vertical" style={{ width: '100%' }}>
+        <Text style={{ fontWeight: 'bold', fontSize: '24px' }}>Add Committee Members</Text>
+        <Input
+          prefix={<SearchOutlined />}
+          placeholder="Search Faculty Members"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ marginBottom: '20px' }}
+        />
+        <List
+          itemLayout="horizontal"
+          dataSource={filteredMembers}
+          renderItem={item => (
+            <List.Item
+              actions={[
+                <Button
+                  type="primary"
+                  onClick={() => handleAddButtonPress(item.facultyId)}
+                >
+                  Add
+                </Button>
+              ]}
             >
-                <Input
-                    placeholder="Search by name"
-                    value={modalSearchQuery}
-                    onChange={(e) => handleModalSearchChange(e.target.value)}
-                    style={{ marginBottom: 20 }}
-                />
-                {modalLoading ? (
-                    <Spin />
-                ) : (
-                    <List
-                        dataSource={filteredModalData}
-                        renderItem={item => (
-                            <List.Item onClick={() => handleAssignGrader(item)}>
-                                <List.Item.Meta
-                                    avatar={<Avatar src={item.profilePic ? `${EndPoint.imageUrl}${item.profilePic}` : './logo.png'} />}
-                                    title={item.name}
-                                />
-                            </List.Item>
-                        )}
-                    />
-                )}
-            </Modal>
-        </div>
-    );
+              <List.Item.Meta
+                avatar={
+                  <Avatar src={item.profilePic ? `${EndPoint.imageUrl}` + item.profilePic : '/logo.png'} />
+                }
+                title={item.name}
+              />
+            </List.Item>
+          )}
+        />
+      </Space>
+    </div>
+  );
 };
 
-export default AssignGrader;
+export default AddCommitteeMember;

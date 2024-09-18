@@ -32,6 +32,7 @@ import UpdatePassword from './pages/Update-Password'
 import ViewApplication from './pages/View-Application'
 import AddPolicies from "./pages/NewPolicies";
 import MeritBaseRejected from "./pages/Meritbase-Rejected";
+import DeclineAmount from "./pages/Decline-Amount";
 
 function App() {
   return (
@@ -69,6 +70,7 @@ function App() {
         <Route path="/View-Application" element={<ViewApplication />} />
         <Route path="/NewPolicies" element={<AddPolicies />} />
         <Route path="/Meritbase-Rejected" element={<MeritBaseRejected />} />
+        <Route path="/Decline-Amount" element={<DeclineAmount />} />
       </Routes>
   );
 }

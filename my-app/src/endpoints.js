@@ -64,12 +64,9 @@ const EndPoint = {
 
 
 
-    //API 
-    // houseAgreement: `${baseUrl}Backend\Content\HouseAgreement`,
-    // deathCertificate: `${baseUrl}Backend\Content\DeathCertificates`,
-    // profileImages: `${baseUrl}Backend\Content/ProfileImages`,
-    // salarySlip: `${baseUrl}Backend\Content/SalarySlip`,
-    //profileImages: `${baseUrl}Backend\Content/ProfileImages`,
+     
+    eligibleRejection: `${baseUrl}api/Testing/GetStudentsEligibleForRejection`,
+    
     
 };
 
