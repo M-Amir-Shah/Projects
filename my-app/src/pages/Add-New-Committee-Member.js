@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../Styling/Add-Committee-Member.css'; // Import CSS for styling
-import Search from '../components/SearchingButton.js';
-import { Button, List, Col, Row, Layout, message, Avatar, Input } from 'antd';
+import { Input, List, Avatar, Button, message, Spin, Alert, Col, Row, Layout } from 'antd';
+import axios from 'axios';
 import logo from './BiitLogo.jpeg';
 import { ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate hook
@@ -9,58 +9,71 @@ import EndPoint from '../endpoints.js';
 
 const { Header } = Layout;
 
-const MeritBase = () => {
+const AddCommitteeMember = (props) => {
     const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState('');
     const [facultyMembers, setFacultyMembers] = useState([]);
-    const [searchQuery, setSearchQuery] = useState(''); // State to store search query
-    const [addedMembers, setAddedMembers] = useState({});
-    const [facultyId, setFacultyId] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Fetch faculty members on component mount
-        const fetchFacultyMembers = async () => {
-            try {
-                const response = await fetch(`${EndPoint.getFacultyMembers}`); // Use fetch instead of axios
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                setFacultyMembers(data);
-                console.log(data);
-            } catch (error) {
-                console.error('Failed to fetch faculty members:', error);
-            }
-        };
-
         fetchFacultyMembers();
     }, []);
 
-    const handleAdd = async (id, event) => {
-        event.preventDefault();  // Now this will work correctly
-
+    const fetchFacultyMembers = async () => {
         try {
-            const response = await fetch(EndPoint.addCommitteeMember, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ id: id }),  // Pass the faculty id
-            });
-            if(response.ok){
-                const data = await response.json();
-                console.log("Response", data);  // Updated console log to show correct data
-                setAddedMembers(prevState => ({
-                    ...prevState,
-                    [id]: true
-                }));
-                message.success('Member added successfully');
-            }
-            
+            const response = await axios.get(`${EndPoint.getFacultyMembers}`);
+            setFacultyMembers(response.data);
         } catch (error) {
-            console.error('Failed to add member:', error);
-            message.error('Failed to add member');
+            console.error('Error fetching data:', error);
+            setError('Failed to fetch faculty members.');
+        } finally {
+            setIsLoading(false);
         }
     };
+
+    const handleAddButtonPress = async (facultyId) => {
+        if (!facultyId) {
+            console.error('Invalid faculty ID:', facultyId);
+            return;
+        }
+
+        try {
+            const addResponse = await axios.post(`${EndPoint.addCommitteeMember}?id=${facultyId}`);
+
+            if (addResponse.status === 200) {
+                message.success('Faculty member added as a committee member.');
+                // Optionally, refresh the list after adding a new member
+                fetchFacultyMembers();
+            } else if (addResponse.status === 302) {
+                message.error('This faculty member is already a committee member.');
+            } else {
+                message.error('Unexpected response status: ' + addResponse.status);
+            }
+        } catch (error) {
+            if (error.response) {
+                const errorMessage = error.response.data;
+                const errorString = typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage);
+
+                if (errorString.includes('Already Exists')) {
+                    message.error('This faculty member is already a committee member.');
+                } else {
+                    message.error('Failed to add faculty member. Please try again later.');
+                }
+            } else {
+                console.log('Error adding faculty member:', error);
+                message.error('Failed to add faculty member. Please try again later.');
+            }
+        }
+    };
+
+    if (isLoading) {
+        return <Spin tip="Loading..." />;
+    }
+
+    if (error) {
+        return <Alert message="Error" description={error} type="error" />;
+    }
 
     const handleBack = () => {
         navigate('/Admin-Dashboard');
@@ -100,23 +113,23 @@ const MeritBase = () => {
                         <div className="scrollable-list">
                             <List
                                 itemLayout="horizontal"
-                                dataSource={filteredFacultyMembers} // Use filtered list
+                                dataSource={facultyMembers.filter(member =>
+                                    member.name && member.name.toLowerCase().includes(searchQuery.toLowerCase())
+                                )}
                                 renderItem={item => (
                                     <List.Item
                                         actions={[
                                             <Button
                                                 type="primary"
-                                                onClick={(event) => handleAdd(item.id, event)}  // Corrected onClick to pass both id and event
-                                                disabled={addedMembers[item.id]}
+                                                onClick={() => handleAddButtonPress(item.facultyId)}
                                             >
-                                                {addedMembers[item.id] ? 'Added' : 'Add'}
+                                                Add
                                             </Button>
                                         ]}
                                     >
                                         <List.Item.Meta
-                                            avatar={<Avatar size={64} icon={<UserOutlined />} />}
+                                            avatar={<Avatar src={item.profilePic ? `${EndPoint.imageUrl}${item.profilePic}` : 'path/to/default-avatar.png'} />}
                                             title={item.name}
-                                            description={item.contactNo}
                                         />
                                     </List.Item>
                                 )}
@@ -129,4 +142,4 @@ const MeritBase = () => {
     );
 };
 
-export default MeritBase;
+export default AddCommitteeMember;
