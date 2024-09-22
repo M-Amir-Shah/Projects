@@ -14,9 +14,9 @@ const DocumentCard = ({ document }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
+        // Store document data in localStorage and pass it to the next page
         localStorage.setItem('selectedApplication', JSON.stringify(document));
-        navigate('/Admin-ViewApplication', { state: { documentId: document.id } });
-
+        navigate('/Admin-ViewApplication', { state: { name: document.re.name, arid_no: document.re.arid_no, document } });
     };
 
     const getDocumentIcon = (fileName) => {
@@ -44,8 +44,8 @@ const DocumentCard = ({ document }) => {
             onClick={handleClick}
         >
             <Meta
-                title={document.name}
-                description={<p>{document.arid_no}</p>} // Display both name and arid_no
+                title={document.re.name}
+                description={<p>{document.re.arid_no}</p>}
             />
         </Card>
     );
@@ -61,8 +61,9 @@ const App = () => {
         const fetchDocuments = async () => {
             try {
                 setLoading(true);
-                const response = await axios.get(`${EndPoint.adminApplication}`);
+                const response = await axios.get(`${EndPoint.applicationSuggestions}`);
                 setDocuments(response.data);
+                console.log("Response : ", response.data);
             } catch (error) {
                 console.error('Error fetching documents:', error);
                 message.error('Failed to fetch documents data.');

@@ -22,6 +22,7 @@ const GradersList = (props) => {
     const [modalLoading, setModalLoading] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [showListModal, setShowListModal] = useState(false);
+    const [data, setData] = useState([]);
 
     useEffect(() => {
         fetchData();
@@ -110,7 +111,7 @@ const GradersList = (props) => {
                     }
                 } catch (error) {
                     console.error('Error assigning grader:', error);
-                    message.error('An error occurred while assigning grader.');
+                    message.error('An error occurred while assigning grader.',error.data);
                 }
             },
         });
@@ -144,20 +145,19 @@ const GradersList = (props) => {
         navigate('/Admin-Dashboard');
     };
 
-    const fetchNotificationData = async () => {
+    const fetchedData = async () => {
         try {
             const response = await fetch(`${EndPoint.notifications}`);
-            console.log('Response : ', response.data);
             const result = await response.json();
             console.log('Notification Fetched data:', result); // Log the data to verify its structure
-            setNotifications(result.sort((a, b) => b.feedback - a.feedback));
+            setData(result.sort((a, b) => b.feedback - a.feedback));
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
 
     useEffect(() => {
-        fetchNotificationData(); // Initial fetch
+        fetchedData(); // Initial fetch
     }, []);
 
     const handleBellClick = () => {
@@ -208,8 +208,8 @@ const GradersList = (props) => {
                                                 src={item.profilePic ? `${EndPoint.imageUrl}${item.profilePic}` : './logo.png'}
                                             />
                                         }
-                                        title={<a onClick={() => handleTouchFlatlist(item)}>{item.name}</a>}
-                                        description={`ARID NO: ${item.arid_no} - Rating Previous semester: ${item.AverageRating}`}
+                                        title={<a onClick={() => handleTouchFlatlist(item)}>{item.name} ({item.arid_no})</a>}
+                                        description={`Previous Rating : ${item.AverageRating}`}
                                     />
                                 </List.Item>
                             )}
@@ -248,22 +248,30 @@ const GradersList = (props) => {
             </Modal>
 
             <Modal
-                title="Notifications"
+                title="Notifications List"
                 visible={showListModal}
                 onCancel={() => setShowListModal(false)}
-                footer={null}
+                footer={[
+                    <Button key="close" onClick={() => setShowListModal(false)}>
+                        Close
+                    </Button>,
+                ]}
             >
-                <List
-                    dataSource={notifications}
-                    renderItem={item => (
-                        <List.Item>
-                            <List.Item.Meta
-                                title={item.title}
-                                description={item.message}
-                            />
-                        </List.Item>
-                    )}
-                />
+                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                    <List
+                        itemLayout="horizontal"
+                        dataSource={data}
+                        renderItem={item => (
+                            <List.Item>
+                                <List.Item.Meta
+                                    avatar={<Avatar size={64} icon={<UserOutlined />} />}
+                                    title={`${item.name} (${item.arid_no})`}
+                                    description={`Rating: ${item.feedback} | (${item.session})`}
+                                />
+                            </List.Item>
+                        )}
+                    />
+                </div>
             </Modal>
 
         </div>

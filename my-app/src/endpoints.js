@@ -8,7 +8,7 @@ const EndPoint = {
     switchRole: `${baseUrl}api/User/SwitchRole`,
 
     getStudentInfo: `${baseUrl}api/Student/getStudentInfo`,
-    checkApplicationStatus: `${baseUrl}api/Student/getStudentApplicationStatus`,
+    getStudentApplicationStatus: `${baseUrl}api/Student/getStudentApplicationStatus`,
     sendApplication: `${baseUrl}api/Student/sendApplication`,
     updateProfileImage: `${baseUrl}api/Student/UpdateProfileImage`,
     getSession: `${baseUrl}api/Student/getSession`,
@@ -39,7 +39,7 @@ const EndPoint = {
     getFacultyMembers: `${baseUrl}api/Admin/FacultyMembers`,
     getCommitteeMembers: `${baseUrl}api/Admin/CommitteeMembers`,
     addCommitteeMember: `${baseUrl}api/Admin/AddCommitteeMember`,
-    adminApplication: `${baseUrl}api/Admin/ApplicationSuggestions`,
+    applicationSuggestions: `${baseUrl}api/Admin/ApplicationSuggestions`,
     acceptApplication: `${baseUrl}api/Admin/AcceptApplication`, //post
     rejectApplication: `${baseUrl}api/Admin/RejectApplication`, //post
     accepted: `${baseUrl}api/Admin/AcceptedApplication`, //get

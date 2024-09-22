@@ -7,9 +7,15 @@
     "@mui/material": "^5.15.12",
     "@mui/styled-engine-sc": "^6.0.0-alpha.17",
     "antd": "^5.17.2",
+    "browserify-zlib": "^0.2.0",
+    "https-browserify": "^1.0.0",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
     "styled-components": "^6.1.8"
   },
   "devDependencies": {
-    "react-router-dom": "^6.22.3"
+    "react-router-dom": "^6.22.3",
+    "webpack": "^5.94.0",
+    "webpack-cli": "^5.1.4"
   }
 }

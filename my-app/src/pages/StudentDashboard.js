@@ -58,52 +58,50 @@ const StudentDashboard = () => {
             setLoading(false);
         }
     };
-    const fetchAmount = async () => {
-        try {
-            const response = await fetch(`${EndPoint.accepted}`);
-            if (!response.ok) throw new Error('Error fetching Amount');
-            const data = await response.json();
+    // const fetchAmount = async () => {
+    //     try {
+    //         const response = await fetch(`${EndPoint.accepted}`);
+    //         if (!response.ok) throw new Error('Error fetching Amount');
+    //         const data = await response.json();
 
-            setAmount(data[0].amount);
-            console.log('Amount', data[0].amount)
-        } catch (error) {
-            setError(error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
+    //         setAmount(data[1].amount);
+    //         console.log('Amount', data[1].amount)
+    //     } catch (error) {
+    //         setError(error.message);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
     const fetchApplicationStatus = async (profileId) => {
         try {
-            const response = await fetch(`${EndPoint.checkApplicationStatus}?id=${profileId}`);
+            const response = await fetch(`${EndPoint.getStudentApplicationStatus}?id=${profileId}`);
             if (!response.ok) throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}`);
-    
+
             const data = await response.json();
-            console.log("API Response:", data); // Log the entire response
-    
-            // If data is null, set applicationStatus to "Not Submitted"
+            console.log("API Response:", data);
+
+            // Default values
             let applicationStatus = "Not Submitted";
-            let aidtype = ""; // Default empty value for aidtype
+            let aidtype = "";
             let amount = "";
-    
+
             if (data) {
-                // If applicationStatus is null, set it to "Pending"
                 applicationStatus = data.applicationStatus ?? "Pending";
-                aidtype = data.aidtype ?? ""; // Set aidtype from the API response
+                aidtype = data.aidtype ?? "";
+                amount = data.amount ?? ""; // Extract the amount from the response
             }
-            
+
             setApplicationStatus(applicationStatus);
-            setAidType(aidtype); // Update the state with the aidtype
-    
-            if (applicationStatus === "Accepted") {
-                fetchAmount(amount); // This function will fetch the amount and update the state
-            }
-    
+            setAidType(aidtype);
+            setAmount(amount); // Set the amount in the state
+
         } catch (error) {
             console.error("Error fetching application status:", error.message);
             setError('Failed to fetch application status. Please try again later.');
         }
     };
-    
+
+
 
 
     useEffect(() => {
@@ -126,26 +124,31 @@ const StudentDashboard = () => {
         fetchSession();
     }, []);
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+    
+
+    const handleSubmit = async (status) => {
         setLoading(true);
         try {
-            const formData = new FormData();
-            formData.append('id', id);
-            formData.append('status', status)
-
-            const response = await axios.post(EndPoint.decideMeritBaseApplication, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            console.log(response.formData);
-            message.success('Added Successfully');
+          const response = await axios.post(EndPoint.decideMeritBaseApplication, {
+            id: id,
+            status: status
+          }, {
+            headers: {
+              'Content-Type': 'application/json' // Send JSON data, no need for multipart
+            }
+          });
+          
+          if (response.status === 200) {
+            message.success(`${status} Successfully`);
             navigate('/StudentDashboard');
+          }
         } catch (error) {
-            message.error('Failed to submit');
+          message.error('Failed to submit');
+          console.error('Error:', error);
+        } finally {
+          setLoading(false);
         }
-    };
+      };
 
     const logout = () => {
         Modal.confirm({
@@ -228,22 +231,24 @@ const StudentDashboard = () => {
                             <b>Session:</b> <b>{session1}</b><br />
                             {applicationStatus === 'Accepted' && (
                                 <>
-                                    <b>Amount:</b><b>{amount}</b><br />
+                                    <b>Amount:</b> <b>{amount}</b><br />
                                 </>
                             )}
-                            {aidtype === 'MeritBase' && (
+
+                            {aidtype === 'MeritBase' && applicationStatus === 'Pending' && (
                                 <>
-                                    <p class="blinking-text highlight-text">Do you want to avail this Amount!</p>
                                     <Button
-                                        onClick={handleSubmit}
+                                        onClick={() => handleSubmit('Accepted')}
                                         type='primary'
+                                        loading={loading}
                                         style={{ marginRight: '10px', backgroundColor: 'green' }}
                                     >
                                         Accept
                                     </Button>
                                     <Button
-                                        onClick={handleSubmit}
+                                        onClick={() => handleSubmit('Rejected')}
                                         type='primary'
+                                        loading={loading}
                                         style={{ backgroundColor: 'red' }}
                                     >
                                         Reject
@@ -254,16 +259,29 @@ const StudentDashboard = () => {
                         </Card>
 
                         <div className="card-container">
+                            {/* {aidtype !== 'MeritBase' && ( */}
                             <Card
                                 onClick={() => Apply(profileId)}
                                 hoverable
                                 cover={<img src={application} alt="Error loading image" />}
                                 className="content-card"
-                                disabled={applicationStatus === 'Accepted' || applicationStatus === 'Rejected' || applicationStatus === 'Pending'}
-                                style={applicationStatus === 'Accepted' || applicationStatus === 'Rejected' || applicationStatus === 'Pending' ? { pointerEvents: 'none', opacity: 0.5 } : {}}
+                                disabled={
+                                    applicationStatus === 'Accepted' ||
+                                    applicationStatus === 'Rejected' ||
+                                    applicationStatus === 'Pending'
+                                }
+                                style={
+                                    applicationStatus === 'Accepted' ||
+                                        applicationStatus === 'Rejected' ||
+                                        applicationStatus === 'Pending'
+                                        ? { pointerEvents: 'none', opacity: 0.5 }
+                                        : {}
+                                }
                             >
                                 Apply Needbase
                             </Card>
+                            {/* )} */}
+
 
 
                             <Card

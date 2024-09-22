@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Row, Col, Button, Modal, List, Image, Layout, Form, Input, message } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; // Import axios
+import axios from 'axios';
 import logo from './BiitLogo.jpeg';
 import '../Styling/View-Application.css';
 import EndPoint from '../endpoints';
@@ -16,44 +16,9 @@ const ViewApplication = () => {
     const [selectedImageUri, setSelectedImageUri] = useState('');
     const [isPdfModalVisible, setIsPdfModalVisible] = useState(false);
     const [selectedPdfUri, setSelectedPdfUri] = useState('');
-    const [visibleCommentId, setVisibleCommentId] = useState(null);
-    const [suggestion, setSuggestion] = useState('');
-
-    const [house, setHouse] = useState(null);
-    const [salary, setSalary] = useState(null);
-    const [death, setDeath] = useState(null);
-    const [isRTrue, setIsRTrue] = useState(false); // For Reject loading state
-    const [isATrue, setIsATrue] = useState(false); // For Accept loading state
-
-    const fetchHouseAgreement = async () => {
-        try {
-            const response = await fetch(`${EndPoint.houseAgreement}`);
-            const data = await response.json();
-            setHouse(data);
-        } catch (error) {
-            console.error('Failed to fetch data.', error);
-        }
-    };
-
-    const fetchSalarySlip = async () => {
-        try {
-            const response = await fetch(`${EndPoint.salarySlip}`);
-            const data = await response.json();
-            setSalary(data);
-        } catch (error) {
-            console.error('Failed to fetch data.', error);
-        }
-    };
-
-    const fetchDeathCertificate = async () => {
-        try {
-            const response = await fetch(`${EndPoint.deathCertificate}`);
-            const data = await response.json();
-            setDeath(data);
-        } catch (error) {
-            console.error('Failed to fetch data.', error);
-        }
-    };
+    const [isRTrue, setIsRTrue] = useState(false);
+    const [isATrue, setIsATrue] = useState(false);
+    const [isDocumentsModalVisible, setIsDocumentsModalVisible] = useState(false);
 
     useEffect(() => {
         const fetchApplicationData = async () => {
@@ -61,18 +26,13 @@ const ViewApplication = () => {
                 const data = localStorage.getItem('selectedApplication');
                 if (data) {
                     const parsedData = JSON.parse(data);
-                    console.log('Fetched application data:', parsedData);
-
                     const sortedDocuments = parsedData.EvidenceDocuments.sort((a, b) => {
                         if (a.document_type === 'salaryslip') return -1;
                         if (b.document_type === 'salaryslip') return 1;
                         return 0;
                     });
-
                     parsedData.EvidenceDocuments = sortedDocuments;
                     setApplicationData(parsedData);
-                } else {
-                    console.log('No application data found in localStorage');
                 }
             } catch (error) {
                 console.error('Failed to fetch application data from localStorage', error);
@@ -86,63 +46,78 @@ const ViewApplication = () => {
         navigate('/Committee-Dashboard');
     };
 
-    const handleImageClick = () => {
-        setSelectedImageUri(fetchDeathCertificate);
+    const handleImagePress = (uri) => {
+        setSelectedImageUri(uri);
         setIsImageModalVisible(true);
     };
 
-    const handleImageModalClose = () => {
-        setIsImageModalVisible(false);
-        setSelectedImageUri('');
-    };
-
-    const handlePdfClick = () => {
-        setSelectedPdfUri(fetchDeathCertificate);
+    const handlePdfPress = (uri) => {
+        setSelectedPdfUri(uri);
         setIsPdfModalVisible(true);
     };
 
-    const handlePdfModalClose = () => {
-        setIsPdfModalVisible(false);
-        setSelectedPdfUri('');
-    };
+    const renderDocumentItem = (item) => {
+        if (!item || !item.image) {
+            return null;
+        }
 
-    const Submit = (event) => {
-        event.preventDefault();
-        console.log('Suggestion submitted:', suggestion);
-        setSuggestion(''); // Clear the suggestion box after submission
-    };
+        const fileExtension = item.image.split('.').pop().toLowerCase();
+        let uri;
+        switch (item.document_type) {
+            case 'salaryslip':
+                uri = `${EndPoint.salarySlip}${item.image}`;
+                break;
+            case 'houseAgreement':
+                uri = `${EndPoint.houseAgreement}${item.image}`;
+                break;
+            case 'deathcertificate':
+                uri = `${EndPoint.deathCertificate}${item.image}`;
+                break;
+            default:
+                uri = '';
+        }
 
-    const toggleCommentVisibility = (id) => {
-        setVisibleCommentId(visibleCommentId === id ? null : id);
+        if (fileExtension === 'pdf') {
+            return (
+                <Button type="link" onClick={() => handlePdfPress(uri)}>
+                    <img src='./pdf.png' alt='PDF Icon' style={{ width: 50, height: 50 }} />
+                </Button>
+            );
+        } else {
+            return (
+                <Button type="link" onClick={() => handleImagePress(uri)}>
+                    <Image src={uri} alt="Document Image" width={200} />
+                </Button>
+            );
+        }
     };
 
     const handleReject = async (values) => {
         setIsRTrue(true);
-        // Handle rejection logic here
+        // Add rejection logic here (API call or other)
         setIsRTrue(false);
     };
 
     const handleAccept = async (values) => {
         if (!isATrue) {
             setIsATrue(true);
-            const { comment, committeeId } = values;
+            const { comment, amount } = values;
             try {
-                const response = await axios.post(`${EndPoint.giveSuggestion}`, {
+                await axios.post(`${EndPoint.giveSuggestion}`, {
                     comment,
                     status: 'Accepted',
                     applicationId: applicationData.applicationId,
-                    committeeId
+                    committeeId: applicationData.committeeId,
+                    amount: parseInt(amount, 10),
                 });
                 message.success('Successfully Submitted!');
-                console.log(response.data);
             } catch (error) {
-                console.error(error);
+                console.error('Error during submission:', error);
                 message.error('Error, try again later');
             }
             setIsATrue(false);
         }
     };
-    
 
     if (!applicationData) {
         return <div>Loading...</div>;
@@ -170,7 +145,7 @@ const ViewApplication = () => {
                 <p><strong>Semester:</strong> {applicationData.semester}<sup>th</sup></p>
                 <p><strong>Father Name:</strong> {applicationData.father_name}</p>
                 <p><strong>Father Status:</strong> {applicationData.father_status}</p>
-                <p><strong>Required Amount:</strong> ${applicationData.requiredAmount}</p>
+                <p><strong>Required Amount:</strong> {applicationData.requiredAmount} Rs.</p>
                 <p><strong>Reason For Apply:</strong></p>
                 <textarea
                     id="suggestion"
@@ -180,41 +155,55 @@ const ViewApplication = () => {
                     cols="97"
                 />
 
-                <List
-                    itemLayout="horizontal"
-                    dataSource={applicationData.EvidenceDocuments}
-                    renderItem={(document) => (
-                        <List.Item>
-                            <List.Item.Meta
-                                title={document.document_type}
-                            />
-                            {document.file_name && document.file_name.endsWith('.pdf') ? (
-                                <Button onClick={() => handlePdfClick(document.document_uri)}>View PDF</Button>
-                            ) : (
-                                <Button onClick={() => handleImageClick(document.document_uri)}>View Documents</Button>
-                            )}
-                        </List.Item>
-                    )}
-                />
-                <Modal
-                    open={isImageModalVisible}
-                    onCancel={handleImageModalClose}
-                    footer={null}
+                <Button
+                    type="primary"
+                    style={{ marginTop: '10px' }}
+                    onClick={() => setIsDocumentsModalVisible(true)}
                 >
-                    <Image src={selectedImageUri} alt="Document" />
+                    View Documents
+                </Button>
+
+                <Modal
+                    title="Documents"
+                    visible={isDocumentsModalVisible}
+                    footer={null}
+                    onCancel={() => setIsDocumentsModalVisible(false)}
+                >
+                    <List
+                        itemLayout="horizontal"
+                        dataSource={applicationData.EvidenceDocuments}
+                        renderItem={(document) => (
+                            <List.Item>
+                                <List.Item.Meta
+                                    title={document.document_type}
+                                />
+                                {renderDocumentItem(document)}
+                            </List.Item>
+                        )}
+                    />
                 </Modal>
+
                 <Modal
-                    open={isPdfModalVisible}
-                    onCancel={handlePdfModalClose}
+                    visible={isImageModalVisible}
                     footer={null}
+                    onCancel={() => setIsImageModalVisible(false)}
                 >
-                    <iframe src={selectedPdfUri} title="PDF Viewer" width="100%" height="500px" />
+                    <Image src={selectedImageUri} alt="Full Size Image" style={{ width: '100%' }} />
+                </Modal>
+
+                <Modal
+                    visible={isPdfModalVisible}
+                    footer={null}
+                    onCancel={() => setIsPdfModalVisible(false)}
+                >
+                    <iframe src={selectedPdfUri} style={{ width: '100%', height: '500px' }} />
                 </Modal>
                 <Row justify="center" gutter={16}>
                     <Col>
                         <Button
                             type="primary"
                             danger
+                            loading={isRTrue}
                             onClick={() => {
                                 Modal.confirm({
                                     title: 'Reject Application',
@@ -230,22 +219,9 @@ const ViewApplication = () => {
                                             >
                                                 <Input.TextArea rows={4} />
                                             </Form.Item>
-                                            <Form.Item>
-                                                <Row justify="end">
-                                                    <Button type="default" onClick={() => Modal.destroyAll()}>Cancel</Button>
-                                                    <Button
-                                                        type="primary"
-                                                        htmlType="submit"
-                                                        loading={isRTrue}
-                                                        style={{ marginLeft: '8px' }}
-                                                    >
-                                                        Confirm
-                                                    </Button>
-                                                </Row>
-                                            </Form.Item>
                                         </Form>
                                     ),
-                                    onCancel: () => Modal.destroyAll()
+                                    onCancel: () => Modal.destroyAll(),
                                 });
                             }}
                         >
@@ -255,6 +231,7 @@ const ViewApplication = () => {
                     <Col>
                         <Button
                             type="primary"
+                            loading={isATrue}
                             onClick={() => {
                                 Modal.confirm({
                                     title: 'Accept Application',
@@ -264,7 +241,7 @@ const ViewApplication = () => {
                                             layout="vertical"
                                         >
                                             <Form.Item
-                                                name="reason"
+                                                name="comment"
                                                 label="Reason for Acceptance"
                                                 rules={[{ required: true, message: 'Enter reason for acceptance' }]}
                                             >
@@ -277,22 +254,9 @@ const ViewApplication = () => {
                                             >
                                                 <Input type="number" />
                                             </Form.Item>
-                                            <Form.Item>
-                                                <Row justify="end">
-                                                    <Button type="default" onClick={() => Modal.destroyAll()}>Cancel</Button>
-                                                    <Button
-                                                        type="primary"
-                                                        htmlType="submit"
-                                                        loading={isATrue}
-                                                        style={{ marginLeft: '8px' }}
-                                                    >
-                                                        Confirm
-                                                    </Button>
-                                                </Row>
-                                            </Form.Item>
                                         </Form>
                                     ),
-                                    onCancel: () => Modal.destroyAll()
+                                    onCancel: () => Modal.destroyAll(),
                                 });
                             }}
                         >

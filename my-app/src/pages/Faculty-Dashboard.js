@@ -1,186 +1,19 @@
-// import React, { useState, useEffect } from 'react';
-// import { Button, List, Col, Row, Layout, Avatar, message, Modal, Spin, Rate, Input } from 'antd'; // Importing necessary components from antd
-// import { ArrowLeftOutlined, UserOutlined } from '@ant-design/icons';
-// import { useNavigate } from 'react-router-dom';
-// import logo from './BiitLogo.jpeg';
-
-// const { Header } = Layout;
-// const { TextArea } = Input;
-
-// const FacultyDashboard = () => {
-//     const navigate = useNavigate();
-//     const [loadingStudents, setLoadingStudents] = useState(false);
-//     const [modalVisible, setModalVisible] = useState(false);
-//     const [selectedStudent, setSelectedStudent] = useState(null);
-//     const [studentsData, setStudentsData] = useState([]);
-//     const [currentRating, setCurrentRating] = useState(0);
-//     const [ratingDescription, setRatingDescription] = useState('');
-//     const [comments, setComments] = useState('');
-//     const [studentComments, setStudentComments] = useState({});
-
-//     useEffect(() => {
-//         const fetchStudents = async () => {
-//             // Simulate fetching students data
-//             setLoadingStudents(true);
-//             setTimeout(() => {
-//                 const fakeStudentsData = [
-//                     { name: 'John Doe', arid_no: '2020-Arid-3690', AverageRating: 4, comments: 'Good performance in assignments.' },
-//                     { name: 'Jane Smith', arid_no: '2023-Arid-3216', AverageRating: 2, comments: 'Needs improvement in attendance.' },
-//                     { name: 'John Doe', arid_no: '2020-Arid-3690', AverageRating: 3, comments: 'Consistent effort in coursework.' },
-//                 ];
-//                 setStudentsData(fakeStudentsData);
-//                 setLoadingStudents(false);
-//             }, 1000);
-//         };
-//         fetchStudents();
-//     }, []);
-
-//     const rateStudent = () => {
-//         // Simulate rating student
-//         setTimeout(() => {
-//             message.success('Student rated successfully');
-//             setStudentsData(prevData => 
-//                 prevData.map(student => 
-//                     student.arid_no === selectedStudent.arid_no ? { ...student, AverageRating: currentRating, comments } : student
-//                 )
-//             );
-//             setModalVisible(false);
-//         }, 1000);
-//     };
-
-//     const handleRatingChange = (value) => {
-//         setCurrentRating(value);
-//         switch (value) {
-//             case 1:
-//                 setRatingDescription('Poor');
-//                 break;
-//             case 2:
-//                 setRatingDescription('Unsatisfied');
-//                 break;
-//             case 3:
-//                 setRatingDescription('Average');
-//                 break;
-//             case 4:
-//                 setRatingDescription('Good');
-//                 break;
-//             case 5:
-//                 setRatingDescription('Excellent');
-//                 break;
-//             default:
-//                 setRatingDescription('');
-//         }
-//     };
-
-//     const openModal = (student) => {
-//         setSelectedStudent(student);
-//         setCurrentRating(student.AverageRating);
-//         setComments(student.comments || '');  // Populate comments if available
-//         handleRatingChange(student.AverageRating);
-//         setModalVisible(true);
-//     };
-
-//     const Back = () => {
-//         navigate('/Login');
-//     };
-
-//     return (
-//         <div className="container">
-//             <Header className="navbar">
-//                 <Row justify="space-between" align="middle">
-//                     <Col>
-//                         <Button onClick={Back} icon={<ArrowLeftOutlined />} />
-//                     </Col>
-//                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#ffff' }}>
-//                         BIIT Rating Screen
-//                     </Col>
-//                     <Col>
-//                         <img src={logo} alt="BIIT Financial Aid Allocation Tool" style={{ height: '35px', width: '35px', borderRadius: '25px' }} />
-//                     </Col>
-//                 </Row>
-//             </Header>
-//             <div className="form-box">
-//                 <h2 style={{ textAlign: 'center' }}>Rate Students</h2>
-//                 <div className="scrollable-list">
-//                     <Spin spinning={loadingStudents}>
-//                         <List
-//                             itemLayout="horizontal"
-//                             dataSource={studentsData}
-//                             renderItem={item => (
-//                                 <List.Item>
-//                                     <List.Item.Meta
-//                                         avatar={<Avatar size={64} icon={<UserOutlined />} />}
-//                                         title={`${item.name} (${item.arid_no})`}
-//                                         description={
-//                                             <>
-//                                                 <div>Average Rating: {item.AverageRating}</div>
-//                                                 {item.comments && <div>Comments: {item.comments}</div>}
-//                                             </>
-//                                         }
-//                                     />
-//                                     <Button onClick={() => openModal(item)}>
-//                                         Rate
-//                                     </Button>
-//                                 </List.Item>
-//                             )}
-//                         />
-//                     </Spin>
-//                 </div>
-//             </div>
-
-//             <Modal
-//                 title="Rate Student"
-//                 visible={modalVisible}
-//                 onCancel={() => setModalVisible(false)}
-//                 footer={[
-//                     <Button key="cancel" onClick={() => setModalVisible(false)}>
-//                         Cancel
-//                     </Button>,
-//                     <Button key="rate" type="primary" onClick={rateStudent}>
-//                         Rate
-//                     </Button>,
-//                 ]}
-//             >
-//                 {selectedStudent && (
-//                     <div style={{ textAlign: 'center' }}>
-//                         <h3>{selectedStudent.name} ({selectedStudent.arid_no})</h3>
-//                         <Rate value={currentRating} onChange={handleRatingChange} />
-//                         <div>{ratingDescription}</div>
-//                         <TextArea 
-//                             rows={4} 
-//                             value={comments} 
-//                             onChange={(e) => setComments(e.target.value)} 
-//                             placeholder="Comments about the student"
-//                             style={{ marginTop: '16px' }}
-//                         />
-//                     </div>
-//                 )}
-//             </Modal>
-//         </div>
-//     );
-// };
-
-// export default FacultyDashboard;
-
-
-
-
-
-
-
 import React, { useState, useEffect } from 'react';
-import { Modal, Button, Input, Rate, Col, Row, List, Layout, Avatar, Drawer, Typography, message } from 'antd';
-import { LogoutOutlined, BarsOutlined, UserOutlined } from '@ant-design/icons';
-import { useNavigate } from "react-router-dom";
+import { Modal, Button, Input, List, Avatar, Rate, message, Col, Row, Layout, Typography, Drawer,Spin } from 'antd'; // Import Ant Design components
+import { BarsOutlined } from '@ant-design/icons';
 import EndPoint from '../endpoints';
-import logo from './BiitLogo.jpeg';
 import axios from 'axios';
+import logo from './BiitLogo.jpeg';
+import { useNavigate } from "react-router-dom";
+import "../Styling/Faculty-Dashboard.css"
 
 const { Header } = Layout;
 const { Title } = Typography;
+const { TextArea } = Input; // Use TextArea for multiline input
 
 const FormScreen = () => {
-    const navigate = useNavigate();
-    const [data, setData] = useState([]);
+    const navigateTo = useNavigate();
+    const [data, setData] = useState([]); // Default to an empty array
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [comment, setComment] = useState('');
@@ -188,66 +21,123 @@ const FormScreen = () => {
     const [facultyInfo, setFacultyInfo] = useState(null);
     const [profileId, setProfileId] = useState(null);
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
-
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
         getStoredProfileId();
     }, []);
 
     const getStoredProfileId = async () => {
         try {
-            const storedProfileId = await localStorage.getItem('profileId');
-            if (storedProfileId !== null) {
+            const storedProfileId = localStorage.getItem('profileId');
+            if (storedProfileId) {
                 setProfileId(storedProfileId);
+                console.log('Profile ID:', storedProfileId);
                 fetchFacultyInfo(storedProfileId);
                 fetchData(storedProfileId);
+            } else {
+                console.log('Profile ID not found in localStorage');
             }
         } catch (error) {
             console.error('Error retrieving profile ID from localStorage:', error);
         }
     };
 
+    const fetchFacultyInfo = (profileId) => {
+        fetch(`${EndPoint.facultyInfo}?id=${profileId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then(response => response.json())
+            .then(async data => {
+                setFacultyInfo(data);
+                console.log('Fetched Faculty info:', data);
 
-    const fetchFacultyInfo = async (profileId) => {
-        try {
-            const response = await fetch(`${EndPoint.facultyInfo}?id=${profileId}`);
-            if (!response.ok) {
-                throw new Error(`Network response was not ok: ${response.status} - ${response.statusText}`);
-            }
-            const data = await response.json();
-            setFacultyInfo(data);
+                try {
+                    if (data && data.facultyId) {
+                        localStorage.setItem('facultyId', data.facultyId.toString());
+                        console.log('Faculty ID stored in localStorage:', data.facultyId);
+                    } else {
+                        console.log('Faculty ID not found in the fetched data');
+                    }
 
-            if (data && data.facultyId) {
-                localStorage.setItem('facultyId', data.facultyId.toString());
-            }
-            localStorage.setItem('Faculty', JSON.stringify(data));
-        } catch (error) {
-            console.error('Error fetching faculty information:', error);
-            alert('Failed to fetch faculty information. Please try again later.');
-        }
+                    localStorage.setItem('Faculty', JSON.stringify(data));
+                    console.log('Faculty info stored in localStorage');
+                } catch (error) {
+                    console.error('Error storing Faculty info in localStorage:', error);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching faculty information:', error);
+                alert('Failed to fetch faculty information. Please try again later.');
+            });
     };
 
     const fetchData = async (profileId) => {
         try {
             const response = await fetch(`${EndPoint.teachersGraders}?id=${profileId}`);
             const json = await response.json();
-            setData(json);
+            setLoading(true);
+            console.log('Fetched data:', json);
+            setData(Array.isArray(json) ? json : []); // Ensure data is an array
         } catch (error) {
             console.error('Error fetching data: ', error);
+            setData([]); // Fallback to empty array on error
         }
     };
 
-    const logout = () => {
-        Modal.confirm({
-            title: 'Logout',
-            content: 'Are you sure you want to logout?',
-            okText: 'Yes',
-            cancelText: 'No',
-            onOk: () => {
-                localStorage.clear();
-                navigate('/Login');
-            },
-        });
+
+    const handleItemPress = (item) => {
+        setSelectedItem(item);
+        setIsModalVisible(true);
     };
+    const handleRate = async () => {
+        try {
+            const facultyIdFromStorage = localStorage.getItem('facultyId');
+            if (!facultyIdFromStorage || !selectedItem || !selectedItem.s || !selectedItem.s.student_id) {
+                console.error("Missing faculty or student information.");
+                return;
+            }
+
+            const requestData = {
+                facultyId: facultyIdFromStorage,
+                studentId: selectedItem.s.student_id,
+                rate: rating,
+                comment: comment
+            };
+
+            const response = await axios.post(
+                `http://localhost/Backend/api/Faculty/RateGraderPerformance`,
+                null, // No body, params are used
+                {
+                    params: requestData
+                }
+            );
+
+            if (response.status === 200) {
+                console.log("Rated successfully.");
+                message.success("Rated successfully.");
+            } else if (response.status === 302) {
+                console.log("Already Rated");
+                message.error("Already Rated");
+            } else if (response.status === 404) {
+                console.log("Grader not found");
+            } else {
+                console.log("Unexpected response from server:", response);
+            }
+        } catch (error) {
+            if (error.response) {
+                console.error('Error response from server:', error.response.data);
+                message.error("Already Rated!");
+            } else {
+                console.error('An error occurred while rating:', error.message);
+                message.error("Error to Rate");
+            }
+        }
+    };
+
+
 
     const showDrawer = () => {
         setIsDrawerVisible(true);
@@ -257,123 +147,93 @@ const FormScreen = () => {
         setIsDrawerVisible(false);
     };
 
-    const handleItemPress = (item) => {
-        setSelectedItem(item);
-        setIsModalVisible(true);
-    };
-
-
-    const navigateTo = (path) => {
-        navigate(path);
-    };
-
-    const rateGraderPerformance = async (facultyId, graderId, rate, comment) => {
-        console.log('Sending:', { facultyId, graderId, rate, comment });
-        try {
-            const response = await axios.post(`${EndPoint.rateGraderPerformance}`, {
-                facultyId: facultyId,
-                graderId: graderId,
-                rate: rate,
-                comment: comment
-            });
-
-            console.log('Rating added successfully:', response.data);
-            message.success('Rating submitted successfully!');
-
-        }
-        catch(error){
-            console.log("Error :",error.message);
-            message.success(`${selectedItem.s.name} Already Rated`);
-        }
-    };
-
-
-
     return (
         <div className='container'>
             <Header className="navbar">
                 <Row justify="space-between" align="middle">
                     <Col>
-                        <Button icon={<BarsOutlined />} onClick={showDrawer} />
+                        <div style={{ padding: "5px" }}>
+                            <Button icon={<BarsOutlined />} onClick={showDrawer} />
+                        </div>
                         <Drawer
                             placement="left"
                             width={300}
                             closable={true}
                             onClose={onClose}
                             visible={isDrawerVisible}
+                            bodyStyle={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
                         >
                             <div className="sider-content">
                                 <Title level={4}>{facultyInfo && (
                                     <>
-                                        <Avatar
-                                            src={facultyInfo?.profilePic ? `${EndPoint.imageUrl}${facultyInfo.profilePic}` : "./logo.png"}
-                                            size={64}
-                                        />
+                                        <div className='image'>
+                                            <Avatar
+                                                src={facultyInfo?.profilePic ? `${EndPoint.imageUrl}${facultyInfo.profilePic}` : "./logo.png"}
+                                                size={64}
+                                            />
+                                        </div>
                                         <h2>{facultyInfo.name}</h2>
                                     </>
                                 )}</Title>
                             </div>
                             <br />
-                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Committee-Dashboard')}>Switch to Committee</Button>
-                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={logout} icon={<LogoutOutlined />}>Logout</Button>
+                            <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={() => navigateTo('/Login')}>Logout</Button>
+                            {/* <Button type="primary" style={{ width: '80%', marginTop: '10px' }} onClick={balanceCheck}>Remaining Balance</Button> */}
                         </Drawer>
                     </Col>
                     <Col flex="auto" style={{ textAlign: 'center', fontSize: 'X-large', color: '#ffff' }}>
-                        BIIT Faculty Dashboard
+                        BIIT Faculty-Dashboard
                     </Col>
                     <Col>
                         <img src={logo} alt="BIIT Financial Aid Allocation Tool" style={{ height: '35px', width: '35px', borderRadius: '25px' }} />
                     </Col>
                 </Row>
             </Header>
-
-            <div className="form-box">
-                <h2 style={{ textAlign: 'center' }}>Rate Students</h2>
+            <div className='form-box'>
+                <h2 style={{ textAlign: 'center' }}>Rate Student</h2>
                 <div className="scrollable-list">
-                    <List
-                        dataSource={data}
-                        renderItem={item => (
-                            <List.Item onClick={() => handleItemPress(item)}>
-                                <List.Item.Meta
-                                    avatar={<Avatar size={64} icon={<UserOutlined />} />}
-                                    title={item.s.name}
-                                    description={`Arid No: ${item.s.arid_no} | Semester: ${item.s.semester}`}
-                                />
-                            </List.Item>
-                        )}
-                    />
+                    
+                        <List
+                            dataSource={data} // Ensure dataSource is an array
+                            renderItem={item => (
+                                <List.Item onClick={() => handleItemPress(item)} style={{ cursor: 'pointer' }}>
+                                    <List.Item.Meta
+                                        title={item.s.name}
+                                        description={`ARID No: ${item.s.arid_no}, Semester: ${item.s.semester}`}
+                                    />
+                                </List.Item>
+                            )}
+                        />
+                    
+                    </div>
+
+                    <Modal
+                        title={`Give Rate & Comment To ${selectedItem?.s.name}`}
+                        visible={isModalVisible}
+                        onCancel={() => setIsModalVisible(false)}
+                        footer={[
+                            <Button key="cancel" onClick={() => setIsModalVisible(false)}>
+                                Cancel
+                            </Button>,
+                            <Button key="submit" type="primary" onClick={handleRate}>
+                                Rate
+                            </Button>,
+                        ]}
+                    >
+                        <TextArea
+                            rows={4}
+                            placeholder="Enter reason"
+                            value={comment}
+                            onChange={e => setComment(e.target.value)}
+                        />
+                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                            <Rate value={rating} onChange={value => setRating(value)} />
+                        </div>
+                    </Modal>
                 </div>
-                <Modal
-                    title={`Give Rate & Comment To ${selectedItem?.s.name}`}
-                    visible={isModalVisible}
-                    onCancel={() => setIsModalVisible(false)}
-                    onOk={() => {
-                        if (selectedItem) {
-                            const student_id = selectedItem.s.student_id; // Ensure this is correctly referenced
-                            if (!student_id) {
-                                message.error('Student ID is missing.');
-                                console.log(student_id)
-                                return;
-                            }
-                            rateGraderPerformance(profileId, student_id, rating, comment);
-                            setIsModalVisible(false);
-                        }
-                    }}
-                >
-
-
-                    <Input
-                        placeholder="Enter reason"
-                        value={comment}
-                        onChange={e => setComment(e.target.value)}
-                        style={{ marginBottom: '10px' }}
-                    />
-                    <Rate onChange={setRating} value={rating} />
-                </Modal>
 
             </div>
-        </div>
-    );
+            );
 };
 
-export default FormScreen;
+            export default FormScreen;
