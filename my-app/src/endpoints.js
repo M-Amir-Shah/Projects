@@ -14,7 +14,7 @@ const EndPoint = {
     getSession: `${baseUrl}api/Student/getSession`,
     uploadfile: `${baseUrl}api/Student/UploadFile1`,
     getAmount:`${baseUrl}api/Student/GetAmount`,
-    decidedMeritBase: `${baseUrl}api/Student/decideMeritBaseApplication`,
+    decidedMeritBase: `${baseUrl}api/Student/DecideMeritBaseApplication`,
 
     imageUrl: `${baseUrl}Content/profileImages/`,
     houseAgreement: `${baseUrl}Content/HouseAgreement/`,

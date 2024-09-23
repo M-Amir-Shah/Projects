@@ -124,33 +124,36 @@ const StudentDashboard = () => {
         fetchSession();
     }, []);
 
-    
+
 
     const handleSubmit = async (status) => {
         setLoading(true);
         try {
-            console.log('Submitting with ID:', id, 'and status:', status); // Debugging line
-            const response = await axios.post(EndPoint.decidedMeritBase, {
-                id: id,
-                status: status
-            }, {
+            console.log('Submitting with ID:', profileId, 'and status:', status); // Debugging line
+    
+            // Construct the URL with query parameters
+            const url = `http://localhost/Backend/api/Student/decideMeritBaseApplication?id=${profileId}&status=${status}`;
+    
+            // Send the POST request with query parameters
+            const response = await axios.post(url, null, {
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json' // Optional, can be omitted if no body is being sent
                 }
             });
     
-            if (response.status === 200) {
-                message.success(`${status} Successfully`);
-                navigate('/StudentDashboard');
-            }
+            console.log("Response : ", response.data);
+            message.success(`${status} Successfully`);
+            navigate('/StudentDashboard');
+    
         } catch (error) {
             message.error('Failed to submit');
-            console.error('Error:', error);
+            console.error('Error:', error.response?.data || error.message);
         } finally {
             setLoading(false);
         }
     };
     
+
 
     const logout = () => {
         Modal.confirm({
@@ -239,6 +242,7 @@ const StudentDashboard = () => {
 
                             {aidtype === 'MeritBase' && applicationStatus === 'Pending' && (
                                 <>
+                                    <b>Amount:</b> <b>{amount}</b><br />
                                     <Button
                                         onClick={() => handleSubmit('Accepted')}
                                         type='primary'
