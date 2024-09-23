@@ -7,7 +7,7 @@ import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import logo from './BiitLogo.jpeg';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Button, Col, Row, Modal, Layout, Table, Input, Image } from 'antd';
+import { Button, Col, Row, Modal, Layout, Table, Input, Image, Progress } from 'antd';
 import EndPoint from "../endpoints";
 import axios from "axios";
 const { Header } = Layout;
@@ -18,7 +18,7 @@ function App() {
     const location = useLocation();
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalContent, setModalContent] = useState('');
-    const [teachers, setTeachers] = useState([]);
+    const [isImageModalVisible, setIsImageModalVisible] = useState(false);
     const [fileUrl, setFileUrl] = useState(null);
     const [fileType, setFileType] = useState(null);
     const [suggestion, setSuggestion] = useState('');
@@ -32,25 +32,7 @@ function App() {
 
 
 
-    const { name, arid_no, document } = location.state || {};
-
-    // useEffect(() => {
-    //     // Fetch suggestions based on document details if needed
-    //     const fetchSuggestions = async () => {
-    //         try {
-    //             const response = await fetch(`${EndPoint.applicationSuggestions}`); // Modify with your API endpoint
-    //             const data = await response.json();
-    //             setSuggestion(data); // Assuming data has suggestions for the document
-    //         } catch (error) {
-    //             console.error('Error fetching suggestions:', error);
-    //             message.error('Failed to fetch suggestions.');
-    //         }
-    //     };
-
-    //     if (document) {
-    //         fetchSuggestions(); // Fetch suggestions if document is passed
-    //     }
-    // }, [document]);
+    const { name, arid_no } = location.state || {};
     useEffect(() => {
         const fetchApplicationData = async () => {
             try {
@@ -169,17 +151,24 @@ function App() {
         { type: 'Reject', value: reject },
     ];
 
-    const pieConfig = {
-        appendPadding: 10,
-        data: pieData,
-        angleField: 'value',
-        colorField: 'type',
-        radius: 1,
-        legend: { position: 'bottom' },
-        label: { type: 'inner', offset: '-30%', content: '{value}' },
-        interactions: [{ type: 'element-active' }],
-        color: ['green', 'red'],
+    // Function to calculate percentages
+    const calculatePercentage = (count, total) => {
+        if (total === 0) return 0;  // Prevent division by 0
+        return Math.round((count / total) * 100);  // Round to avoid decimal percentages
     };
+
+    // Get count of accepted and rejected suggestions
+    const acceptCount = applicationDetails?.Suggestions?.filter((item) => item.status === 'Accepted').length || 0;
+    const rejectCount = applicationDetails?.Suggestions?.filter((item) => item.status === 'Rejected').length || 0;
+
+    // Total suggestions count
+    const totalSuggestions = acceptCount + rejectCount;
+
+    // Calculate percentages for both statuses
+    const acceptPercentage = calculatePercentage(acceptCount, totalSuggestions);
+    const rejectPercentage = calculatePercentage(rejectCount, totalSuggestions);
+
+
     const showModal = (reason) => {
         setModalContent(reason);
         setIsModalVisible(true);
@@ -196,29 +185,30 @@ function App() {
     const columns = [
         {
             title: 'Committee Member Name',
-            dataIndex: 'CommitteeMemberName',
+            dataIndex: 'CommitteeMemberName',  // This matches the field in your data
             key: 'CommitteeMemberName',
         },
         {
             title: 'Status',
-            dataIndex: 'status',
+            dataIndex: 'status',  // This matches the status field
             key: 'status',
             render: (status) => (
                 <span style={{ color: status === 'Accepted' ? 'green' : 'red' }}>
-                    {status}
+                    {status === 'Accepted' ? 'Accepted' : 'Rejected'}
                 </span>
             )
         },
         {
             title: 'Comment',
-            dataIndex: 'comment',
+            dataIndex: 'comment',  // The comment from committee member
             key: 'comment',
         },
         {
             title: 'Amount',
+            dataIndex: 'amount',  // Display the amount suggested
             key: 'amount',
-            dataIndex: 'amount'
-        },
+            render: (amount) => amount ? `${amount} PKR` : 'N/A',  // Conditional formatting for amount
+        }
     ];
 
     const openDocumentModal = async () => {
@@ -296,14 +286,30 @@ function App() {
                         <h3>Name: {name}</h3>
                         <h4>Arid No. : {arid_no}</h4>
                     </div>
+                    <div style={{ marginTop: '20px' }}>
+                        <Row gutter={16}>
+                            {/* Accepted Bar */}
+                            <Col span={12}>
+                                <h4>Accepted ({acceptCount} / {totalSuggestions})</h4>
+                                <Progress percent={acceptPercentage} status="active" strokeColor="green" />
+                            </Col>
+
+                            {/* Rejected Bar */}
+                            <Col span={12}>
+                                <h4>Rejected ({rejectCount} / {totalSuggestions})</h4>
+                                <Progress percent={rejectPercentage} status="active" strokeColor="red" />
+                            </Col>
+                        </Row>
+                    </div>
+
                     <Button type="primary" onClick={() => setIsDataModalVisible(true)} style={{ marginTop: '20px' }}>
                         Show Details
                     </Button>
 
                     <Table
-                        dataSource={applicationData?.Suggestions || []}
+                        dataSource={applicationDetails?.Suggestions || []}
                         columns={columns}
-                        rowKey={(record) => record.$id}
+                        rowKey={(record) => record.$id}  // Ensure each row has a unique key
                         style={{ marginTop: '20px' }}
                     />
 
@@ -336,46 +342,7 @@ function App() {
                             type="number"
                         />
                     </Modal>
-                    {/* <div style={{ marginBottom: '20px' }}>
-                        <h3>Accepted</h3>
-                        <Progress
-                            percent={parseFloat(acceptedPercentage)}
-                            strokeColor="green"
-                            trailColor="#d9d9d9"
-                        />
-                    </div> */}
-                    {/* <div style={{ marginBottom: '20px' }}>
-                        <h3>Rejected</h3>
-                        <Progress
-                            percent={parseFloat(rejectedPercentage)}
-                            strokeColor="red"
-                            trailColor="#d9d9d9"
-                        />
-                    </div> */}
-                    {/* <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                        <Table columns={columns} dataSource={teachers} pagination={false} />
-                    </div>
-                    <Modal title="Details" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
-                        <p>{modalContent}</p>
-                    </Modal> */}
                 </div>
-                {/* <Button onClick={openDocumentModal}>View Documents</Button> */}
-
-                {/* <Modal
-                    title="Document Viewer"
-                    visible={isModalVisible}
-                    onCancel={handleDocumentModalCancel}
-                    footer={null}
-                    width="80%"
-                    style={{ top: 20 }}
-                >
-                    <div style={{ height: '500px' }}>
-                        {fileUrl && renderViewer()}
-                    </div>
-                </Modal> */}
-                <br />
-                {/* <Button type="primary" onClick={openDocumentModal}>Accepted</Button>
-                <Button type="primary" onClick={openDocumentModal}>Rejected</Button> */}
             </div>
 
         </div>

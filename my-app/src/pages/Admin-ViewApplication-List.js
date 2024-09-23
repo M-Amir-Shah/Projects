@@ -14,9 +14,16 @@ const DocumentCard = ({ document }) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
-        // Store document data in localStorage and pass it to the next page
+        // Save document to localStorage or pass necessary details in the state
         localStorage.setItem('selectedApplication', JSON.stringify(document));
-        navigate('/Admin-ViewApplication', { state: { name: document.re.name, arid_no: document.re.arid_no, document } });
+
+        // Navigate to the Admin-ViewApplication with the required state (name, arid_no)
+        navigate('/Admin-ViewApplication', { 
+            state: { 
+                name: document.name, 
+                arid_no: document.arid_no 
+            } 
+        });
     };
 
     const getDocumentIcon = (fileName) => {
@@ -40,12 +47,16 @@ const DocumentCard = ({ document }) => {
     return (
         <Card
             style={{ width: 300, margin: '20px', cursor: 'pointer' }}
-            cover={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '150px' }}>{getDocumentIcon(document.EvidenceDocuments)}</div>}
+            cover={
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '150px' }}>
+                    {getDocumentIcon(document.EvidenceDocuments)}
+                </div>
+            }
             onClick={handleClick}
         >
             <Meta
-                title={document.re.name}
-                description={<p>{document.re.arid_no}</p>}
+                title={document.name} 
+                description={<p>{document.arid_no}</p>}
             />
         </Card>
     );

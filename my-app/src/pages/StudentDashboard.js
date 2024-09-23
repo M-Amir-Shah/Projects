@@ -129,26 +129,28 @@ const StudentDashboard = () => {
     const handleSubmit = async (status) => {
         setLoading(true);
         try {
-          const response = await axios.post(EndPoint.decideMeritBaseApplication, {
-            id: id,
-            status: status
-          }, {
-            headers: {
-              'Content-Type': 'application/json' // Send JSON data, no need for multipart
+            console.log('Submitting with ID:', id, 'and status:', status); // Debugging line
+            const response = await axios.post(EndPoint.decidedMeritBase, {
+                id: id,
+                status: status
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            if (response.status === 200) {
+                message.success(`${status} Successfully`);
+                navigate('/StudentDashboard');
             }
-          });
-          
-          if (response.status === 200) {
-            message.success(`${status} Successfully`);
-            navigate('/StudentDashboard');
-          }
         } catch (error) {
-          message.error('Failed to submit');
-          console.error('Error:', error);
+            message.error('Failed to submit');
+            console.error('Error:', error);
         } finally {
-          setLoading(false);
+            setLoading(false);
         }
-      };
+    };
+    
 
     const logout = () => {
         Modal.confirm({

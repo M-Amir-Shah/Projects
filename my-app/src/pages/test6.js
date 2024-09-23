@@ -565,4 +565,295 @@
 
 // export default ViewApplication;
 
-zz
+
+
+
+
+
+import React, { useEffect, useState } from 'react';
+import { Modal, Button, List, Image, Alert, Input, notification } from 'antd';
+import { Pie } from '@ant-design/plots';
+import axios from 'axios';
+import EndPoint from '../endpoints';
+
+const ViewApplication = () => {
+  const [applicationData, setApplicationData] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isImageModalVisible, setIsImageModalVisible] = useState(false);
+  const [selectedImageUri, setSelectedImageUri] = useState('');
+  const [isPdfModalVisible, setIsPdfModalVisible] = useState(false);
+  const [selectedPdfUri, setSelectedPdfUri] = useState('');
+  const [visibleCommentId, setVisibleCommentId] = useState(null);
+  const [isDataModalVisible, setIsDataModalVisible] = useState(false);
+  const [isAcceptModalVisible, setIsAcceptModalVisible] = useState(false);
+  const [amount, setAmount] = useState('');
+
+  useEffect(() => {
+    const fetchApplicationData = async () => {
+      try {
+        const data = localStorage.getItem('selectedApplication');
+        if (data !== null) {
+          const parsedData = JSON.parse(data);
+          console.log('Fetched application data:', parsedData);
+
+          const sortedDocuments = parsedData.EvidenceDocuments.sort((a, b) => {
+            if (a.document_type === 'salaryslip') return -1;
+            if (b.document_type === 'salaryslip') return 1;
+            return 0;
+          });
+
+          parsedData.EvidenceDocuments = sortedDocuments;
+          setApplicationData(parsedData);
+        } else {
+          console.log('No application data found in localStorage');
+        }
+      } catch (error) {
+        console.error('Failed to fetch application data from localStorage', error);
+      }
+    };
+
+    fetchApplicationData();
+  }, []);
+
+  const handleImagePress = (uri) => {
+    setSelectedImageUri(uri);
+    setIsImageModalVisible(true);
+  };
+
+  const handleReject = () => {
+    Alert.confirm({
+      title: 'Reject Application',
+      content: 'Are you sure you want to reject this application?',
+      onOk: handleRejectConfirmation,
+    });
+  };
+
+  const handleRejectConfirmation = async () => {
+    console.log('Application rejected');
+    const applicationId = applicationData?.applicationID;
+    if (!applicationId) {
+      notification.error({ message: 'Application ID is missing' });
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${EndPoint.rejectApplication}`, {
+        applicationid: applicationId,
+        status: 'Rejected',
+      });
+
+      if (response.status === 200) {
+        notification.success({ message: 'Application rejected successfully!' });
+        console.log('Application rejected:', response.data);
+      } else {
+        notification.error({ message: 'Failed to reject application' });
+      }
+    } catch (error) {
+      console.error('Failed to reject application', error);
+    }
+  };
+
+  const handlePdfPress = (uri) => {
+    setSelectedPdfUri(uri);
+    setIsPdfModalVisible(true);
+  };
+
+  const renderDocumentItem = (item) => {
+    if (!item || !item.image) return null;
+
+    const fileExtension = item.image.split('.').pop().toLowerCase();
+    let uri;
+    switch (item.document_type) {
+      case 'salaryslip':
+        uri = `${EndPoint.salarySlip}${item.image}`;
+        break;
+      case 'houseAgreement':
+        uri = `${EndPoint.houseAgreement}${item.image}`;
+        break;
+      case 'deathcertificate':
+        uri = `${EndPoint.deathCertificate}${item.image}`;
+        break;
+      default:
+        return null;
+    }
+
+    if (fileExtension === 'pdf') {
+      return (
+        <Button type="link" onClick={() => handlePdfPress(uri)}>
+          View PDF
+        </Button>
+      );
+    } else {
+      return (
+        <Image
+          src={uri}
+          alt="Document Image"
+          style={{ width: 200, height: 200 }}
+          onClick={() => handleImagePress(uri)}
+        />
+      );
+    }
+  };
+
+  const renderSuggestionItem = (item) => {
+    const statusColor = item.status === 'Accept' ? 'green' : item.status === 'Reject' ? 'red' : 'black';
+
+    return (
+      <List.Item>
+        <div>
+          <p>
+            <b>Committee Member Name:</b> {item.CommitteeMemberName}
+          </p>
+          <p style={{ color: statusColor }}>
+            <b>Status:</b> {item.status}
+          </p>
+          {visibleCommentId === item.$id && (
+            <p>
+              <b>Comment:</b> {item.comment}
+            </p>
+          )}
+          <Button onClick={() => setVisibleCommentId(visibleCommentId === item.$id ? null : item.$id)}>
+            {visibleCommentId === item.$id ? 'Hide Comment' : 'View Comment'}
+          </Button>
+        </div>
+      </List.Item>
+    );
+  };
+
+  const getStatusCounts = () => {
+    if (!applicationData || !applicationData.Suggestions) {
+      return { accept: 0, reject: 0 };
+    }
+    const acceptCount = applicationData.Suggestions.filter((item) => item.status === 'Accept').length;
+    const rejectCount = applicationData.Suggestions.filter((item) => item.status === 'Reject').length;
+    return { accept: acceptCount, reject: rejectCount };
+  };
+
+  const { accept, reject } = getStatusCounts();
+  const total = accept + reject;
+
+  const pieData = [
+    {
+      type: 'Accept',
+      value: accept,
+    },
+    {
+      type: 'Reject',
+      value: reject,
+    },
+  ];
+
+  const handleAccept = () => {
+    setIsAcceptModalVisible(true);
+  };
+
+  const handleSaveAmount = async () => {
+    const applicationId = applicationData?.applicationID;
+    if (!applicationId) {
+      notification.error({ message: 'Application ID is missing' });
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${EndPoint.acceptApplication}`, {
+        amount,
+        applicationid: applicationId,
+      });
+
+      if (response.status === 200) {
+        notification.success({ message: 'Accepted Application successfully!' });
+        console.log('Amount saved:', response.data);
+      } else {
+        notification.error({ message: 'Failed to Accept Application' });
+      }
+    } catch (error) {
+      console.error('Failed to save Accepted Application', error);
+    }
+
+    setIsAcceptModalVisible(false);
+  };
+
+  return (
+    <div>
+      <h2>Application Status Summary</h2>
+      <Pie data={pieData} height={220} width={400} autoFit />
+
+      <Button onClick={() => setIsDataModalVisible(true)}>Show Details</Button>
+
+      <List
+        dataSource={applicationData ? applicationData.Suggestions : []}
+        renderItem={renderSuggestionItem}
+        style={{ margin: '20px 0' }}
+      />
+
+      <Button type="primary" onClick={handleAccept}>
+        Accept
+      </Button>
+      <Button type="danger" onClick={handleReject}>
+        Reject
+      </Button>
+
+      <Modal
+        title="Document Details"
+        visible={isDataModalVisible}
+        onCancel={() => setIsDataModalVisible(false)}
+        footer={null}
+      >
+        <List
+          dataSource={applicationData ? applicationData.EvidenceDocuments : []}
+          renderItem={renderDocumentItem}
+          horizontal
+        />
+        {applicationData && (
+          <div>
+            <p>
+              <b>Name:</b> {applicationData.name}
+            </p>
+            <p>
+              <b>Arid No:</b> {applicationData.arid_no}
+            </p>
+            <p>
+              <b>Father Name:</b> {applicationData.father_name}
+            </p>
+            <p>
+              <b>Father Status:</b> {applicationData.father_status}
+            </p>
+            <p>
+              <b>Amount Required:</b> {applicationData.requiredAmount}
+            </p>
+            <p>
+              <b>Salary:</b> {applicationData.salary}
+            </p>
+          </div>
+        )}
+      </Modal>
+
+      <Modal
+        title="Enter Amount"
+        visible={isAcceptModalVisible}
+        onCancel={() => setIsAcceptModalVisible(false)}
+        footer={null}
+      >
+        <Input
+          placeholder="Enter amount"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          type="number"
+        />
+        <Button type="primary" onClick={handleSaveAmount}>
+          Save
+        </Button>
+      </Modal>
+
+      <Modal visible={isImageModalVisible} footer={null} onCancel={() => setIsImageModalVisible(false)}>
+        <Image src={selectedImageUri} alt="Document Image" style={{ width: '100%' }} />
+      </Modal>
+
+      <Modal visible={isPdfModalVisible} footer={null} onCancel={() => setIsPdfModalVisible(false)}>
+        <iframe src={selectedPdfUri} width="100%" height="600px" title="PDF Viewer" />
+      </Modal>
+    </div>
+  );
+};
+
+export default ViewApplication;

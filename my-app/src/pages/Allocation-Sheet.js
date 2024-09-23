@@ -58,7 +58,7 @@ const AddFaculty = () => {
                 gender,
                 cgpa,
                 prev_cgpa: prev_cgpa || null,
-                amount: `${totalAmount.toLocaleString()}`,  // ensure proper formatting
+                amount: item.applicationStatus === "Accepted" ? item.amount : null,  // ensure proper formatting
             };
         });
     };
@@ -95,8 +95,8 @@ const AddFaculty = () => {
         { title: 'Discipline', dataIndex: 'degree', key: 'degree' },
         { title: 'Gender', dataIndex: 'gender', key: 'gender' },
         { title: 'Current CGPA', dataIndex: 'cgpa', key: 'cgpa' },
-        { title: 'Previous CGPA', dataIndex: 'prev_cgpa', key: 'prev_cgpa' },
-        { title: 'Fee Exempted', dataIndex: 'amount', key: 'amount' }
+        // { title: 'Previous CGPA', dataIndex: 'prev_cgpa', key: 'prev_cgpa' },
+        { title: 'Amount', dataIndex: 'amount', key: 'amount' }
     ];
 
     const meritBaseColumns = [
