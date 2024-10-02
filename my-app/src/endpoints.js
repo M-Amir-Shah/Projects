@@ -8,7 +8,7 @@ const EndPoint = {
     switchRole: `${baseUrl}api/User/SwitchRole`,
 
     getStudentInfo: `${baseUrl}api/Student/getStudentInfo`,
-    getStudentApplicationStatus: `${baseUrl}api/Student/getStudentApplicationStatus`,
+    getStudentApplicationStatus: `${baseUrl}/api/Student/getStudentApplicationStatus`,
     sendApplication: `${baseUrl}api/Student/sendApplication`,
     updateProfileImage: `${baseUrl}api/Student/UpdateProfileImage`,
     getSession: `${baseUrl}api/Student/getSession`,

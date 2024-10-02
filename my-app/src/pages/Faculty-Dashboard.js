@@ -4,7 +4,7 @@ import { BarsOutlined } from '@ant-design/icons';
 import EndPoint from '../endpoints';
 import axios from 'axios';
 import logo from './BiitLogo.jpeg';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../Styling/Faculty-Dashboard.css"
 
 const { Header } = Layout;
@@ -22,6 +22,9 @@ const FormScreen = () => {
     const [profileId, setProfileId] = useState(null);
     const [isDrawerVisible, setIsDrawerVisible] = useState(false);
     const [loading, setLoading] = useState(true);
+    const location = useLocation();
+    const { name } = location.state || {};
+
     useEffect(() => {
         getStoredProfileId();
     }, []);

@@ -43,7 +43,8 @@ const GradersList = (props) => {
         setLoading(true);
         try {
             const response = await axios.get(`${EndPoint.unAssignedStudents}`);
-            console.log('Fetch Unassigned Students OK:', response.data);
+            console.log('Fetch Unassigned Students :', response.data);
+            
             setAssignGrader(response.data);
             setFilteredAssignGrader(response.data);
         } catch (error) {

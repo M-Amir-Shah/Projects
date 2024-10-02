@@ -10,7 +10,7 @@ const { Header } = Layout;
 
 const fetchStudentRecords = async () => {
     try {
-        const response = await fetch(EndPoint.eligibleRejection);
+        const response = await fetch(EndPoint.meritRejected);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
@@ -73,8 +73,8 @@ const StudentRecords = () => {
                                     <List.Item>
                                         <List.Item.Meta
                                             avatar={<Avatar size={64} icon={<UserOutlined />} />}
-                                            title={item.name}
-                                            description={item.arid_no}
+                                            title={`${item.name} (${item.arid_no})`}
+                                            description={"Rejected Amount: "+item.amount}
                                         />
                                     </List.Item>
                                 )}

@@ -10,7 +10,7 @@ const DecideMeritBaseApplication = ({ aidtype, applicationStatus, id, EndPoint }
   const handleSubmit = async (status) => {
     setLoading(true);
     try {
-      const response = await axios.post(`${EndPoint.decideMeritBaseApplication}`, {
+      const response = await axios.post(`${EndPoint.meritRejected}`, {
         id: id,
         status: status
       }, {

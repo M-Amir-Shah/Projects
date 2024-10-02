@@ -90,23 +90,23 @@ const AddStudent = () => {
             data.append('section', section);
             data.append('password', password);
             data.append('pic', pic);
-
+    
             const response = await axios.post(EndPoint.addStudent, data, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            console.log(response.data);
+            console.log('Response data:', response.data);  // Log full response
             message.success('Add Successfully');
             navigate('/Admin-Dashboard');
         } catch (error) {
-            console.error('Error adding student:', error);
+            console.error('Error adding student:', error.response ? error.response.data : error.message);  // Log error response
             message.error('Failed to add student');
         } finally {
             setLoading(false);
         }
     };
-
+    
     const handleCancel = () => {
         navigate('/Student-Record');
     };

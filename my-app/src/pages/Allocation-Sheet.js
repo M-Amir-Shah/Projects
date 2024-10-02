@@ -6,6 +6,7 @@ import axios from 'axios';
 import logo from './BiitLogo.jpeg';
 import "../Styling/Allocation-Sheet.css";
 import EndPoint from '../endpoints';
+import { render } from '@antv/g2';
 
 const { Header } = Layout;
 const { TabPane } = Tabs;
@@ -49,7 +50,6 @@ const AddFaculty = () => {
     const processNeedBaseData = (data) => {
         return data.map(item => {
             const { arid_no, name, degree, gender, cgpa, prev_cgpa, suggestion, amount } = item.re;
-            // Use 'amount' directly if available, otherwise fallback to summing suggestions
             const totalAmount = amount || suggestion.reduce((total, sugg) => total + parseFloat(sugg.amount || 0), 0);
             return {
                 arid_no,
@@ -58,11 +58,10 @@ const AddFaculty = () => {
                 gender,
                 cgpa,
                 prev_cgpa: prev_cgpa || null,
-                amount: item.applicationStatus === "Accepted" ? item.amount : null,  // ensure proper formatting
+                amount: item.applicationStatus === "Accepted" ? item.amount : null,
             };
         });
     };
-    
 
     const Cancel = () => {
         navigate('/Admin-Dashboard');
@@ -74,7 +73,6 @@ const AddFaculty = () => {
         return total + parseFloat(amount || 0);
     }, 0);
 
-    // Calculate total fee for males and females
     const totalMaleFee = needBaseData
         .filter(item => item.gender === 'M')
         .reduce((total, item) => {
@@ -89,13 +87,38 @@ const AddFaculty = () => {
             return total + parseFloat(amount || 0);
         }, 0);
 
+    // New calculations for Meritbase tab
+    const totalMeritFee = meritBaseData.reduce((total, item) => {
+        const amount = item.amount?.replace('', '').replace(',', '');
+        return total + parseFloat(parseFloat(amount || 0).toFixed(2));
+    }, 0);
+    
+    const totalMaleMeritFee = meritBaseData
+        .filter(item => item.gender === 'M')
+        .reduce((total, item) => {
+            const amount = item.amount?.replace('', '').replace(',', '');
+            return total + parseFloat(parseFloat(amount || 0).toFixed(2));
+        }, 0);
+    
+    const totalFemaleMeritFee = meritBaseData
+        .filter(item => item.gender === 'F')
+        .reduce((total, item) => {
+            const amount = item.amount?.replace('', '').replace(',', '');
+            return total + parseFloat(parseFloat(amount || 0).toFixed(2));
+        }, 0);
+    
+
     const needBaseColumns = [
         { title: 'Arid No', dataIndex: 'arid_no', key: 'arid_no' },
         { title: 'Name', dataIndex: 'name', key: 'name' },
         { title: 'Discipline', dataIndex: 'degree', key: 'degree' },
         { title: 'Gender', dataIndex: 'gender', key: 'gender' },
-        { title: 'Current CGPA', dataIndex: 'cgpa', key: 'cgpa' },
-        // { title: 'Previous CGPA', dataIndex: 'prev_cgpa', key: 'prev_cgpa' },
+        {
+            title: 'Current CGPA',
+            dataIndex: 'cgpa',
+            key: 'cgpa',
+            render: (text) => (text ? parseFloat(text).toFixed(2) : 'N/A')
+        },
         { title: 'Amount', dataIndex: 'amount', key: 'amount' }
     ];
 
@@ -106,10 +129,20 @@ const AddFaculty = () => {
         { title: 'Semester', dataIndex: 'semester', key: 'semester' },
         { title: 'Section', dataIndex: 'section', key: 'section' },
         { title: 'Gender', dataIndex: 'gender', key: 'gender' },
-        { title: 'Current CGPA', dataIndex: 'cgpa', key: 'cgpa' },
-        { title: 'Previous CGPA', dataIndex: 'prev_cgpa', key: 'prev_cgpa' },
-        { title: 'Position', dataIndex: 'position', key: 'position' },
-        { title: 'Amount', dataIndex: 'amount', key: 'amount' },
+        {
+            title: 'Current CGPA',
+            dataIndex: 'cgpa',
+            key: 'cgpa',
+            render: (text) => (text ? parseFloat(text).toFixed(2) : 'N/A')
+        },
+        {
+            title: 'Previous CGPA',
+            dataIndex: 'prev_cgpa',
+            key: 'prev_cgpa',
+            render: (text) => (text ? parseFloat(text).toFixed(2) : 'N/A')
+        },
+        // { title: 'Position', dataIndex: 'position', key: 'position' },
+        { title: 'Amount', dataIndex: 'amount', key: 'amount', render: (text)=> (text ? parseFloat(text).toFixed(2): 'N/A') },
     ];
 
     return (
@@ -162,7 +195,16 @@ const AddFaculty = () => {
                                     loading={loading}
                                     scroll={{ y: 400 }}
                                 />
-                                
+                                <div style={{ marginTop: '20px' }}>
+                                    <Text strong>Total Fee: </Text>
+                                    <Text>{`${totalMeritFee.toLocaleString()} Rs.`}</Text>
+                                    <br/>
+                                    <Text strong>Total Male: </Text>
+                                    <Text>{`${totalMaleMeritFee.toLocaleString()} Rs.`}</Text>
+                                    <br/>
+                                    <Text strong>Total Female: </Text>
+                                    <Text>{`${totalFemaleMeritFee.toLocaleString()} Rs.`}</Text>
+                                </div>
                             </div>
                         </div>
                     </TabPane>

@@ -30,12 +30,6 @@ const StudentDashboard = () => {
     const [session1, setSession] = useState('');
     const [amount, setAmount] = useState(''); // State variable for amount
     const [aidtype, setAidType] = useState(''); // State variable for aidtype
-    const [house,setAmt] = useState('');
-    const [five, setFive] = useState('');
-    const [ten, setTen] = useState('');
-    const [fifteen, setFifteen] = useState('');
-    const [twenty, setTwenty] = useState('');
-
 
 
     const fetchStudentInfo = async (profileId) => {
@@ -132,7 +126,7 @@ const StudentDashboard = () => {
 
 
 
-    const handleFiveK = async (status) => {
+    const handleSubmit = async (status) => {
         setLoading(true);
         try {
             console.log('Submitting with ID:', profileId, 'and status:', status); // Debugging line
@@ -161,123 +155,6 @@ const StudentDashboard = () => {
         }
     };
 
-
-    const handleTenK = async (status) => {
-        setLoading(true);
-        try {
-            console.log('Submitting with ID:', profileId, 'and status:', status); // Debugging line
-
-            // Construct the URL with query parameters
-            const url = `http://localhost/Backend/api/Testing/decideMeritBaseApplication?id=${profileId}&status=${status}`;
-
-            // Send the POST request with query parameters
-            const response = await axios.post(url, null, {
-                headers: {
-                    'Content-Type': 'application/json' // Optional, can be omitted if no body is being sent
-                }
-            });
-
-            console.log("Response : ", response.data);
-            message.success(`${status} Successfully`);
-            // Replace navigate('/StudentDashboard');
-            window.location.reload();
-
-
-        } catch (error) {
-            message.error('Failed to submit');
-            console.error('Error:', error.response?.data || error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleFifteenK = async (status) => {
-        setLoading(true);
-        try {
-            console.log('Submitting with ID:', profileId, 'and status:', status); // Debugging line
-
-            // Construct the URL with query parameters
-            const url = `http://localhost/Backend/api/Committee/decideMeritBaseApplication?id=${profileId}&status=${status}`;
-
-            // Send the POST request with query parameters
-            const response = await axios.post(url, null, {
-                headers: {
-                    'Content-Type': 'application/json' // Optional, can be omitted if no body is being sent
-                }
-            });
-
-            console.log("Response : ", response.data);
-            message.success(`${status} Successfully`);
-            // Replace navigate('/StudentDashboard');
-            window.location.reload();
-
-
-        } catch (error) {
-            message.error('Failed to submit');
-            console.error('Error:', error.response?.data || error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleTwentyK = async (status) => {
-        setLoading(true);
-        try {
-            console.log('Submitting with ID:', profileId, 'and status:', status); // Debugging line
-
-            // Construct the URL with query parameters
-            const url = `http://localhost/Backend/api/User/decideMeritBaseApplication?id=${profileId}&status=${status}`;
-
-            // Send the POST request with query parameters
-            const response = await axios.post(url, null, {
-                headers: {
-                    'Content-Type': 'application/json' // Optional, can be omitted if no body is being sent
-                }
-            });
-
-            console.log("Response : ", response.data);
-            message.success(`${status} Successfully`);
-            // Replace navigate('/StudentDashboard');
-            window.location.reload();
-
-
-        } catch (error) {
-            message.error('Failed to submit');
-            console.error('Error:', error.response?.data || error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    
-    const handleSubmit = async (status) => {
-        setLoading(true);
-        try {
-            console.log('Submitting with ID:', profileId, 'and status:', status); // Debugging line
-
-            // Construct the URL with query parameters
-            const url = `http://localhost/Backend/api/Faculty/decideMeritBaseApplication?id=${profileId}&status=${status}`;
-
-            // Send the POST request with query parameters
-            const response = await axios.post(url, null, {
-                headers: {
-                    'Content-Type': 'application/json' // Optional, can be omitted if no body is being sent
-                }
-            });
-
-            console.log("Response : ", response.data);
-            message.success(`${status} Successfully`);
-            // Replace navigate('/StudentDashboard');
-            window.location.reload();
-
-
-        } catch (error) {
-            message.error('Failed to submit');
-            console.error('Error:', error.response?.data || error.message);
-        } finally {
-            setLoading(false);
-        }
-    };
 
 
     const logout = () => {
@@ -316,7 +193,6 @@ const StudentDashboard = () => {
     const onClose = () => {
         setIsDrawerVisible(false);
     };
-
 
     return (
         <Layout>
@@ -368,42 +244,15 @@ const StudentDashboard = () => {
 
                             {aidtype === 'MeritBase' && applicationStatus === 'Pending' && (
                                 <>
-                                    {/* <b>Amount:</b> <b>{amount}</b><br /> */}
-                                    <label>Hrs/Week</label>
-                                    <br/>
+                                    <b>Amount:</b> <b>{amount}</b><br />
                                     <Button
-                                        onClick={() => handleFiveK('Accepted')}
+                                        onClick={() => handleSubmit('Accepted')}
                                         type='primary'
                                         loading={loading}
                                         style={{ marginRight: '10px', backgroundColor: 'green' }}
                                     >
-                                        5 Hrs
+                                        Accept
                                     </Button>
-                                    <Button
-                                        onClick={() => handleTenK('Accepted')}
-                                        type='primary'
-                                        loading={loading}
-                                        style={{ marginRight: '10px', backgroundColor: 'green' }}
-                                    >
-                                        10 Hrs
-                                    </Button>
-                                    <Button
-                                        onClick={() => handleFifteenK('Accepted')}
-                                        type='primary'
-                                        loading={loading}
-                                        style={{ marginRight: '10px', backgroundColor: 'green' }}
-                                    >
-                                        15 Hrs
-                                    </Button>
-                                    <Button
-                                        onClick={() => handleTwentyK('Accepted')}
-                                        type='primary'
-                                        loading={loading}
-                                        style={{ marginRight: '10px', backgroundColor: 'green' }}
-                                    >
-                                        20 Hrs
-                                    </Button>
-                                    
                                     <Button
                                         onClick={() => handleSubmit('Rejected')}
                                         type='primary'
@@ -412,7 +261,6 @@ const StudentDashboard = () => {
                                     >
                                         Reject
                                     </Button>
-                                    
                                 </>
                             )}
 
